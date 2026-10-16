@@ -12,8 +12,39 @@ All values were copied from first-party government sources on **2026-10-16**. Do
 | `eu` | EU Reference Intakes | **Regulation (EU) No 1169/2011, Annex XIII** (unchanged since 2011; checked against the 2025-04-01 consolidated text) | Average adult, 8,400 kJ / 2,000 kcal | [EUR-Lex](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:02011R1169-20250401) |
 | `us` | FDA Daily Values | **21 CFR 101.9** (last amended 2023-05-24; eCFR up to date as of 2026-10-14) | Adults and children 4+, 2,000 kcal | [eCFR § 101.9](https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-101/subpart-A/section-101.9) |
 | `ca` | Health Canada Table of Daily Values | **2022-10-20 version** | Children 4+ and adults | [canada.ca](https://www.canada.ca/en/health-canada/services/technical-documents-labelling-requirements/table-daily-values/nutrition-labelling.html) |
+| `who` (fallback) | WHO healthy diet guidelines | **Sugars 2015, sodium 2012, fats 2023, carbohydrate 2023** | Adults; scaled to the chosen source's energy | [WHO Healthy diet fact sheet](https://www.who.int/news-room/fact-sheets/detail/healthy-diet) |
 
 Each source in the JSON has a `version.displayName`. **Show it to the user wherever a % appears** (e.g. in the table footer or Settings), so they know which version the numbers come from.
+
+## Lookup order: WHO fills the gaps
+
+The user picks one source (Japan by default). For each label line:
+
+1. Use the chosen source's value.
+2. If its `match` is `none`, use the **WHO** value (`fallbackSource`) and mark the row, e.g. "28% · WHO".
+3. If WHO has none either, show **No reference**.
+
+WHO values are **limits** (sugars, fats, sodium) or **targets** (fibre, potassium), not reference amounts. The `kind` field says which, so the copy reads "of the WHO daily limit". Where WHO gives a share of energy, convert it with the chosen source's `referenceEnergyKcal`, or 2,000 kcal when it has none:
+
+| WHO guideline | At 2,000 kcal | At 2,200 kcal (Japan) |
+|---|---|---|
+| Free sugars < 10% of energy | 50 g | 55 g |
+| Saturated fat ≤ 10% of energy | 22.2 g | 24.4 g |
+| Total fat ≤ 30% of energy | 66.7 g | 73.3 g |
+| Sodium < 2,000 mg | 2,000 mg (≈ 5.1 g salt) | same |
+| Fibre ≥ 25 g | 25 g | same |
+| Potassium ≥ 3,510 mg | 3,510 mg | same |
+
+The gaps WHO fills for each source:
+
+| Chosen source | Filled by WHO |
+|---|---|
+| Japan | Sugars (55 g limit) |
+| EU | Fibre (25 g target) |
+| US | Sugars (50 g limit) |
+| Canada | Nothing. Its gaps (energy, protein, carbohydrate) have no single WHO value. |
+
+**WHO limits free sugars, but 糖類 is total sugars** (including sugars naturally in milk and fruit), so the WHO sugars % can come out high. Footnote it, especially for dairy and fruit products.
 
 ## Values per Japanese label line
 
@@ -89,7 +120,8 @@ The app always calculates with the current values. If a label prints its own %, 
 - **Japan:** Table 10 was read from the consolidated text in the e-Gov law database API (revision `427M60000002010_20261001_508M60000002089`, in force 2026-10-01). It was then cross-checked against the new column of the CAA's comparison table for 令和7年内閣府令第26号. The 2026 amendment didn't change Table 10.
 - **EU:** Annex XIII Parts A and B were read from the 2025-04-01 consolidated text and the original 2011 Official Journal text, both from the EU Publications Office. They're identical. The definitions of carbohydrate, sugars, fibre and salt come from Annex I of the same regulation.
 - **US:** § 101.9(c)(9) (DRVs) and (c)(8)(iv) (RDIs) were read from the eCFR renderer API. The amendment dates come from the eCFR versioner API.
-- **Canada:** the Table of Daily Values page on canada.ca, published 2022-10-20.
+- **Canada:** the Table of Daily Values page on canada.ca, published 2022-10-20. canada.ca couldn't be downloaded directly, so it was read through a summarising fetch. Worth a visual re-check.
+- **WHO:** the Healthy diet fact sheet (updated 2026-01-26), the 2023 fats and carbohydrates announcement, the sodium reduction fact sheet and the guideline publication pages, all on who.int.
 
 ## Updating
 

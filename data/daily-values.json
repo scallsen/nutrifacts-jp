@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "description": "Official daily reference values used to compute the % shown next to each line of a Japanese nutrition label. Every value was copied from a first-party government source. See docs/daily-values.md for how to read and update this file.",
+  "description": "Official daily reference values used to compute the % shown next to each line of a Japanese nutrition label. Every value was copied from a first-party source. See docs/daily-values.md for how to read and update this file.",
   "retrieved": "2026-10-16",
   "defaultSource": "jp",
   "match": {
@@ -11,19 +11,75 @@
     "none": "The source has no value for this line. Show \"No reference\", never a %."
   },
   "labelLines": {
-    "energy":       { "ja": "熱量",       "en": "Energy",        "unit": "kcal" },
-    "protein":      { "ja": "たんぱく質", "en": "Protein",       "unit": "g" },
-    "fat":          { "ja": "脂質",       "en": "Fat",           "unit": "g" },
-    "saturatedFat": { "ja": "飽和脂肪酸", "en": "Saturated fat", "unit": "g" },
-    "carbohydrate": { "ja": "炭水化物",   "en": "Carbohydrate",  "unit": "g", "note": "Includes fibre." },
-    "netCarbs":     { "ja": "糖質",       "en": "Net carbs",     "unit": "g", "note": "Carbohydrate minus fibre. Includes starch, sugars and sugar alcohols." },
-    "sugars":       { "ja": "糖類",       "en": "Sugars",        "unit": "g", "note": "Mono- and disaccharides, natural and added. Excludes sugar alcohols." },
-    "fibre":        { "ja": "食物繊維",   "en": "Fibre",         "unit": "g" },
-    "salt":         { "ja": "食塩相当量", "en": "Salt",          "unit": "g", "note": "Salt equivalent. Sodium mg = salt g × 1000 ÷ 2.54." },
-    "potassium":    { "ja": "カリウム",   "en": "Potassium",     "unit": "mg" },
-    "calcium":      { "ja": "カルシウム", "en": "Calcium",       "unit": "mg" },
-    "iron":         { "ja": "鉄",         "en": "Iron",          "unit": "mg" },
-    "vitaminD":     { "ja": "ビタミンD",  "en": "Vitamin D",     "unit": "µg" }
+    "energy": {
+      "ja": "熱量",
+      "en": "Energy",
+      "unit": "kcal"
+    },
+    "protein": {
+      "ja": "たんぱく質",
+      "en": "Protein",
+      "unit": "g"
+    },
+    "fat": {
+      "ja": "脂質",
+      "en": "Fat",
+      "unit": "g"
+    },
+    "saturatedFat": {
+      "ja": "飽和脂肪酸",
+      "en": "Saturated fat",
+      "unit": "g"
+    },
+    "carbohydrate": {
+      "ja": "炭水化物",
+      "en": "Carbohydrate",
+      "unit": "g",
+      "note": "Includes fibre."
+    },
+    "netCarbs": {
+      "ja": "糖質",
+      "en": "Net carbs",
+      "unit": "g",
+      "note": "Carbohydrate minus fibre. Includes starch, sugars and sugar alcohols."
+    },
+    "sugars": {
+      "ja": "糖類",
+      "en": "Sugars",
+      "unit": "g",
+      "note": "Mono- and disaccharides, natural and added. Excludes sugar alcohols."
+    },
+    "fibre": {
+      "ja": "食物繊維",
+      "en": "Fibre",
+      "unit": "g"
+    },
+    "salt": {
+      "ja": "食塩相当量",
+      "en": "Salt",
+      "unit": "g",
+      "note": "Salt equivalent. Sodium mg = salt g × 1000 ÷ 2.54."
+    },
+    "potassium": {
+      "ja": "カリウム",
+      "en": "Potassium",
+      "unit": "mg"
+    },
+    "calcium": {
+      "ja": "カルシウム",
+      "en": "Calcium",
+      "unit": "mg"
+    },
+    "iron": {
+      "ja": "鉄",
+      "en": "Iron",
+      "unit": "mg"
+    },
+    "vitaminD": {
+      "ja": "ビタミンD",
+      "en": "Vitamin D",
+      "unit": "µg"
+    }
   },
   "sources": {
     "jp": {
@@ -55,67 +111,254 @@
         "amendmentHistory": "https://www.caa.go.jp/policies/policy/food_labeling/food_labeling_act/past_ordinance/"
       },
       "dailyValues": {
-        "energy":       { "amount": 2200, "unit": "kcal", "sourceTerm": "熱量", "match": "exact" },
-        "protein":      { "amount": 85,   "unit": "g",    "sourceTerm": "たんぱく質", "match": "exact" },
-        "fat":          { "amount": 70,   "unit": "g",    "sourceTerm": "脂質", "match": "exact" },
-        "saturatedFat": { "amount": 17,   "unit": "g",    "sourceTerm": "飽和脂肪酸", "match": "exact" },
-        "carbohydrate": { "amount": 320,  "unit": "g",    "sourceTerm": "炭水化物", "match": "exact", "note": "Includes fibre, like the label line." },
-        "netCarbs":     { "amount": null, "match": "none", "note": "Japan sets no value for 糖質." },
-        "sugars":       { "amount": null, "match": "none", "note": "Japan sets no value for 糖類." },
-        "fibre":        { "amount": 20,   "unit": "g",    "sourceTerm": "食物繊維", "match": "exact" },
-        "salt":         { "amount": 7.0,  "unit": "g",    "sourceTerm": "ナトリウム（食塩相当量に換算したもの）", "match": "exact", "note": "Stated as sodium 2,700 mg, or 7.0 g as salt equivalent." },
-        "potassium":    { "amount": 2800, "unit": "mg",   "sourceTerm": "カリウム", "match": "exact" },
-        "calcium":      { "amount": 700,  "unit": "mg",   "sourceTerm": "カルシウム", "match": "exact" },
-        "iron":         { "amount": 6.5,  "unit": "mg",   "sourceTerm": "鉄", "match": "exact" },
-        "vitaminD":     { "amount": 9.0,  "unit": "µg",   "sourceTerm": "ビタミンＤ", "match": "exact" }
+        "energy": {
+          "amount": 2200,
+          "unit": "kcal",
+          "sourceTerm": "熱量",
+          "match": "exact"
+        },
+        "protein": {
+          "amount": 85,
+          "unit": "g",
+          "sourceTerm": "たんぱく質",
+          "match": "exact"
+        },
+        "fat": {
+          "amount": 70,
+          "unit": "g",
+          "sourceTerm": "脂質",
+          "match": "exact"
+        },
+        "saturatedFat": {
+          "amount": 17,
+          "unit": "g",
+          "sourceTerm": "飽和脂肪酸",
+          "match": "exact"
+        },
+        "carbohydrate": {
+          "amount": 320,
+          "unit": "g",
+          "sourceTerm": "炭水化物",
+          "match": "exact",
+          "note": "Includes fibre, like the label line."
+        },
+        "netCarbs": {
+          "amount": null,
+          "match": "none",
+          "note": "Japan sets no value for 糖質."
+        },
+        "sugars": {
+          "amount": null,
+          "match": "none",
+          "note": "Japan sets no value for 糖類."
+        },
+        "fibre": {
+          "amount": 20,
+          "unit": "g",
+          "sourceTerm": "食物繊維",
+          "match": "exact"
+        },
+        "salt": {
+          "amount": 7.0,
+          "unit": "g",
+          "sourceTerm": "ナトリウム（食塩相当量に換算したもの）",
+          "match": "exact",
+          "note": "Stated as sodium 2,700 mg, or 7.0 g as salt equivalent."
+        },
+        "potassium": {
+          "amount": 2800,
+          "unit": "mg",
+          "sourceTerm": "カリウム",
+          "match": "exact"
+        },
+        "calcium": {
+          "amount": 700,
+          "unit": "mg",
+          "sourceTerm": "カルシウム",
+          "match": "exact"
+        },
+        "iron": {
+          "amount": 6.5,
+          "unit": "mg",
+          "sourceTerm": "鉄",
+          "match": "exact"
+        },
+        "vitaminD": {
+          "amount": 9.0,
+          "unit": "µg",
+          "sourceTerm": "ビタミンＤ",
+          "match": "exact"
+        }
       },
       "otherValues": {
-        "sodium":          { "amount": 2700, "unit": "mg", "sourceTerm": "ナトリウム" },
-        "n3FattyAcids":    { "amount": 2.0,  "unit": "g",  "sourceTerm": "ｎ―３系脂肪酸" },
-        "n6FattyAcids":    { "amount": 10.0, "unit": "g",  "sourceTerm": "ｎ―６系脂肪酸" },
-        "zinc":            { "amount": 8.5,  "unit": "mg", "sourceTerm": "亜鉛" },
-        "chromium":        { "amount": 10,   "unit": "µg", "sourceTerm": "クロム" },
-        "selenium":        { "amount": 28,   "unit": "µg", "sourceTerm": "セレン" },
-        "copper":          { "amount": 0.8,  "unit": "mg", "sourceTerm": "銅" },
-        "magnesium":       { "amount": 320,  "unit": "mg", "sourceTerm": "マグネシウム" },
-        "manganese":       { "amount": 3.2,  "unit": "mg", "sourceTerm": "マンガン" },
-        "molybdenum":      { "amount": 25,   "unit": "µg", "sourceTerm": "モリブデン" },
-        "iodine":          { "amount": 140,  "unit": "µg", "sourceTerm": "ヨウ素" },
-        "phosphorus":      { "amount": 900,  "unit": "mg", "sourceTerm": "リン" },
-        "niacin":          { "amount": 13,   "unit": "mg", "sourceTerm": "ナイアシン" },
-        "pantothenicAcid": { "amount": 5.5,  "unit": "mg", "sourceTerm": "パントテン酸" },
-        "biotin":          { "amount": 50,   "unit": "µg", "sourceTerm": "ビオチン" },
-        "vitaminA":        { "amount": 770,  "unit": "µg", "sourceTerm": "ビタミンＡ" },
-        "vitaminB1":       { "amount": 1.0,  "unit": "mg", "sourceTerm": "ビタミンＢ１" },
-        "vitaminB2":       { "amount": 1.4,  "unit": "mg", "sourceTerm": "ビタミンＢ２" },
-        "vitaminB6":       { "amount": 1.3,  "unit": "mg", "sourceTerm": "ビタミンＢ６" },
-        "vitaminB12":      { "amount": 4.0,  "unit": "µg", "sourceTerm": "ビタミンＢ１２" },
-        "vitaminC":        { "amount": 100,  "unit": "mg", "sourceTerm": "ビタミンＣ" },
-        "vitaminE":        { "amount": 6.5,  "unit": "mg", "sourceTerm": "ビタミンＥ" },
-        "vitaminK":        { "amount": 150,  "unit": "µg", "sourceTerm": "ビタミンＫ" },
-        "folate":          { "amount": 240,  "unit": "µg", "sourceTerm": "葉酸" }
+        "sodium": {
+          "amount": 2700,
+          "unit": "mg",
+          "sourceTerm": "ナトリウム"
+        },
+        "n3FattyAcids": {
+          "amount": 2.0,
+          "unit": "g",
+          "sourceTerm": "ｎ―３系脂肪酸"
+        },
+        "n6FattyAcids": {
+          "amount": 10.0,
+          "unit": "g",
+          "sourceTerm": "ｎ―６系脂肪酸"
+        },
+        "zinc": {
+          "amount": 8.5,
+          "unit": "mg",
+          "sourceTerm": "亜鉛"
+        },
+        "chromium": {
+          "amount": 10,
+          "unit": "µg",
+          "sourceTerm": "クロム"
+        },
+        "selenium": {
+          "amount": 28,
+          "unit": "µg",
+          "sourceTerm": "セレン"
+        },
+        "copper": {
+          "amount": 0.8,
+          "unit": "mg",
+          "sourceTerm": "銅"
+        },
+        "magnesium": {
+          "amount": 320,
+          "unit": "mg",
+          "sourceTerm": "マグネシウム"
+        },
+        "manganese": {
+          "amount": 3.2,
+          "unit": "mg",
+          "sourceTerm": "マンガン"
+        },
+        "molybdenum": {
+          "amount": 25,
+          "unit": "µg",
+          "sourceTerm": "モリブデン"
+        },
+        "iodine": {
+          "amount": 140,
+          "unit": "µg",
+          "sourceTerm": "ヨウ素"
+        },
+        "phosphorus": {
+          "amount": 900,
+          "unit": "mg",
+          "sourceTerm": "リン"
+        },
+        "niacin": {
+          "amount": 13,
+          "unit": "mg",
+          "sourceTerm": "ナイアシン"
+        },
+        "pantothenicAcid": {
+          "amount": 5.5,
+          "unit": "mg",
+          "sourceTerm": "パントテン酸"
+        },
+        "biotin": {
+          "amount": 50,
+          "unit": "µg",
+          "sourceTerm": "ビオチン"
+        },
+        "vitaminA": {
+          "amount": 770,
+          "unit": "µg",
+          "sourceTerm": "ビタミンＡ"
+        },
+        "vitaminB1": {
+          "amount": 1.0,
+          "unit": "mg",
+          "sourceTerm": "ビタミンＢ１"
+        },
+        "vitaminB2": {
+          "amount": 1.4,
+          "unit": "mg",
+          "sourceTerm": "ビタミンＢ２"
+        },
+        "vitaminB6": {
+          "amount": 1.3,
+          "unit": "mg",
+          "sourceTerm": "ビタミンＢ６"
+        },
+        "vitaminB12": {
+          "amount": 4.0,
+          "unit": "µg",
+          "sourceTerm": "ビタミンＢ１２"
+        },
+        "vitaminC": {
+          "amount": 100,
+          "unit": "mg",
+          "sourceTerm": "ビタミンＣ"
+        },
+        "vitaminE": {
+          "amount": 6.5,
+          "unit": "mg",
+          "sourceTerm": "ビタミンＥ"
+        },
+        "vitaminK": {
+          "amount": 150,
+          "unit": "µg",
+          "sourceTerm": "ビタミンＫ"
+        },
+        "folate": {
+          "amount": 240,
+          "unit": "µg",
+          "sourceTerm": "葉酸"
+        }
       },
       "previousVersion": {
         "label": "2015 values",
         "validOnLabelsUntil": "2028-03-31",
         "source": "Old column (改正前) of the 令和7年内閣府令第26号 comparison table",
         "changedValues": {
-          "protein":      { "amount": 81,   "unit": "g" },
-          "fat":          { "amount": 62,   "unit": "g" },
-          "saturatedFat": { "amount": 16,   "unit": "g" },
-          "fibre":        { "amount": 19,   "unit": "g" },
-          "sodium":       { "amount": 2900, "unit": "mg" },
-          "calcium":      { "amount": 680,  "unit": "mg" },
-          "iron":         { "amount": 6.8,  "unit": "mg" },
-          "vitaminD":     { "amount": 5.5,  "unit": "µg" },
-          "n6FattyAcids": { "amount": 9.0,  "unit": "g" }
+          "protein": {
+            "amount": 81,
+            "unit": "g"
+          },
+          "fat": {
+            "amount": 62,
+            "unit": "g"
+          },
+          "saturatedFat": {
+            "amount": 16,
+            "unit": "g"
+          },
+          "fibre": {
+            "amount": 19,
+            "unit": "g"
+          },
+          "sodium": {
+            "amount": 2900,
+            "unit": "mg"
+          },
+          "calcium": {
+            "amount": 680,
+            "unit": "mg"
+          },
+          "iron": {
+            "amount": 6.8,
+            "unit": "mg"
+          },
+          "vitaminD": {
+            "amount": 5.5,
+            "unit": "µg"
+          },
+          "n6FattyAcids": {
+            "amount": 9.0,
+            "unit": "g"
+          }
         },
         "note": "Only the values that changed are listed. Energy (2,200 kcal) and carbohydrate (320 g) were unchanged. The old salt-equivalent figure wasn't captured; don't derive one."
       },
       "interpretation": null,
       "interpretationNote": "Japan publishes no official \"low / high\" bands for %."
     },
-
     "eu": {
       "country": "EU",
       "name": "European Union",
@@ -140,25 +383,94 @@
         "cellar": "https://publications.europa.eu/resource/celex/02011R1169-20250401"
       },
       "dailyValues": {
-        "energy":       { "amount": 2000, "unit": "kcal", "sourceTerm": "Energy", "match": "exact", "note": "Stated as 8 400 kJ / 2 000 kcal." },
-        "protein":      { "amount": 50,   "unit": "g",    "sourceTerm": "Protein", "match": "exact" },
-        "fat":          { "amount": 70,   "unit": "g",    "sourceTerm": "Total fat", "match": "exact" },
-        "saturatedFat": { "amount": 20,   "unit": "g",    "sourceTerm": "Saturates", "match": "exact" },
-        "netCarbs":     { "amount": 260,  "unit": "g",    "sourceTerm": "Carbohydrate", "match": "exact", "note": "EU 'carbohydrate' is any carbohydrate metabolised by humans, including polyols, so it excludes fibre. That is the same thing as 糖質." },
-        "carbohydrate": { "amount": 260,  "unit": "g",    "sourceTerm": "Carbohydrate", "match": "fallback", "fallbackFor": "netCarbs", "note": "Only use when the label has no 糖質 line. 炭水化物 includes fibre, so the % comes out slightly high. Footnote it." },
-        "sugars":       { "amount": 90,   "unit": "g",    "sourceTerm": "Sugars", "match": "exact", "note": "EU 'sugars' are mono- and disaccharides excluding polyols, the same as 糖類." },
-        "fibre":        { "amount": null, "match": "none", "note": "The EU sets no reference intake for fibre." },
-        "salt":         { "amount": 6,    "unit": "g",    "sourceTerm": "Salt", "match": "approximate", "note": "EU salt = sodium × 2.5; Japan uses × 2.54. About 1.6% apart. Compare directly." },
-        "potassium":    { "amount": 2000, "unit": "mg",   "sourceTerm": "Potassium", "match": "exact" },
-        "calcium":      { "amount": 800,  "unit": "mg",   "sourceTerm": "Calcium", "match": "exact" },
-        "iron":         { "amount": 14,   "unit": "mg",   "sourceTerm": "Iron", "match": "exact" },
-        "vitaminD":     { "amount": 5,    "unit": "µg",   "sourceTerm": "Vitamin D", "match": "exact" }
+        "energy": {
+          "amount": 2000,
+          "unit": "kcal",
+          "sourceTerm": "Energy",
+          "match": "exact",
+          "note": "Stated as 8 400 kJ / 2 000 kcal."
+        },
+        "protein": {
+          "amount": 50,
+          "unit": "g",
+          "sourceTerm": "Protein",
+          "match": "exact"
+        },
+        "fat": {
+          "amount": 70,
+          "unit": "g",
+          "sourceTerm": "Total fat",
+          "match": "exact"
+        },
+        "saturatedFat": {
+          "amount": 20,
+          "unit": "g",
+          "sourceTerm": "Saturates",
+          "match": "exact"
+        },
+        "netCarbs": {
+          "amount": 260,
+          "unit": "g",
+          "sourceTerm": "Carbohydrate",
+          "match": "exact",
+          "note": "EU 'carbohydrate' is any carbohydrate metabolised by humans, including polyols, so it excludes fibre. That is the same thing as 糖質."
+        },
+        "carbohydrate": {
+          "amount": 260,
+          "unit": "g",
+          "sourceTerm": "Carbohydrate",
+          "match": "fallback",
+          "fallbackFor": "netCarbs",
+          "note": "Only use when the label has no 糖質 line. 炭水化物 includes fibre, so the % comes out slightly high. Footnote it."
+        },
+        "sugars": {
+          "amount": 90,
+          "unit": "g",
+          "sourceTerm": "Sugars",
+          "match": "exact",
+          "note": "EU 'sugars' are mono- and disaccharides excluding polyols, the same as 糖類."
+        },
+        "fibre": {
+          "amount": null,
+          "match": "none",
+          "note": "The EU sets no reference intake for fibre."
+        },
+        "salt": {
+          "amount": 6,
+          "unit": "g",
+          "sourceTerm": "Salt",
+          "match": "approximate",
+          "note": "EU salt = sodium × 2.5; Japan uses × 2.54. About 1.6% apart. Compare directly."
+        },
+        "potassium": {
+          "amount": 2000,
+          "unit": "mg",
+          "sourceTerm": "Potassium",
+          "match": "exact"
+        },
+        "calcium": {
+          "amount": 800,
+          "unit": "mg",
+          "sourceTerm": "Calcium",
+          "match": "exact"
+        },
+        "iron": {
+          "amount": 14,
+          "unit": "mg",
+          "sourceTerm": "Iron",
+          "match": "exact"
+        },
+        "vitaminD": {
+          "amount": 5,
+          "unit": "µg",
+          "sourceTerm": "Vitamin D",
+          "match": "exact"
+        }
       },
       "otherValues": {},
       "interpretation": null,
       "interpretationNote": "The regulation sets no \"low / high\" bands for %. (UK traffic-light bands are UK guidance, not EU law.)"
     },
-
     "us": {
       "country": "US",
       "name": "United States",
@@ -181,28 +493,109 @@
         "interpretation": "https://www.fda.gov/food/nutrition-facts-label/how-understand-and-use-nutrition-facts-label"
       },
       "dailyValues": {
-        "energy":       { "amount": null, "match": "none", "note": "There's no DV for calories. 2,000 kcal is the reference intake the other DVs are based on. The app may show % of 2,000 kcal, labelled as such." },
-        "protein":      { "amount": 50,   "unit": "g",  "sourceTerm": "Protein", "match": "exact" },
-        "fat":          { "amount": 78,   "unit": "g",  "sourceTerm": "Fat", "match": "exact" },
-        "saturatedFat": { "amount": 20,   "unit": "g",  "sourceTerm": "Saturated fat", "match": "exact" },
-        "carbohydrate": { "amount": 275,  "unit": "g",  "sourceTerm": "Total carbohydrate", "match": "exact", "note": "Includes fibre, like 炭水化物." },
-        "netCarbs":     { "amount": null, "match": "none" },
-        "sugars":       { "amount": null, "match": "none", "note": "The only US sugar DV is for added sugars (50 g). 糖類 is total sugars, so it can't be compared." },
-        "fibre":        { "amount": 28,   "unit": "g",  "sourceTerm": "Dietary fiber", "match": "exact" },
-        "salt":         { "amount": 2300, "unit": "mg", "sourceTerm": "Sodium", "match": "converted", "convert": "sodiumMg = saltG * 1000 / 2.54", "note": "Equivalent to about 5.84 g salt." },
-        "potassium":    { "amount": 4700, "unit": "mg", "sourceTerm": "Potassium", "match": "exact" },
-        "calcium":      { "amount": 1300, "unit": "mg", "sourceTerm": "Calcium", "match": "exact" },
-        "iron":         { "amount": 18,   "unit": "mg", "sourceTerm": "Iron", "match": "exact" },
-        "vitaminD":     { "amount": 20,   "unit": "µg", "sourceTerm": "Vitamin D", "match": "exact" }
+        "energy": {
+          "amount": null,
+          "match": "none",
+          "note": "There's no DV for calories. 2,000 kcal is the reference intake the other DVs are based on. The app may show % of 2,000 kcal, labelled as such."
+        },
+        "protein": {
+          "amount": 50,
+          "unit": "g",
+          "sourceTerm": "Protein",
+          "match": "exact"
+        },
+        "fat": {
+          "amount": 78,
+          "unit": "g",
+          "sourceTerm": "Fat",
+          "match": "exact"
+        },
+        "saturatedFat": {
+          "amount": 20,
+          "unit": "g",
+          "sourceTerm": "Saturated fat",
+          "match": "exact"
+        },
+        "carbohydrate": {
+          "amount": 275,
+          "unit": "g",
+          "sourceTerm": "Total carbohydrate",
+          "match": "exact",
+          "note": "Includes fibre, like 炭水化物."
+        },
+        "netCarbs": {
+          "amount": null,
+          "match": "none"
+        },
+        "sugars": {
+          "amount": null,
+          "match": "none",
+          "note": "The only US sugar DV is for added sugars (50 g). 糖類 is total sugars, so it can't be compared."
+        },
+        "fibre": {
+          "amount": 28,
+          "unit": "g",
+          "sourceTerm": "Dietary fiber",
+          "match": "exact"
+        },
+        "salt": {
+          "amount": 2300,
+          "unit": "mg",
+          "sourceTerm": "Sodium",
+          "match": "converted",
+          "convert": "sodiumMg = saltG * 1000 / 2.54",
+          "note": "Equivalent to about 5.84 g salt."
+        },
+        "potassium": {
+          "amount": 4700,
+          "unit": "mg",
+          "sourceTerm": "Potassium",
+          "match": "exact"
+        },
+        "calcium": {
+          "amount": 1300,
+          "unit": "mg",
+          "sourceTerm": "Calcium",
+          "match": "exact"
+        },
+        "iron": {
+          "amount": 18,
+          "unit": "mg",
+          "sourceTerm": "Iron",
+          "match": "exact"
+        },
+        "vitaminD": {
+          "amount": 20,
+          "unit": "µg",
+          "sourceTerm": "Vitamin D",
+          "match": "exact"
+        }
       },
       "otherValues": {
-        "addedSugars": { "amount": 50,  "unit": "g",  "sourceTerm": "Added Sugars", "note": "Japanese labels don't give added sugars." },
-        "cholesterol": { "amount": 300, "unit": "mg", "sourceTerm": "Cholesterol" },
-        "sodium":      { "amount": 2300, "unit": "mg", "sourceTerm": "Sodium" }
+        "addedSugars": {
+          "amount": 50,
+          "unit": "g",
+          "sourceTerm": "Added Sugars",
+          "note": "Japanese labels don't give added sugars."
+        },
+        "cholesterol": {
+          "amount": 300,
+          "unit": "mg",
+          "sourceTerm": "Cholesterol"
+        },
+        "sodium": {
+          "amount": 2300,
+          "unit": "mg",
+          "sourceTerm": "Sodium"
+        }
       },
-      "interpretation": { "lowAtOrBelowPct": 5, "highAtOrAbovePct": 20, "basis": "per serving", "source": "FDA, How to Understand and Use the Nutrition Facts Label (content current as of 2024-03-05)" }
+      "interpretation": {
+        "lowAtOrBelowPct": 5,
+        "highAtOrAbovePct": 20,
+        "basis": "per serving",
+        "source": "FDA, How to Understand and Use the Nutrition Facts Label (content current as of 2024-03-05)"
+      }
     },
-
     "ca": {
       "country": "CA",
       "name": "Canada",
@@ -225,25 +618,281 @@
         "interpretation": "https://www.canada.ca/en/health-canada/services/understanding-food-labels/percent-daily-value.html"
       },
       "dailyValues": {
-        "energy":       { "amount": null, "match": "none", "note": "Canada sets no DV for Calories." },
-        "protein":      { "amount": null, "match": "none", "note": "Canada sets no DV for protein." },
-        "fat":          { "amount": 75,   "unit": "g",  "sourceTerm": "Fat", "match": "exact" },
-        "saturatedFat": { "amount": 20,   "unit": "g",  "sourceTerm": "Sum of saturated fatty acids and trans fatty acids", "match": "approximate", "note": "Canada's DV covers saturated plus trans fat. Japanese labels show saturated fat only, so the % slightly understates the combined figure." },
-        "carbohydrate": { "amount": null, "match": "none", "note": "Canada sets no DV for carbohydrate." },
-        "netCarbs":     { "amount": null, "match": "none" },
-        "sugars":       { "amount": 100,  "unit": "g",  "sourceTerm": "Sugars", "match": "exact", "note": "Total sugars, the same scope as 糖類." },
-        "fibre":        { "amount": 28,   "unit": "g",  "sourceTerm": "Fibre", "match": "exact" },
-        "salt":         { "amount": 2300, "unit": "mg", "sourceTerm": "Sodium", "match": "converted", "convert": "sodiumMg = saltG * 1000 / 2.54", "note": "Equivalent to about 5.84 g salt." },
-        "potassium":    { "amount": 3400, "unit": "mg", "sourceTerm": "Potassium", "match": "exact" },
-        "calcium":      { "amount": 1300, "unit": "mg", "sourceTerm": "Calcium", "match": "exact" },
-        "iron":         { "amount": 18,   "unit": "mg", "sourceTerm": "Iron", "match": "exact" },
-        "vitaminD":     { "amount": 20,   "unit": "µg", "sourceTerm": "Vitamin D", "match": "exact" }
+        "energy": {
+          "amount": null,
+          "match": "none",
+          "note": "Canada sets no DV for Calories."
+        },
+        "protein": {
+          "amount": null,
+          "match": "none",
+          "note": "Canada sets no DV for protein."
+        },
+        "fat": {
+          "amount": 75,
+          "unit": "g",
+          "sourceTerm": "Fat",
+          "match": "exact"
+        },
+        "saturatedFat": {
+          "amount": 20,
+          "unit": "g",
+          "sourceTerm": "Sum of saturated fatty acids and trans fatty acids",
+          "match": "approximate",
+          "note": "Canada's DV covers saturated plus trans fat. Japanese labels show saturated fat only, so the % slightly understates the combined figure."
+        },
+        "carbohydrate": {
+          "amount": null,
+          "match": "none",
+          "note": "Canada sets no DV for carbohydrate."
+        },
+        "netCarbs": {
+          "amount": null,
+          "match": "none"
+        },
+        "sugars": {
+          "amount": 100,
+          "unit": "g",
+          "sourceTerm": "Sugars",
+          "match": "exact",
+          "note": "Total sugars, the same scope as 糖類."
+        },
+        "fibre": {
+          "amount": 28,
+          "unit": "g",
+          "sourceTerm": "Fibre",
+          "match": "exact"
+        },
+        "salt": {
+          "amount": 2300,
+          "unit": "mg",
+          "sourceTerm": "Sodium",
+          "match": "converted",
+          "convert": "sodiumMg = saltG * 1000 / 2.54",
+          "note": "Equivalent to about 5.84 g salt."
+        },
+        "potassium": {
+          "amount": 3400,
+          "unit": "mg",
+          "sourceTerm": "Potassium",
+          "match": "exact"
+        },
+        "calcium": {
+          "amount": 1300,
+          "unit": "mg",
+          "sourceTerm": "Calcium",
+          "match": "exact"
+        },
+        "iron": {
+          "amount": 18,
+          "unit": "mg",
+          "sourceTerm": "Iron",
+          "match": "exact"
+        },
+        "vitaminD": {
+          "amount": 20,
+          "unit": "µg",
+          "sourceTerm": "Vitamin D",
+          "match": "exact"
+        }
       },
       "otherValues": {
-        "cholesterol": { "amount": 300,  "unit": "mg", "sourceTerm": "Cholesterol" },
-        "sodium":      { "amount": 2300, "unit": "mg", "sourceTerm": "Sodium" }
+        "cholesterol": {
+          "amount": 300,
+          "unit": "mg",
+          "sourceTerm": "Cholesterol"
+        },
+        "sodium": {
+          "amount": 2300,
+          "unit": "mg",
+          "sourceTerm": "Sodium"
+        }
       },
-      "interpretation": { "lowAtOrBelowPct": 5, "highAtOrAbovePct": 15, "basis": "per serving", "source": "Health Canada, Understanding the % Daily Value (date modified 2024-09-05)" }
+      "interpretation": {
+        "lowAtOrBelowPct": 5,
+        "highAtOrAbovePct": 15,
+        "basis": "per serving",
+        "source": "Health Canada, Understanding the % Daily Value (date modified 2024-09-05)"
+      }
+    },
+    "who": {
+      "country": null,
+      "name": "World Health Organization",
+      "title": "WHO healthy diet guidelines",
+      "nativeTitle": "WHO guidelines on nutrient intake",
+      "authority": "World Health Organization",
+      "instrument": "Separate WHO guidelines per nutrient, summarised in the WHO 'Healthy diet' fact sheet",
+      "version": {
+        "label": "WHO guidelines 2012–2023",
+        "displayName": "WHO guidelines (sugars 2015, sodium 2012, fats 2023, carbohydrate 2023)",
+        "documents": [
+          {
+            "title": "Guideline: sugars intake for adults and children",
+            "published": "2015-03-04",
+            "isbn": "9789241549028",
+            "url": "https://iris.who.int/handle/10665/149782"
+          },
+          {
+            "title": "Guideline: sodium intake for adults and children",
+            "published": "2012",
+            "isbn": "9789241504836",
+            "url": "https://www.who.int/publications/i/item/9789241504836"
+          },
+          {
+            "title": "Saturated fatty acid and trans-fatty acid intake for adults and children: WHO guideline",
+            "published": "2023-07-17",
+            "isbn": "9789240073630",
+            "url": "https://www.who.int/publications/i/item/9789240073630"
+          },
+          {
+            "title": "Total fat intake for the prevention of unhealthy weight gain in adults and children: WHO guideline",
+            "published": "2023-07-17",
+            "url": "https://www.who.int/news/item/17-07-2023-who-updates-guidelines-on-fats-and-carbohydrates"
+          },
+          {
+            "title": "Carbohydrate intake for adults and children: WHO guideline",
+            "published": "2023-07-17",
+            "url": "https://www.who.int/news/item/17-07-2023-who-updates-guidelines-on-fats-and-carbohydrates"
+          },
+          {
+            "title": "Healthy diet (fact sheet)",
+            "updated": "2026-01-26",
+            "url": "https://www.who.int/news-room/fact-sheets/detail/healthy-diet"
+          }
+        ]
+      },
+      "population": "Adults (fibre also has values for children; not captured)",
+      "referenceEnergyKcal": null,
+      "energyScaling": "Values given as percentOfEnergy are converted to grams with the user's chosen source's referenceEnergyKcal, or 2000 kcal when it has none (the figure WHO uses in its own examples). grams = kcal × percentOfEnergy / 100 / kcalPerGram.",
+      "urls": {
+        "values": "https://www.who.int/news-room/fact-sheets/detail/healthy-diet",
+        "fatsAndCarbs": "https://www.who.int/news/item/17-07-2023-who-updates-guidelines-on-fats-and-carbohydrates",
+        "sodium": "https://www.who.int/news-room/fact-sheets/detail/sodium-reduction"
+      },
+      "dailyValues": {
+        "energy": {
+          "amount": null,
+          "match": "none",
+          "note": "WHO sets no daily energy value."
+        },
+        "protein": {
+          "amount": null,
+          "match": "none",
+          "note": "WHO gives a range (10–15% of energy, about 50–75 g at 2000 kcal), not a single value."
+        },
+        "fat": {
+          "kind": "limit",
+          "percentOfEnergy": 30,
+          "kcalPerGram": 9,
+          "amountAt2000kcal": 66.7,
+          "unit": "g",
+          "sourceTerm": "Total fat",
+          "match": "exact",
+          "note": "30% of energy or less."
+        },
+        "saturatedFat": {
+          "kind": "limit",
+          "percentOfEnergy": 10,
+          "kcalPerGram": 9,
+          "amountAt2000kcal": 22.2,
+          "unit": "g",
+          "sourceTerm": "Saturated fatty acids",
+          "match": "exact",
+          "note": "No more than 10% of energy."
+        },
+        "carbohydrate": {
+          "amount": null,
+          "match": "none",
+          "note": "WHO gives a range (45–75% of energy), not a single value."
+        },
+        "netCarbs": {
+          "amount": null,
+          "match": "none"
+        },
+        "sugars": {
+          "kind": "limit",
+          "percentOfEnergy": 10,
+          "kcalPerGram": 4,
+          "amountAt2000kcal": 50,
+          "unit": "g",
+          "sourceTerm": "Free sugars",
+          "match": "approximate",
+          "note": "WHO limits free sugars (added sugars plus honey, syrups and juices). 糖類 is total sugars, including sugars naturally in milk and fruit, so the % can come out high. Footnote it. WHO also says under 5% gives extra benefit."
+        },
+        "fibre": {
+          "kind": "target",
+          "amount": 25,
+          "unit": "g",
+          "sourceTerm": "Naturally occurring dietary fibre",
+          "match": "approximate",
+          "note": "At least 25 g a day for adults. WHO means naturally occurring fibre; labels can include added fibre."
+        },
+        "salt": {
+          "kind": "limit",
+          "amount": 2000,
+          "unit": "mg",
+          "sourceTerm": "Sodium",
+          "match": "converted",
+          "convert": "sodiumMg = saltG * 1000 / 2.54",
+          "note": "Less than 2000 mg sodium (WHO: under 5 g salt)."
+        },
+        "potassium": {
+          "kind": "target",
+          "amount": 3510,
+          "unit": "mg",
+          "sourceTerm": "Potassium",
+          "match": "exact",
+          "note": "At least 90 mmol (3510 mg) a day for adults."
+        },
+        "calcium": {
+          "amount": null,
+          "match": "none",
+          "note": "Not captured from WHO yet."
+        },
+        "iron": {
+          "amount": null,
+          "match": "none",
+          "note": "Not captured from WHO yet."
+        },
+        "vitaminD": {
+          "amount": null,
+          "match": "none",
+          "note": "Not captured from WHO yet."
+        }
+      },
+      "otherValues": {
+        "transFat": {
+          "kind": "limit",
+          "percentOfEnergy": 1,
+          "kcalPerGram": 9,
+          "amountAt2000kcal": 2.2,
+          "unit": "g",
+          "sourceTerm": "Trans-fatty acids"
+        },
+        "sodium": {
+          "kind": "limit",
+          "amount": 2000,
+          "unit": "mg",
+          "sourceTerm": "Sodium"
+        },
+        "freeSugarsConditional": {
+          "kind": "limit",
+          "percentOfEnergy": 5,
+          "kcalPerGram": 4,
+          "amountAt2000kcal": 25,
+          "unit": "g",
+          "sourceTerm": "Free sugars (conditional recommendation)"
+        }
+      },
+      "interpretation": null,
+      "interpretationNote": "WHO sets no low/high bands for %."
     }
+  },
+  "fallbackSource": "who",
+  "lookupOrder": "For each label line: the user's chosen source; if its match is 'none', the fallback source (WHO); otherwise show 'No reference'. Mark rows filled by the fallback.",
+  "kind": {
+    "reference": "A daily reference amount (most country values). Show as '% of daily value'.",
+    "limit": "An upper limit (WHO sugars, fats, sodium). Show as '% of daily limit'.",
+    "target": "A minimum to reach (WHO fibre, potassium). Show as '% of daily target'."
   }
 }
