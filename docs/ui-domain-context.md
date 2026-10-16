@@ -138,6 +138,8 @@ Most values are whole numbers, but sub-1 g values must show at least one signifi
 
 ## 5. Daily values (%DV)
 
+> The values below are Japan's, the app's default. Every supported standard (Japan, EU, US, Canada), with versions and mapping rules, is in [`data/daily-values.json`](../data/daily-values.json) and [`daily-values.md`](daily-values.md). Use those files, not this table, in code.
+
 Japanese labels don't print them. Compute them from the official **栄養素等表示基準値 (2025)**, for adults aged 18+ at 2,200 kcal:
 
 | Nutrient | Reference |
