@@ -3,10 +3,11 @@
 
   Set PROVIDER and ID below. See website/README.md for how to get the ID.
   Leave ID empty to run in preview mode: the form shows success but sends nothing.
+  Kit form: https://app.kit.com/forms/10057938/edit
 */
 const CONFIG = {
   PROVIDER: "kit", // "kit" | "loops" | "buttondown"
-  ID: "",          // Kit form ID, Loops form ID, or Buttondown username
+  ID: "10057938",  // Kit form ID, Loops form ID, or Buttondown username
 };
 
 const PROVIDERS = {
@@ -16,7 +17,15 @@ const PROVIDERS = {
       method: "POST",
       headers: { Accept: "application/json" },
       body: new URLSearchParams({ email_address: email }),
-    }).then(ok),
+    })
+      .then(ok)
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status === "success") return;
+        // Kit's bot protection holds some sign-ups until the person passes a check on Kit's site.
+        if (result.status === "quarantined" && result.url) throw new NeedsCheck(result.url);
+        throw new Error(`Kit sign-up ${result.status || "failed"}`);
+      }),
 
   // Loops (loops.so): free up to 1,000 contacts.
   loops: (id, email) =>
@@ -35,6 +44,13 @@ const PROVIDERS = {
       body: new URLSearchParams({ email, tag: "beta" }),
     }),
 };
+
+class NeedsCheck extends Error {
+  constructor(url) {
+    super("Kit needs a human check");
+    this.url = url;
+  }
+}
 
 function ok(response) {
   if (!response.ok) throw new Error(`Sign-up failed (${response.status})`);
@@ -90,6 +106,16 @@ document.querySelectorAll("[data-signup]").forEach((form) => {
         note.classList.add("is-success");
       });
     } catch (error) {
+      if (error instanceof NeedsCheck) {
+        show("");
+        const link = document.createElement("a");
+        link.href = error.url;
+        link.target = "_blank";
+        link.rel = "noopener";
+        link.textContent = "Confirm you’re not a robot";
+        status.append("One more step: ", link, " to finish joining.");
+        return;
+      }
       console.error(error);
       show("Something went wrong. Please try again.", "error");
     } finally {
