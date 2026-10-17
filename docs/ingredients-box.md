@@ -1,6 +1,6 @@
 # Pack Size and the Ingredients Box (一括表示)
 
-Status: step 1 (typed pack size) is built. Step 2 is built in the app with Apple Intelligence only: `ExtractedIngredientsBox` holds the schema and prompt. The ai& Worker doesn't have the route yet.
+Status: step 1 (typed pack size) is built. Step 2 is built: the app reads the box with the backend chosen in Settings. The ai& Worker reads it at `POST /v1/ingredients-box/read` (`backend/src/ingredients.ts`), and the app falls back to Apple Intelligence while the deployed Worker doesn't have that route. `npm run eval:box` checks the reading on 6 real photos (`backend/eval/box/`).
 
 ## The problem
 
@@ -170,4 +170,5 @@ User message: `Transcribe the Japanese ingredients box in this photo.` For the o
 - **Length.** Ingredient lists run to 40+ items. With translation, the output can exceed what the on-device model handles well (4,096-token context on iOS 26). Recommend PCC or ai& for this scan, and show a clear error when the list is cut off.
 - **Translation.** Additive names (e.g. 加工でん粉, ｐＨ調整剤) need care. Mark the English as translated, and keep the Japanese one tap away.
 - **Allergens.** This is the field that can hurt someone. Only show allergens the box names, always next to the printed Japanese, and never as "free from".
-- **Untested.** The prompt hasn't been run on real packs yet. The next step is 10 to 20 photos (drinks, snacks, canned food, imports) through `backend/scripts/compare-models.ts` with this schema.
+- **Allergens named only as ingredients.** Packs leave out of the allergen statement any allergen that's already obvious from an ingredient's name (小麦粉, バター). The curry pouch's statement lists pork, soy, chicken, gelatin and banana, but not wheat or milk. The app shows only what the statement names, so its "Contains" row can be shorter than the real list.
+- **Few test photos.** `npm run eval:box` has 6 photos, none verified by a person yet. Add more (drinks, snacks, imports, 40-item lists) as they're taken.

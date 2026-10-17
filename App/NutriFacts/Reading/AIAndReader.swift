@@ -51,8 +51,19 @@ nonisolated struct AIAndReader: LabelReader {
     }
 
     func read(_ image: CGImage) async throws -> LabelReading {
+        let (label, details): (ExtractedLabel, _) = try await post("v1/nutrition-label/read", image: image)
+        return LabelReading(label: label, readBy: .aiAnd, details: details)
+    }
+
+    /// Reads the ingredients box (一括表示) with the Worker's own box prompt.
+    func readBox(_ image: CGImage) async throws -> ExtractedIngredientsBox {
+        try await post("v1/ingredients-box/read", image: image).0
+    }
+
+    /// Sends the photo to one of the Worker's read routes and decodes its answer.
+    private func post<T: Decodable>(_ path: String, image: CGImage) async throws -> (T, [ScanTiming.Detail]) {
         guard let apiURL = config.apiURL else { throw LabelReaderError.backendNotConfigured }
-        var request = URLRequest(url: apiURL.appending(path: "v1/nutrition-label/read"))
+        var request = URLRequest(url: apiURL.appending(path: path))
         request.httpMethod = "POST"
         request.timeoutInterval = 60
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -68,13 +79,14 @@ nonisolated struct AIAndReader: LabelReader {
         let (data, response) = try await session.data(for: request)
         let roundTrip = clock.now - sendStarted
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+        if status == 404 { throw LabelReaderError.aiAndRouteMissing }
         guard (200..<300).contains(status) else {
             let message = (try? JSONDecoder().decode(ErrorBody.self, from: data))?.error?.message
             throw LabelReaderError.aiAnd(message ?? "The ai& server returned HTTP \(status).")
         }
         let details = Self.details(response: response as? HTTPURLResponse, encode: encode, jpegBytes: jpeg.count,
                                    bodyBytes: request.httpBody?.count ?? 0, roundTrip: roundTrip)
-        return LabelReading(label: try JSONDecoder().decode(ExtractedLabel.self, from: data), readBy: .aiAnd, details: details)
+        return (try JSONDecoder().decode(T.self, from: data), details)
     }
 
     /// Splits the round trip into the Worker's time (and AI&'s within it) and the rest: network, TLS and queueing.

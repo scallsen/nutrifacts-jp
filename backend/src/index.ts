@@ -1,7 +1,8 @@
-// NutriFacts API: reads a nutrition label photo with AI& and returns the transcription.
-// The app never sees the AI& key, and this Worker only does label reading, so its URL
-// can't be used as a general AI& proxy. See README.md.
+// NutriFacts API: reads a nutrition label or ingredients box photo with AI& and returns the
+// transcription. The app never sees the AI& key, and this Worker only runs its own two prompts,
+// so its URL can't be used as a general AI& proxy. See README.md.
 
+import { boxCompletionRequest, parseBoxCompletion } from "./ingredients.ts";
 import { completionRequest, parseCompletion } from "./label.ts";
 
 export interface Env {
@@ -19,12 +20,19 @@ export interface Env {
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 const MIME_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
+/** What each read route sends to AI& and how it reads the answer. */
+const READS: Record<string, { request: typeof completionRequest; parse: (completion: unknown) => unknown; kind: string }> = {
+  "/v1/nutrition-label/read": { request: completionRequest, parse: parseCompletion, kind: "label" },
+  "/v1/ingredients-box/read": { request: boxCompletionRequest, parse: parseBoxCompletion, kind: "box" },
+};
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const started = Date.now();
     const url = new URL(request.url);
     if (url.pathname === "/health") return json({ ok: true });
-    if (url.pathname !== "/v1/nutrition-label/read" && url.pathname !== "/v1/config") return error(404, "Not found.");
+    const route = READS[url.pathname];
+    if (!route && url.pathname !== "/v1/config") return error(404, "Not found.");
 
     if (env.APP_TOKEN && request.headers.get("X-App-Token") !== env.APP_TOKEN) {
       return error(401, "Missing or wrong app token.");
@@ -37,6 +45,7 @@ export default {
       const efforts = await reasoningEfforts(env);
       return json({ model: env.AIAND_MODEL, reasoningEfforts: efforts, defaultReasoningEffort: pickEffort(env, efforts) ?? null });
     }
+    if (!route) return error(404, "Not found.");
     if (request.method !== "POST") return error(405, "Use POST.");
     const client = request.headers.get("CF-Connecting-IP") ?? "unknown";
     const { success } = await env.READ_LIMITER.limit({ key: client });
@@ -59,7 +68,7 @@ export default {
     const upstream = await fetch(`${base(env)}/chat/completions`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${env.AIAND_API_KEY}` },
-      body: JSON.stringify(completionRequest(env.AIAND_MODEL, image, mimeType, effort)),
+      body: JSON.stringify(route.request(env.AIAND_MODEL, image, mimeType, effort)),
     });
     if (!upstream.ok) return upstreamError(upstream);
 
@@ -74,12 +83,12 @@ export default {
     const usage = usageOf(raw);
     // One line per read for `wrangler tail` and Workers Logs.
     console.log(JSON.stringify({
-      read: "ok", model: env.AIAND_MODEL, effort: applied ?? "model default", aiandMs, totalMs: Date.now() - started,
+      read: "ok", kind: route.kind, model: env.AIAND_MODEL, effort: applied ?? "model default", aiandMs, totalMs: Date.now() - started,
       imageKB: Math.round((image.length * 3) / 4 / 1024), ...usage,
     }));
 
     try {
-      const res = json(parseCompletion(raw));
+      const res = json(route.parse(raw));
       // Timing and usage for the app's diagnostics: how long AI& took, and what the request cost in tokens.
       res.headers.set("Server-Timing", `aiand;dur=${aiandMs}, total;dur=${Date.now() - started}`);
       res.headers.set("X-AIAnd-Usage", Object.entries(usage).map(([k, v]) => `${k}=${v}`).join("; "));

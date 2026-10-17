@@ -80,6 +80,8 @@ nonisolated enum LabelReaderError: LocalizedError {
     case backendNotConfigured
     /// A message from the NutriFacts API, written for the user.
     case aiAnd(String)
+    /// The deployed Worker doesn't have this route yet.
+    case aiAndRouteMissing
 
     var errorDescription: String? {
         switch self {
@@ -89,6 +91,7 @@ nonisolated enum LabelReaderError: LocalizedError {
             else { "You've reached today's Private Cloud Compute limit." }
         case .backendNotConfigured: "The ai& server isn't set up in this build. Pick Apple Intelligence in Settings."
         case .aiAnd(let message): message
+        case .aiAndRouteMissing: "The ai& server can't read this yet."
         }
     }
 }

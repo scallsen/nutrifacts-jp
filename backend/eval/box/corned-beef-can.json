@@ -1,0 +1,95 @@
+{
+  "photo": "corned-beef-can.jpg",
+  "notes": "Running-text box under a nutrition panel. Per-item allergen note （乳由来）. Best before printed on the lid.",
+  "expected": {
+    "boxFound": true,
+    "category": {
+      "japanese": "コンビーフ",
+      "english": "corned beef"
+    },
+    "ingredients": [
+      {
+        "japanese": "牛肉",
+        "english": "beef",
+        "isAdditive": false
+      },
+      {
+        "japanese": "牛脂",
+        "english": "beef fat",
+        "isAdditive": false
+      },
+      {
+        "japanese": "加工油脂",
+        "english": "processed fat",
+        "isAdditive": false
+      },
+      {
+        "japanese": "食塩",
+        "english": "salt",
+        "isAdditive": false
+      },
+      {
+        "japanese": "ゼラチン",
+        "english": "gelatin",
+        "isAdditive": false
+      },
+      {
+        "japanese": "砂糖",
+        "english": "sugar",
+        "isAdditive": false
+      },
+      {
+        "japanese": "寒天",
+        "english": "agar",
+        "isAdditive": false
+      },
+      {
+        "japanese": "カゼインNa（乳由来）",
+        "english": "sodium caseinate (from milk)",
+        "isAdditive": false
+      },
+      {
+        "japanese": "調味料（アミノ酸等）",
+        "english": "seasoning (amino acids)",
+        "isAdditive": false
+      },
+      {
+        "japanese": "酸化防止剤（ビタミンC）",
+        "english": "antioxidant (vitamin C)",
+        "isAdditive": false
+      },
+      {
+        "japanese": "発色剤（亜硝酸Na）",
+        "english": "colour fixative (sodium nitrite)",
+        "isAdditive": false
+      }
+    ],
+    "allergens": [
+      "乳"
+    ],
+    "netContentsText": "100g",
+    "netContentsAmount": 100,
+    "netContentsUnit": "g",
+    "netContentsCount": 0,
+    "netContentsPrintedElsewhere": false,
+    "date": {
+      "japanese": "缶ぶたに記載",
+      "english": "printed on the lid"
+    },
+    "isUseBy": false,
+    "storage": {
+      "japanese": "",
+      "english": ""
+    },
+    "maker": "川商フーズ株式会社",
+    "countryOfOrigin": {
+      "japanese": "",
+      "english": ""
+    }
+  },
+  "reference": {
+    "by": "claude-opus-5-5, read from the photo",
+    "at": "2026-10-17"
+  },
+  "verified": false
+}

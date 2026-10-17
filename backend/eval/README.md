@@ -72,3 +72,23 @@ Either way a fixture stays `verified: false` until a person has compared it with
    took yourself are best: they're what the app actually sees.
 2. `ANTHROPIC_API_KEY=sk-ant-… npm run eval:reference` creates its `.json` and expected reading.
 3. `npm run eval:review` to check it against the photo, fix it if needed, and mark it verified.
+
+## Ingredients box eval
+
+`npm run eval:box` reads the ingredients box (一括表示) photos in `eval/box/` with
+`/v1/ingredients-box/read`, or with `--direct` straight from AI& with this checkout's prompt
+(`src/ingredients.ts`). It takes `--model`, `--reasoning`, `--only` and `--fail-under` like `npm run eval`.
+
+Each fixture in `eval/box/<id>.json` names a photo in `eval/fixtures/` and holds the expected reading.
+The scoring:
+
+| Check | Pass when |
+|---|---|
+| Box found | `boxFound` matches. A photo with no box must give `false`. |
+| Ingredient | Each expected ingredient comes back with the same Japanese (NFKC, spaces ignored), in any order. Extras count as invented. |
+| Allergen | Each allergen comes back, with 乳成分 = 乳 and ピーナッツ = 落花生. A missed allergen is the worst mistake. |
+| Net contents | Amount, unit, count and "printed elsewhere". |
+| Food type, date, additives | 名称, use by vs best before, and the additive flags (only on boxes with a ／ or 添加物 line). |
+
+English translations aren't scored. The run prints them to read by eye. The 6 current expected
+readings were made by Claude Opus 5.5 from the photos and aren't verified yet.
