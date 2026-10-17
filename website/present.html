@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>NutriFacts Beta</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css?v=5">
+  <!-- Full-screen slide for talks. Add ?theme=light or ?theme=dark to force one. -->
+  <script>
+    const theme = new URLSearchParams(location.search).get("theme");
+    if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+  </script>
+</head>
+<body>
+
+  <main class="present">
+    <div class="present-copy">
+      <div class="present-brand">
+        <img src="icon.svg" alt="" width="64" height="64">
+        <span>NutriFacts</span>
+      </div>
+      <h1>Read any Japanese nutrition label.</h1>
+      <p class="present-lede">
+        Point your iPhone at the 栄養成分表示. Every line in plain English, with how much is a lot.
+      </p>
+      <p class="present-url">scallsen.github.io/nutrifacts-jp</p>
+    </div>
+
+    <figure class="present-qr">
+      <img src="qr.svg" alt="QR code for scallsen.github.io/nutrifacts-jp" width="29" height="29">
+      <figcaption>
+        <strong>Join the TestFlight beta</strong>
+        Scan with your iPhone camera
+      </figcaption>
+    </figure>
+  </main>
+
+</body>
+</html>

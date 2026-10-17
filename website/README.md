@@ -8,6 +8,8 @@ A one-page site that collects emails for the TestFlight beta. Plain HTML, CSS an
 | `styles.css` | All colours, type sizes, radii and spacing as tokens at the top (iOS system colours, light and dark) |
 | `main.js` | Email provider config (`CONFIG` at the top) |
 | `icon.svg` | App icon, used for the favicon, nav and CTA |
+| `present.html` | Full-screen slide with a QR code to the site, for talks. Not linked from the site. Add `?theme=light` or `?theme=dark` to force a look. |
+| `qr.svg` | The QR code, made with `qrencode -t SVG -l M -m 0 --svg-path --foreground=1c1c1e --background=ffffff -o website/qr.svg "https://scallsen.github.io/nutrifacts-jp/"` (then remove the fixed width and height) |
 | `screens/` | App screenshots from the iPhone Simulator (600 px wide WebP). Replace a file with the same name to update it. |
 
 Preview locally: `python3 -m http.server -d website 8000`, then open http://localhost:8000.
