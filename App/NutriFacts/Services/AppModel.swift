@@ -114,6 +114,14 @@ final class AppModel {
         if current?.id == scan.id { current = updated }
     }
 
+    /// Sets the whole-pack size the user typed, so the result can show the whole pack.
+    func setPackSize(of scan: Scan, amount: Double) {
+        var updated = latest(scan)
+        updated.panel.setPack(amount: amount)
+        if let i = history.firstIndex(where: { $0.id == scan.id }) { history[i] = updated }
+        if current?.id == scan.id { current = updated }
+    }
+
     // MARK: Live camera
 
     /// Starts the hold-still countdown when a panel comes into view, and cancels it when it leaves.

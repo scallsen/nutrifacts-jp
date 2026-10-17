@@ -56,6 +56,12 @@ struct LabelPanel: Identifiable, Hashable, Sendable {
         basisShort = "\(basisUnitName) · \(text)"
         basisSuggestion = nil
     }
+
+    /// Sets the whole-pack size (内容量) the user typed, usually printed away from the panel.
+    mutating func setPack(amount: Double) {
+        packAmount = amount
+        packShort = "Pack · \(NumberFormat.amount(amount, .protein)) \(unit.rawValue)"
+    }
 }
 
 struct BasisSuggestion: Hashable, Sendable {
