@@ -1,0 +1,57 @@
+name: NutrifactsJP
+options:
+  bundleIdPrefix: com.justingarcia
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+    SWIFT_APPROACHABLE_CONCURRENCY: YES
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: ""
+targets:
+  NutrifactsJP:
+    type: application
+    platform: iOS
+    sources:
+      - path: NutrifactsJP
+      # The repo's data files are the single source of truth; bundle them directly.
+      - path: ../data/daily-values.json
+        buildPhase: resources
+      - path: ../data/health-score.json
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.justingarcia.NutrifactsJP
+        INFOPLIST_KEY_CFBundleDisplayName: Nutrifacts
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_NSPhotoLibraryUsageDescription: Pick a screenshot of a nutrition label to score.
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_ENTITLEMENTS: NutrifactsJP/Support/NutrifactsJP.entitlements
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+  NutrifactsJPTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: NutrifactsJPTests
+    dependencies:
+      - target: NutrifactsJP
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.justingarcia.NutrifactsJPTests
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  NutrifactsJP:
+    build:
+      targets:
+        NutrifactsJP: all
+        NutrifactsJPTests: [test]
+    test:
+      targets:
+        - NutrifactsJPTests

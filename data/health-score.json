@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "description": "Rubric for the app's health score. Every threshold comes from an official source; the weights, the scale and the grade bands are the app's own product decisions. See docs/health-score.md.",
+  "version": "2026-10-17",
+  "displayName": "nutrifacts score v1",
+  "basis": "Per 100 g, or per 100 ml for drinks. Label values are normalised first.",
+  "start": 100,
+  "negatives": {
+    "fat": {
+      "weight": 15,
+      "unit": "g",
+      "solid": { "low": 3.0, "high": 17.5 },
+      "drink": { "low": 1.5, "high": 8.75 }
+    },
+    "saturatedFat": {
+      "weight": 25,
+      "unit": "g",
+      "solid": { "low": 1.5, "high": 5.0 },
+      "drink": { "low": 0.75, "high": 2.5 }
+    },
+    "sugars": {
+      "weight": 25,
+      "unit": "g",
+      "solid": { "low": 5.0, "high": 22.5 },
+      "drink": { "low": 2.5, "high": 11.25 }
+    },
+    "salt": {
+      "weight": 25,
+      "unit": "g",
+      "solid": { "low": 0.3, "high": 1.5 },
+      "drink": { "low": 0.3, "high": 0.75 },
+      "note": "Low is Japan's 低ナトリウム claim (sodium ≤ 120 mg) converted to salt: 120 × 2.54 ÷ 1000 = 0.30 g."
+    }
+  },
+  "positives": {
+    "protein": {
+      "weight": 10,
+      "unit": "g",
+      "solid": { "source": 8.5, "high": 17.0 },
+      "drink": { "source": 4.3, "high": 8.5 }
+    },
+    "fibre": {
+      "weight": 10,
+      "unit": "g",
+      "solid": { "source": 3.0, "high": 6.0 },
+      "drink": { "source": 1.5, "high": 3.0 }
+    }
+  },
+  "grades": [
+    { "grade": "A", "min": 80 },
+    { "grade": "B", "min": 65 },
+    { "grade": "C", "min": 50 },
+    { "grade": "D", "min": 35 },
+    { "grade": "E", "min": 0 }
+  ],
+  "sources": {
+    "low": {
+      "title": "食品表示基準 別表第十二 (nutrient-content claims: 低 / 控えめ)",
+      "authority": "Consumer Affairs Agency (消費者庁)",
+      "url": "https://laws.e-gov.go.jp/law/427M60000002010",
+      "note": "Same values as docs/japanese-nutrition-label-spec.md §9. They match the UK 'low' (green) thresholds exactly."
+    },
+    "high": {
+      "title": "Guide to creating a front of pack (FoP) nutrition label for pre-packed products sold through retail outlets (2016), Table 1",
+      "authority": "UK Department of Health / Food Standards Agency",
+      "url": "https://www.gov.uk/government/publications/front-of-pack-nutrition-labelling-guidance",
+      "note": "The 'high' (red) per-100 g and per-100 ml thresholds. The guide's per-portion red rule (> 30% / 40% of the reference intake) isn't used, because Japan has no standard portion. UK guidance, not Japanese or EU law."
+    },
+    "positives": {
+      "title": "食品表示基準 別表第十二 (nutrient-content claims: 含む / 高)",
+      "authority": "Consumer Affairs Agency (消費者庁)",
+      "url": "https://laws.e-gov.go.jp/law/427M60000002010",
+      "note": "'Source of' and 'high in' thresholds for protein and fibre, as in docs/japanese-nutrition-label-spec.md §9."
+    }
+  }
+}

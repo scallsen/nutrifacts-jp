@@ -1,0 +1,580 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0128E19B7601AFE42975FA2B /* ExtractedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B77D05D5CC40D35076ECBE78 /* ExtractedLabel.swift */; };
+		08C6238DC2BB8549D63A044E /* SanityChecks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1856F21F4B8105C3017AE0C4 /* SanityChecks.swift */; };
+		10EA68978895785639F174E7 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6AD0C53AF47DB9FCBD3B6E /* SettingsView.swift */; };
+		1355722A8D0005B1641D24CF /* HealthScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB7A7EC5E9E6BBF987D07323 /* HealthScore.swift */; };
+		1421CC2BB39E91C9BF881F23 /* Scan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2B528FEE9C96F26986EB62 /* Scan.swift */; };
+		1A169306AC61D0907F86EBF7 /* ActionButtonSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2002FB79B34101638FE564C1 /* ActionButtonSetupView.swift */; };
+		229BCBD768F9E558FC74C160 /* daily-values.json in Resources */ = {isa = PBXBuildFile; fileRef = 3EC1529BE8E9FF4AB1036EBC /* daily-values.json */; };
+		33A8F383AFD5996F8609733B /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5D7F0BDAD0EB693BDF4D6D /* Keychain.swift */; };
+		394079B0E21CA294B48164C7 /* health-score.json in Resources */ = {isa = PBXBuildFile; fileRef = 3941FA9183BD339D187BD22D /* health-score.json */; };
+		4348B2C6069FC1513D98FE2E /* AppleIntelligenceReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C79F577E313948EE5635F76A /* AppleIntelligenceReader.swift */; };
+		6AB129A8A1EE66CDDED8A250 /* ScoringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E291D3F191A9F3837AAA1E85 /* ScoringTests.swift */; };
+		6E99CEB4F59EF6084838B395 /* ScoreLabelIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC461AA3B40B778BD4195014 /* ScoreLabelIntent.swift */; };
+		71332026806E1828EA47CD99 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F6EE1DF747F7D6D0EB1F5D83 /* Assets.xcassets */; };
+		8A16AEEAB1E2AFECAD839224 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70A1286D751CE3CCD13C79BF /* ContentView.swift */; };
+		9DD4597101ED3E3D40A4AB74 /* AIAndReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A6CE3B13FB6FDEED0AA3442 /* AIAndReader.swift */; };
+		AE7023418720FB5095B7C781 /* SampleLabels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7C31A34C2842882D3E04A7C /* SampleLabels.swift */; };
+		BADEFFC581AA1733495B2FBF /* DailyValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63CAAE10235544FB297DA7C /* DailyValues.swift */; };
+		BB00B7CD07C9BD55D9CA0212 /* ScanService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B96327B896365EA05AC528E8 /* ScanService.swift */; };
+		EC8B10B39617BCF7921E4E33 /* NutritionPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81C555B26DF7A036B9B0D160 /* NutritionPanel.swift */; };
+		F0B3FAFC87474F080E14FAC6 /* NutrifactsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F5B7F12D2F2AF1B2EB2521B /* NutrifactsApp.swift */; };
+		F36468AECEA6E2CD9149579A /* LabelReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E45EED7263020C9264D6AB2 /* LabelReader.swift */; };
+		F4DB78A570FB6F217BA3A35A /* GradeViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5F7F7CD76E57830FAB59029 /* GradeViews.swift */; };
+		FCE41F9751AFCCA3D30C9456 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7249417FB08DB8D5889EDD8 /* ResultView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D35F748DF148880876ECDC95 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F56E1563E348648F1362A75D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 671E4E54B0A212EE4089E4E3;
+			remoteInfo = NutrifactsJP;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0F5B7F12D2F2AF1B2EB2521B /* NutrifactsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutrifactsApp.swift; sourceTree = "<group>"; };
+		1856F21F4B8105C3017AE0C4 /* SanityChecks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SanityChecks.swift; sourceTree = "<group>"; };
+		2002FB79B34101638FE564C1 /* ActionButtonSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtonSetupView.swift; sourceTree = "<group>"; };
+		3941FA9183BD339D187BD22D /* health-score.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "health-score.json"; sourceTree = "<group>"; };
+		3A2B528FEE9C96F26986EB62 /* Scan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scan.swift; sourceTree = "<group>"; };
+		3A6CE3B13FB6FDEED0AA3442 /* AIAndReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIAndReader.swift; sourceTree = "<group>"; };
+		3B5D7F0BDAD0EB693BDF4D6D /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
+		3EC1529BE8E9FF4AB1036EBC /* daily-values.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "daily-values.json"; sourceTree = "<group>"; };
+		70A1286D751CE3CCD13C79BF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		81C555B26DF7A036B9B0D160 /* NutritionPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionPanel.swift; sourceTree = "<group>"; };
+		862C10F24099060F8F61F1A3 /* NutrifactsJPTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NutrifactsJPTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B6AD0C53AF47DB9FCBD3B6E /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		9E45EED7263020C9264D6AB2 /* LabelReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelReader.swift; sourceTree = "<group>"; };
+		9EDBB66F41B446C7B1A31C0E /* NutrifactsJP.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NutrifactsJP.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A63CAAE10235544FB297DA7C /* DailyValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyValues.swift; sourceTree = "<group>"; };
+		AB7A7EC5E9E6BBF987D07323 /* HealthScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthScore.swift; sourceTree = "<group>"; };
+		B5F7F7CD76E57830FAB59029 /* GradeViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradeViews.swift; sourceTree = "<group>"; };
+		B77D05D5CC40D35076ECBE78 /* ExtractedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtractedLabel.swift; sourceTree = "<group>"; };
+		B7C31A34C2842882D3E04A7C /* SampleLabels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleLabels.swift; sourceTree = "<group>"; };
+		B7DC208B78F809A978A46047 /* NutrifactsJP.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NutrifactsJP.entitlements; sourceTree = "<group>"; };
+		B96327B896365EA05AC528E8 /* ScanService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanService.swift; sourceTree = "<group>"; };
+		C79F577E313948EE5635F76A /* AppleIntelligenceReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleIntelligenceReader.swift; sourceTree = "<group>"; };
+		E291D3F191A9F3837AAA1E85 /* ScoringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoringTests.swift; sourceTree = "<group>"; };
+		E7249417FB08DB8D5889EDD8 /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
+		F6EE1DF747F7D6D0EB1F5D83 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FC461AA3B40B778BD4195014 /* ScoreLabelIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreLabelIntent.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		2206E4C3D3171AE1EEC7501B /* nutrifacts-jp */ = {
+			isa = PBXGroup;
+			children = (
+				848A172E9D54419D11F9984F /* data */,
+			);
+			name = "nutrifacts-jp";
+			path = ..;
+			sourceTree = "<group>";
+		};
+		2A3B2759D2BFFC0FFEA6734B /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				F6EE1DF747F7D6D0EB1F5D83 /* Assets.xcassets */,
+				3B5D7F0BDAD0EB693BDF4D6D /* Keychain.swift */,
+				B7DC208B78F809A978A46047 /* NutrifactsJP.entitlements */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		58260BF749E973A46EA59594 /* Intents */ = {
+			isa = PBXGroup;
+			children = (
+				FC461AA3B40B778BD4195014 /* ScoreLabelIntent.swift */,
+			);
+			path = Intents;
+			sourceTree = "<group>";
+		};
+		6890C966920F292D907D0176 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9EDBB66F41B446C7B1A31C0E /* NutrifactsJP.app */,
+				862C10F24099060F8F61F1A3 /* NutrifactsJPTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		70555953BE88414C8CDE5AE1 /* NutrifactsJP */ = {
+			isa = PBXGroup;
+			children = (
+				F3B672DADF32CB97E3D16D03 /* App */,
+				86D72E19BCBE7480B758A340 /* Extraction */,
+				58260BF749E973A46EA59594 /* Intents */,
+				788CD8DF54AAD00801E3A9F5 /* Model */,
+				747A6E866F61E4FC3D63351E /* Scoring */,
+				2A3B2759D2BFFC0FFEA6734B /* Support */,
+				CA81A1F466A4AAE25EBD1F79 /* Views */,
+			);
+			path = NutrifactsJP;
+			sourceTree = "<group>";
+		};
+		747A6E866F61E4FC3D63351E /* Scoring */ = {
+			isa = PBXGroup;
+			children = (
+				AB7A7EC5E9E6BBF987D07323 /* HealthScore.swift */,
+			);
+			path = Scoring;
+			sourceTree = "<group>";
+		};
+		788CD8DF54AAD00801E3A9F5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				A63CAAE10235544FB297DA7C /* DailyValues.swift */,
+				81C555B26DF7A036B9B0D160 /* NutritionPanel.swift */,
+				B7C31A34C2842882D3E04A7C /* SampleLabels.swift */,
+				1856F21F4B8105C3017AE0C4 /* SanityChecks.swift */,
+				3A2B528FEE9C96F26986EB62 /* Scan.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		848A172E9D54419D11F9984F /* data */ = {
+			isa = PBXGroup;
+			children = (
+				3EC1529BE8E9FF4AB1036EBC /* daily-values.json */,
+				3941FA9183BD339D187BD22D /* health-score.json */,
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
+		86D72E19BCBE7480B758A340 /* Extraction */ = {
+			isa = PBXGroup;
+			children = (
+				3A6CE3B13FB6FDEED0AA3442 /* AIAndReader.swift */,
+				C79F577E313948EE5635F76A /* AppleIntelligenceReader.swift */,
+				B77D05D5CC40D35076ECBE78 /* ExtractedLabel.swift */,
+				9E45EED7263020C9264D6AB2 /* LabelReader.swift */,
+			);
+			path = Extraction;
+			sourceTree = "<group>";
+		};
+		8EC73D89036EF5AE545CEC9F = {
+			isa = PBXGroup;
+			children = (
+				2206E4C3D3171AE1EEC7501B /* nutrifacts-jp */,
+				70555953BE88414C8CDE5AE1 /* NutrifactsJP */,
+				D18388A11D9E04DA291A3BAF /* NutrifactsJPTests */,
+				6890C966920F292D907D0176 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CA81A1F466A4AAE25EBD1F79 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				2002FB79B34101638FE564C1 /* ActionButtonSetupView.swift */,
+				70A1286D751CE3CCD13C79BF /* ContentView.swift */,
+				B5F7F7CD76E57830FAB59029 /* GradeViews.swift */,
+				E7249417FB08DB8D5889EDD8 /* ResultView.swift */,
+				9B6AD0C53AF47DB9FCBD3B6E /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D18388A11D9E04DA291A3BAF /* NutrifactsJPTests */ = {
+			isa = PBXGroup;
+			children = (
+				E291D3F191A9F3837AAA1E85 /* ScoringTests.swift */,
+			);
+			path = NutrifactsJPTests;
+			sourceTree = "<group>";
+		};
+		F3B672DADF32CB97E3D16D03 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				0F5B7F12D2F2AF1B2EB2521B /* NutrifactsApp.swift */,
+				B96327B896365EA05AC528E8 /* ScanService.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5BF73C274B723CBA76E2888E /* NutrifactsJPTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 14DCCC76327CA5DC2F1281E7 /* Build configuration list for PBXNativeTarget "NutrifactsJPTests" */;
+			buildPhases = (
+				2E04A91A42678825747CC82A /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A24BBD123953BF89C7F5E568 /* PBXTargetDependency */,
+			);
+			name = NutrifactsJPTests;
+			packageProductDependencies = (
+			);
+			productName = NutrifactsJPTests;
+			productReference = 862C10F24099060F8F61F1A3 /* NutrifactsJPTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		671E4E54B0A212EE4089E4E3 /* NutrifactsJP */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E6C0CE1C99FD1C74356606C4 /* Build configuration list for PBXNativeTarget "NutrifactsJP" */;
+			buildPhases = (
+				07A07F9F0DE623C99FCF646A /* Sources */,
+				FDD0F63995106FDB7E1A67B0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NutrifactsJP;
+			packageProductDependencies = (
+			);
+			productName = NutrifactsJP;
+			productReference = 9EDBB66F41B446C7B1A31C0E /* NutrifactsJP.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F56E1563E348648F1362A75D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					5BF73C274B723CBA76E2888E = {
+						DevelopmentTeam = "";
+					};
+					671E4E54B0A212EE4089E4E3 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 88D06B64B1C832D974F07525 /* Build configuration list for PBXProject "NutrifactsJP" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 8EC73D89036EF5AE545CEC9F;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 6890C966920F292D907D0176 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				671E4E54B0A212EE4089E4E3 /* NutrifactsJP */,
+				5BF73C274B723CBA76E2888E /* NutrifactsJPTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FDD0F63995106FDB7E1A67B0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				71332026806E1828EA47CD99 /* Assets.xcassets in Resources */,
+				229BCBD768F9E558FC74C160 /* daily-values.json in Resources */,
+				394079B0E21CA294B48164C7 /* health-score.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		07A07F9F0DE623C99FCF646A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9DD4597101ED3E3D40A4AB74 /* AIAndReader.swift in Sources */,
+				1A169306AC61D0907F86EBF7 /* ActionButtonSetupView.swift in Sources */,
+				4348B2C6069FC1513D98FE2E /* AppleIntelligenceReader.swift in Sources */,
+				8A16AEEAB1E2AFECAD839224 /* ContentView.swift in Sources */,
+				BADEFFC581AA1733495B2FBF /* DailyValues.swift in Sources */,
+				0128E19B7601AFE42975FA2B /* ExtractedLabel.swift in Sources */,
+				F4DB78A570FB6F217BA3A35A /* GradeViews.swift in Sources */,
+				1355722A8D0005B1641D24CF /* HealthScore.swift in Sources */,
+				33A8F383AFD5996F8609733B /* Keychain.swift in Sources */,
+				F36468AECEA6E2CD9149579A /* LabelReader.swift in Sources */,
+				F0B3FAFC87474F080E14FAC6 /* NutrifactsApp.swift in Sources */,
+				EC8B10B39617BCF7921E4E33 /* NutritionPanel.swift in Sources */,
+				FCE41F9751AFCCA3D30C9456 /* ResultView.swift in Sources */,
+				AE7023418720FB5095B7C781 /* SampleLabels.swift in Sources */,
+				08C6238DC2BB8549D63A044E /* SanityChecks.swift in Sources */,
+				1421CC2BB39E91C9BF881F23 /* Scan.swift in Sources */,
+				BB00B7CD07C9BD55D9CA0212 /* ScanService.swift in Sources */,
+				6E99CEB4F59EF6084838B395 /* ScoreLabelIntent.swift in Sources */,
+				10EA68978895785639F174E7 /* SettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2E04A91A42678825747CC82A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6AB129A8A1EE66CDDED8A250 /* ScoringTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A24BBD123953BF89C7F5E568 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 671E4E54B0A212EE4089E4E3 /* NutrifactsJP */;
+			targetProxy = D35F748DF148880876ECDC95 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		182FE0E9474B6964C1559C56 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.justingarcia.NutrifactsJPTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NutrifactsJP.app/NutrifactsJP";
+			};
+			name = Release;
+		};
+		5108E6169EEFCD991DF3AAD7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = NutrifactsJP/Support/NutrifactsJP.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Nutrifacts;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Pick a screenshot of a nutrition label to score.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.justingarcia.NutrifactsJP;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		615A13D81A13DE06B0F727F1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = NutrifactsJP/Support/NutrifactsJP.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Nutrifacts;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Pick a screenshot of a nutrition label to score.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.justingarcia.NutrifactsJP;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		674B9FA9721EDADCB823219D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.justingarcia.NutrifactsJPTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NutrifactsJP.app/NutrifactsJP";
+			};
+			name = Debug;
+		};
+		C999CA1E0F64DEE6E1FC30FC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		E4606ABD9B812F279EE43007 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		14DCCC76327CA5DC2F1281E7 /* Build configuration list for PBXNativeTarget "NutrifactsJPTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				674B9FA9721EDADCB823219D /* Debug */,
+				182FE0E9474B6964C1559C56 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		88D06B64B1C832D974F07525 /* Build configuration list for PBXProject "NutrifactsJP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E4606ABD9B812F279EE43007 /* Debug */,
+				C999CA1E0F64DEE6E1FC30FC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E6C0CE1C99FD1C74356606C4 /* Build configuration list for PBXNativeTarget "NutrifactsJP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				615A13D81A13DE06B0F727F1 /* Debug */,
+				5108E6169EEFCD991DF3AAD7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F56E1563E348648F1362A75D /* Project object */;
+}
