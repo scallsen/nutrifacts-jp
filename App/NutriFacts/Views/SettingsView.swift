@@ -54,6 +54,13 @@ struct SettingsView: View {
                     }
                 }
                 Section {
+                    NavigationLink {
+                        ActionButtonSetupView()
+                    } label: {
+                        Label("Action Button", systemImage: "button.horizontal.top.press")
+                    }
+                }
+                Section {
                     Button("Clear Scan History", role: .destructive) { confirmsClearHistory = true }
                         .disabled(model.history.isEmpty)
                         .confirmationDialog("Clear all scans from this iPhone?", isPresented: $confirmsClearHistory, titleVisibility: .visible) {
