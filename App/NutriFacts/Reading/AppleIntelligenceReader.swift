@@ -22,15 +22,24 @@ nonisolated struct AppleIntelligenceReader: LabelReader {
     }()
 
     func read(_ image: CGImage) async throws -> LabelReading {
+        let (label, readBy, details) = try await generate(ExtractedLabel.self, instructions: Self.instructions,
+                                                          task: "Transcribe the Japanese nutrition facts panel", image: image)
+        return LabelReading(label: label, readBy: readBy, details: details)
+    }
+
+    /// Reads anything Generable off the photo, e.g. the panel or the ingredients box.
+    /// `task` is the request without its ending, e.g. "Transcribe the Japanese nutrition facts panel".
+    func generate<T: Generable>(_ type: T.Type, instructions: String, task: String,
+                                image: CGImage) async throws -> (T, ReadBy, [ScanTiming.Detail]) {
+        let request = Request(instructions: instructions, task: task)
         let clock = ContinuousClock()
         var pccProblem: LabelReaderError?
         var details: [ScanTiming.Detail] = []
         if #available(iOS 27, *), Self.canUsePCC {
             let started = clock.now
             do {
-                let label = try await readWithPCC(image)
-                return LabelReading(label: label, readBy: .privateCloudCompute,
-                                    details: [.init(name: "Model", value: "Private Cloud Compute")])
+                let output = try await readWithPCC(type, request, image)
+                return (output, .privateCloudCompute, [.init(name: "Model", value: "Private Cloud Compute")])
             } catch let problem as PCCUnavailable {
                 pccProblem = problem.error
                 details.append(.init(name: "PCC", value: "\(problem.reason) after \(ScanTiming.seconds(clock.now - started)), fell back"))
@@ -40,14 +49,19 @@ nonisolated struct AppleIntelligenceReader: LabelReader {
         }
         do {
             let started = clock.now
-            let label = try await readOnDevice(image)
+            let output = try await readOnDevice(type, request, image)
             details.insert(.init(name: "Model", value: "On device (\(ScanTiming.seconds(clock.now - started)))"), at: 0)
-            return LabelReading(label: label, readBy: .onDevice, details: details)
+            return (output, .onDevice, details)
         } catch let error as LabelReaderError {
             // Neither works. If PCC stopped on its daily limit, that's the more useful thing to say.
             if case .quotaReached = pccProblem { throw pccProblem! }
             throw error
         }
+    }
+
+    private struct Request: Sendable {
+        var instructions: String
+        var task: String
     }
 
     /// PCC can't take this read, but the on-device model might.
@@ -57,7 +71,7 @@ nonisolated struct AppleIntelligenceReader: LabelReader {
     }
 
     @available(iOS 27, *)
-    private func readWithPCC(_ image: CGImage) async throws -> ExtractedLabel {
+    private func readWithPCC<T: Generable>(_ type: T.Type, _ request: Request, _ image: CGImage) async throws -> T {
         let model = PrivateCloudComputeLanguageModel()
         switch model.availability {
         case .available: break
@@ -65,7 +79,7 @@ nonisolated struct AppleIntelligenceReader: LabelReader {
         case .unavailable: throw PCCUnavailable(reason: "not ready")
         }
         do {
-            return try await respond(model: model, image: image)
+            return try await respond(type, request, model: model, image: image)
         } catch let error as PrivateCloudComputeLanguageModel.Error {
             switch error {
             case .quotaLimitReached(let info):
@@ -81,7 +95,7 @@ nonisolated struct AppleIntelligenceReader: LabelReader {
         }
     }
 
-    private func readOnDevice(_ image: CGImage) async throws -> ExtractedLabel {
+    private func readOnDevice<T: Generable>(_ type: T.Type, _ request: Request, _ image: CGImage) async throws -> T {
         let model = SystemLanguageModel.default
         switch model.availability {
         case .available: break
@@ -90,23 +104,23 @@ nonisolated struct AppleIntelligenceReader: LabelReader {
         case .unavailable: throw LabelReaderError.modelUnavailable("the model is still downloading")
         }
         if #available(iOS 27, *), model.capabilities.contains(.vision) {
-            return try await respond(model: model, image: image)
+            return try await respond(type, request, model: model, image: image)
         }
         // The model can't take images (iOS 26), so it reads on-device OCR of the photo instead.
         let ocrText = (try? await OCR.text(in: image)) ?? ""
-        let session = LanguageModelSession(model: model, instructions: Self.instructions)
-        return try await session.respond(generating: ExtractedLabel.self) {
-            "Transcribe the Japanese nutrition facts panel from this OCR of a photo (it may contain misreads):"
+        let session = LanguageModelSession(model: model, instructions: request.instructions)
+        return try await session.respond(generating: type) {
+            "\(request.task) from this OCR of a photo (it may contain misreads):"
             ocrText.isEmpty ? "(no text recognised)" : ocrText
         }.content
     }
 
     /// iOS 27: the photo alone goes to a model that can see it.
     @available(iOS 27, *)
-    private func respond(model: some LanguageModel, image: CGImage) async throws -> ExtractedLabel {
-        let session = LanguageModelSession(model: model, instructions: Self.instructions)
-        let response = try await session.respond(generating: ExtractedLabel.self) {
-            "Transcribe the Japanese nutrition facts panel in this photo."
+    private func respond<T: Generable>(_ type: T.Type, _ request: Request, model: some LanguageModel, image: CGImage) async throws -> T {
+        let session = LanguageModelSession(model: model, instructions: request.instructions)
+        let response = try await session.respond(generating: type) {
+            "\(request.task) in this photo."
             Attachment(image).label("photo")
         }
         return response.content

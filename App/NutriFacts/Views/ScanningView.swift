@@ -9,18 +9,33 @@ struct ScanningView: View {
     @State private var pickedItem: PhotosPickerItem?
 
     var body: some View {
+        let forIngredients = model.ingredientsFor != nil
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Scan a Nutrition Label").font(.title2.bold())
-                    Text("Point at the nutrition facts box on the back.").foregroundStyle(.secondary)
+                    Text(forIngredients ? "Scan the Ingredients" : "Scan a Nutrition Label").font(.title2.bold())
+                    Text(forIngredients ? "Point at the box listing the ingredients and net contents."
+                                        : "Point at the nutrition facts box on the back.").foregroundStyle(.secondary)
                 }
                 Spacer()
+                if forIngredients {
+                    Button("Cancel", systemImage: "xmark") { model.cancelIngredientsScan() }
+                        .labelStyle(.iconOnly)
+                        .buttonStyle(.glass)
+                        .buttonBorderShape(.circle)
+                        .controlSize(.large)
+                } else {
+                    Button("History", systemImage: "clock.arrow.circlepath", action: onHistory)
+                        .labelStyle(.iconOnly)
+                        .buttonStyle(.glass)
+                        .buttonBorderShape(.circle)
+                        .controlSize(.large)
+                }
             }
             HStack(spacing: 8) {
                 if model.isReading {
                     ProgressView()
-                    Text("Reading the label…")
+                    Text(forIngredients ? "Reading the ingredients…" : "Reading the label…")
                 } else if let error = model.readError {
                     Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
                     Text(error).lineLimit(3)
@@ -29,32 +44,31 @@ struct ScanningView: View {
                     Text("Found it. Hold still…")
                 } else {
                     ProgressView()
-                    Text("Looking for the label…")
+                    Text(forIngredients ? "Looking for the ingredients…" : "Looking for the label…")
                 }
             }
             .font(.subheadline.weight(.medium))
             .animation(.default, value: model.labelFound)
 
-            PhotosPicker(selection: $pickedItem, matching: .images) {
-                Label("Score a Screenshot", systemImage: "photo.on.rectangle")
-            }
-            .font(.subheadline)
-            .disabled(model.isReading)
-            .onChange(of: pickedItem) { _, item in
-                guard let item else { return }
-                pickedItem = nil
-                Task {
-                    guard let data = try? await item.loadTransferable(type: Data.self) else { return }
-                    await model.readAndShow(imageData: data)
-                }
-            }
+            Spacer(minLength: 0)
 
             HStack {
-                Button("History", systemImage: "clock.arrow.circlepath", action: onHistory)
-                    .labelStyle(.iconOnly)
-                    .buttonStyle(.glass)
-                    .buttonBorderShape(.circle)
-                    .controlSize(.large)
+                PhotosPicker(selection: $pickedItem, matching: .images) {
+                    Label("Choose a Screenshot or Photo", systemImage: "photo.on.rectangle")
+                }
+                .labelStyle(.iconOnly)
+                .buttonStyle(.glass)
+                .buttonBorderShape(.circle)
+                .controlSize(.large)
+                .disabled(model.isReading)
+                .onChange(of: pickedItem) { _, item in
+                    guard let item else { return }
+                    pickedItem = nil
+                    Task {
+                        guard let data = try? await item.loadTransferable(type: Data.self) else { return }
+                        await model.readAndShow(imageData: data)
+                    }
+                }
                 Spacer()
                 Button {
                     Task { await model.capture() }

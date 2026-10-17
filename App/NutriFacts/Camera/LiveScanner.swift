@@ -19,6 +19,12 @@ final class LiveScanner {
     /// Size of the preview on screen, for placing the brackets.
     var viewSize: CGSize = .zero
 
+    /// The nutrition panel, or the ingredients box for a second scan.
+    var lookingFor: CameraEngine.LookingFor {
+        get { engine.lookingFor }
+        set { engine.lookingFor = newValue; clearPanel() }
+    }
+
     /// Whether the camera should be running.
     var isActive = false {
         didSet {

@@ -9,6 +9,7 @@ struct SettingsView: View {
     @AppStorage(Backend.storageKey) private var backend = Backend.defaultBackend
     @AppStorage("hasOnboarded") private var hasOnboarded = true
     @State private var confirmsClearHistory = false
+    @AppStorage("showsScanTiming") private var showsTiming = false
 
     var body: some View {
         let source = ReferenceSource.with(id: sourceID)
@@ -51,21 +52,6 @@ struct SettingsView: View {
                     AIAndSection()
                 }
                 Section {
-                    NavigationLink {
-                        ActionButtonSetupView()
-                    } label: {
-                        Label("Action Button", systemImage: "button.horizontal.top.press")
-                    }
-                }
-                Section {
-                    ShareLink(item: DiagnosticsLog(history: model.history),
-                              preview: SharePreview("NutriFacts logs", image: Image(systemName: "doc.text"))) {
-                        Label("Share Logs", systemImage: "square.and.arrow.up")
-                    }
-                } footer: {
-                    Text("Timing for each scan and any errors this session, as a text file. No photos or label contents.")
-                }
-                Section {
                     Button("Clear Scan History", role: .destructive) { confirmsClearHistory = true }
                         .disabled(model.history.isEmpty)
                         .confirmationDialog("Clear all scans from this iPhone?", isPresented: $confirmsClearHistory, titleVisibility: .visible) {
@@ -74,6 +60,13 @@ struct SettingsView: View {
                 }
                 #if DEBUG
                 Section("Debug") {
+                    ShareLink(item: DiagnosticsLog(history: model.history),
+                              preview: SharePreview("NutriFacts logs", image: Image(systemName: "doc.text"))) {
+                        Label("Share Logs", systemImage: "square.and.arrow.up")
+                    }
+                    Toggle(isOn: $showsTiming) {
+                        Label("Show Scan Timing", systemImage: "stopwatch")
+                    }
                     Button("Show Onboarding Again") {
                         close()
                         // Let this sheet finish closing before the root swaps to onboarding.

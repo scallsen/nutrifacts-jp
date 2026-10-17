@@ -20,6 +20,10 @@ nonisolated final class CameraEngine: NSObject, @unchecked Sendable {
     private let videoOutput = AVCaptureVideoDataOutput()
     private var isConfigured = false
     private var lastAnalysis = Date.distantPast
+    /// What to look for. Set from the main actor and read on `videoQueue`; a stale read only affects one frame.
+    var lookingFor: LookingFor = .panel
+
+    enum LookingFor: Sendable { case panel, ingredientsBox }
     private var photoContinuation: CheckedContinuation<Data, any Error>?
 
     /// Portrait: the back camera's sensor is landscape, so frames are rotated 90°.
@@ -121,6 +125,9 @@ extension CameraEngine: AVCaptureVideoDataOutputSampleBufferDelegate {
     static let panelWords = ["栄養成分表示", "栄養成分", "熱量", "エネルギー", "たんぱく質", "蛋白質", "タンパク質",
                              "脂質", "炭水化物", "食塩相当量", "糖質", "糖類", "食物繊維"]
 
+    /// Headings of the ingredients box (一括表示).
+    static let boxWords = ["原材料名", "名称", "品名", "内容量", "賞味期限", "消費期限", "保存方法", "製造者", "販売者", "輸入者"]
+
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         // Japanese needs the accurate recogniser, so analyse about two frames a second, not every frame.
         guard Date.now.timeIntervalSince(lastAnalysis) > 0.5, let pixels = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
@@ -136,7 +143,7 @@ extension CameraEngine: AVCaptureVideoDataOutputSampleBufferDelegate {
         var hits = Set<String>()
         for observation in request.results ?? [] {
             guard let text = observation.topCandidates(1).first?.string else { continue }
-            let found = Self.panelWords.filter { text.contains($0) }
+            let found = (lookingFor == .panel ? Self.panelWords : Self.boxWords).filter { text.contains($0) }
             guard !found.isEmpty else { continue }
             hits.formUnion(found)
             // Vision's origin is bottom left; flip to top left.
@@ -145,7 +152,8 @@ extension CameraEngine: AVCaptureVideoDataOutputSampleBufferDelegate {
             rect = rect.map { $0.union(box) } ?? box
         }
         // The heading alone, or three nutrient lines, counts as a panel.
-        let isPanel = hits.contains("栄養成分表示") || hits.count >= 3
+        // For the ingredients box: 原材料名, or three headings.
+        let isPanel = hits.contains(lookingFor == .panel ? "栄養成分表示" : "原材料名") || hits.count >= 3
         let size = CGSize(width: CVPixelBufferGetWidth(pixels), height: CVPixelBufferGetHeight(pixels))
         let detection: Detection = (isPanel ? rect : nil, size)
         Task { @MainActor [onDetection] in onDetection?(detection) }

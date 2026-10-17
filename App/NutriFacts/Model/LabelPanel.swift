@@ -57,7 +57,20 @@ struct LabelPanel: Identifiable, Hashable, Sendable {
         basisSuggestion = nil
     }
 
-    /// Sets the whole-pack size (内容量) the user typed, usually printed away from the panel.
+    /// Uses 内容量 read from the ingredients box. Sets the pack size when the basis has one and no pack size
+    /// is known yet (it never replaces one), or offers it as the size of a basis printed without one.
+    mutating func apply(netContents amount: Double, unit contentsUnit: PackUnit, count: Int, printed: String) {
+        if basisAmount != nil {
+            if packAmount == nil, contentsUnit == unit { setPack(amount: amount) }
+        } else if basisSuggestion == nil {
+            let pieces = max(count, 1)
+            let text = "内容量 \(printed)"
+            basisSuggestion = BasisSuggestion(amount: amount / Double(pieces), unit: contentsUnit,
+                                              reason: pieces > 1 ? "\(text) ÷ \(pieces)" : text)
+        }
+    }
+
+    /// Sets the whole-pack size (内容量), usually printed away from the panel.
     mutating func setPack(amount: Double) {
         packAmount = amount
         packShort = "Pack · \(NumberFormat.amount(amount, .protein)) \(unit.rawValue)"
