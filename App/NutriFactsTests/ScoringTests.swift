@@ -72,6 +72,21 @@ import Testing
         #expect(panel.printed[.protein] == "21.6")
     }
 
+    @Test func countBasisIgnoresAMadeUpSize() throws {
+        // 1本当たり prints no weight, so a basisAmount of 1 from the model is a misread.
+        let panel = try label([line(.fat, 0)], basis: "1本当たり", amount: 1).toPanel(photo: nil)
+        #expect(panel.basisAmount == nil)
+        #expect(try label([line(.fat, 0)], basis: "1袋（60g）当たり", amount: 60).toPanel(photo: nil).basisAmount == 60)
+    }
+
+    @Test func printedZeroShowsAsLow() throws {
+        let panel = try label([line(.fat, 0), line(.carbohydrate, 0)]).toPanel(photo: nil)
+        let a = PanelAnalysis(panel: panel, basis: .asLabelled, source: .japan)
+        #expect(a.level(.fat) == .zero)
+        #expect(a.level(.fat)?.word == "Low")
+        #expect(a.value(.fat)?.text == "0 g")
+    }
+
     @Test func sodiumOnlyBecomesSalt() throws {
         let panel = try label([line(.sodium, 1.2, "g")]).toPanel(photo: nil)
         #expect(abs(panel.number(.salt)! - 3.048) < 0.001)

@@ -14,6 +14,16 @@ struct RootView: View {
                 CameraBackdrop(target: model.cameraTarget, phase: model.phase, labelFound: model.labelFound)
             }
         }
+            // Shutter feedback for both the button and auto-capture: a flash and a tap,
+            // then a success or error haptic when the read finishes.
+            .phaseAnimator([0.0, 0.7, 0.0], trigger: model.captureCount) { content, flash in
+                content.overlay { Color.white.opacity(flash).allowsHitTesting(false) }
+            } animation: { flash in
+                flash > 0 ? .linear(duration: 0.06) : .easeOut(duration: 0.35)
+            }
+            .sensoryFeedback(.impact(weight: .medium), trigger: model.captureCount)
+            .sensoryFeedback(.success, trigger: model.current?.id) { _, new in new != nil }
+            .sensoryFeedback(.error, trigger: model.readError) { _, new in new != nil }
             .ignoresSafeArea()
             .sheet(isPresented: .constant(hasOnboarded)) {
                 SheetContent()

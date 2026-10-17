@@ -78,6 +78,8 @@ extension ExtractedLabel {
     /// A basis without a size (1個当たり) keeps `basisAmount` nil; 内容量 only becomes a suggestion.
     func toPanel(photo: Data?) throws -> LabelPanel {
         guard panelFound, !lines.isEmpty else { throw MappingError.noPanel }
+        // Models sometimes take the count in 1本当たり as 1 g. Only trust a size the basis actually prints.
+        let basisAmount = Self.printsSize(basisText) ? basisAmount : 0
 
         var values: [NutrientKey: Double] = [:]
         var sodiumMg: Double?
@@ -152,6 +154,11 @@ extension ExtractedLabel {
             s = String(s.dropFirst().dropLast()).trimmingCharacters(in: .whitespaces)
         }
         return s
+    }
+
+    /// True when the basis phrase has a weight or volume, like 1袋（60g）当たり or 100ml当たり. Empty counts as true.
+    static func printsSize(_ text: String) -> Bool {
+        text.isEmpty || text.range(of: #"[0-9０-９.．]+\s*(g|ｇ|ml|mL|ｍｌ|ミリリットル|グラム)"#, options: .regularExpression) != nil
     }
 
     /// As a label would print it: "0", "336", "21.6", "0.08".

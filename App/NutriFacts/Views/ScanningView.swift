@@ -13,7 +13,7 @@ struct ScanningView: View {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Scan a Nutrition Label").font(.title2.bold())
-                    Text("Point at the 栄養成分表示 box on the back.").foregroundStyle(.secondary)
+                    Text("Point at the nutrition facts box on the back.").foregroundStyle(.secondary)
                 }
                 Spacer()
             }

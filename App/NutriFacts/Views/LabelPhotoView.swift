@@ -19,10 +19,6 @@ struct LabelPhotoView: View {
         }
         .navigationTitle("Label Photo")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            Button("Edit") {}
-                .disabled(true)
-        }
     }
 
     private var drawnLabel: some View {
@@ -42,18 +38,21 @@ struct LabelPhotoView: View {
         Section {
             ForEach(lines, id: \.id) { line in
                 Button {
-                    selected = selected == line.id ? nil : line.id
+                    selected = selected == line.highlight ? nil : line.highlight
                 } label: {
+                    // Plain colours: inside a Button, hierarchical styles pick up the tint.
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(line.english).foregroundStyle(.primary)
-                            Text(line.japanese).font(.footnote).foregroundStyle(.secondary)
+                            Text(line.japanese).foregroundStyle(Color.primary)
+                            Text(line.english).font(.footnote).foregroundStyle(Color.secondary)
                         }
                         Spacer()
-                        Text(line.value).foregroundStyle(.primary).monospacedDigit()
+                        Text(line.value).foregroundStyle(line.isListed ? Color.primary : Color.secondary).monospacedDigit()
                     }
+                    .padding(.leading, CGFloat(line.depth) * 16)
                 }
-                .listRowBackground(selected == line.id ? Color.yellow.opacity(0.18) : nil)
+                .allowsHitTesting(line.highlight != nil)
+                .listRowBackground(selected != nil && selected == line.highlight ? Color.yellow.opacity(0.18) : nil)
             }
         } header: {
             Text("What we read")
@@ -62,20 +61,38 @@ struct LabelPhotoView: View {
         }
     }
 
-    private struct Line { var id: String; var english: String; var japanese: String; var value: String }
+    /// `highlight` is the printed row to mark on the drawn label, if the line is on it.
+    private struct Line {
+        var id: String
+        var japanese: String
+        var english: String
+        var value: String
+        var depth = 0
+        var isListed = true
+        var highlight: String?
+    }
 
+    /// Every line the app understands, in panel order. Lines the label leaves out show "Not listed".
     private var lines: [Line] {
-        let label = PrintedLabelView(panel: panel)
-        var result = [Line(id: "head", english: "Nutrition facts", japanese: "栄養成分表示（\(panel.basisJapanese)）", value: panel.basisDescription)]
-        for row in label.rows {
-            let keys = row.id.split(separator: " ").compactMap { NutrientKey(rawValue: String($0)) }
-            let english = keys.map(\.english).joined(separator: " and ")
-            let unit = keys.first == .energy ? "kcal" : "g"
-            let number = row.value.replacingOccurrences(of: unit, with: "")
-            result.append(Line(id: row.id, english: english, japanese: "\(row.name) \(row.value)",
-                               value: "\(number) \(unit)" + (keys.count > 1 ? " each" : "")))
+        let rows = PrintedLabelView(panel: panel).rows
+        let p = panel.printed
+        var result = [Line(id: "head", japanese: "栄養成分表示（\(panel.basisJapanese)）", english: "Nutrition facts",
+                           value: panel.basisDescription, highlight: "head")]
+        for key in NutrientKey.allCases {
+            let printed = p[key] ?? (panel.groupedZeros.contains(key) ? "0" : nil)
+            let depth: Int = switch key {
+            case .saturatedFat, .netCarbs, .fibre: 1
+            case .sugars: p[.netCarbs] != nil ? 2 : 1
+            default: 0
+            }
+            result.append(Line(id: key.rawValue, japanese: key.japanese, english: key.english,
+                               value: printed.map { "\($0) \(key.unit)" } ?? "Not listed", depth: depth,
+                               isListed: printed != nil,
+                               highlight: rows.first { $0.id.split(separator: " ").contains(Substring(key.rawValue)) }?.id))
         }
-        if panel.isEstimate { result.append(Line(id: "estimate", english: "Estimated values", japanese: "推定値", value: "")) }
+        if panel.isEstimate {
+            result.append(Line(id: "estimate", japanese: "推定値", english: "Estimated values", value: "", highlight: "estimate"))
+        }
         return result
     }
 }

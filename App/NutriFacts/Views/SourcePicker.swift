@@ -23,10 +23,12 @@ struct SourcePicker: View {
                         SourceRow(source: source, matchedCountry: country, isSelected: selection == source.id) { selection = source.id }
                     }
                 }
-            } footer: {
-                Text(selection == ReferenceSource.who.id
-                     ? "No values for energy, protein or carbohydrate."
-                     : "Anything missing uses the World Health Organization’s guidelines, marked WHO.")
+            } header: {
+                Text("Choose which health authority to determine daily values and percentages.")
+                    .font(.subheadline)
+                    .foregroundStyle(Color.secondary)
+                    .textCase(nil)
+                    .padding(.bottom, 4)
             }
         }
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Country or organisation")
@@ -45,17 +47,19 @@ private struct SourceRow: View {
                 SourceIcon(source: source)
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 6) {
-                        Text(source.name).foregroundStyle(.primary)
+                        Text(source.name).foregroundStyle(Color.primary)
                         if source.id == ReferenceSource.japan.id { Tag(text: "Suggested", tint: .secondary) }
                     }
-                    Text(matchedCountry.map { "Includes \($0)" } ?? source.title)
-                        .font(.footnote).foregroundStyle(.secondary)
-                    Text(source.detail).font(.footnote).foregroundStyle(.secondary)
+                    // Plain colours: inside a Button, hierarchical styles pick up the tint.
+                    Text(source.title).font(.footnote).foregroundStyle(Color.secondary)
+                    Text(matchedCountry.map { "Includes \($0) · \(source.detail)" } ?? source.detail)
+                        .font(.footnote).foregroundStyle(Color.secondary)
                 }
                 Spacer()
-                if isSelected {
-                    Image(systemName: "checkmark").fontWeight(.semibold).foregroundStyle(.tint)
-                }
+                // Always laid out, so selecting a row doesn't reflow its text.
+                Image(systemName: "checkmark").fontWeight(.semibold).foregroundStyle(.tint)
+                    .opacity(isSelected ? 1 : 0)
+                    .accessibilityHidden(true)
             }
         }
         .accessibilityAddTraits(isSelected ? .isSelected : [])
@@ -68,12 +72,16 @@ struct SourceIcon: View {
     var body: some View {
         Group {
             if let flag = source.flag {
-                Text(flag).font(.system(size: 22))
+                // Circle flags from github.com/HatScripts/circle-flags (MIT).
+                Image(flag).resizable().scaledToFit()
             } else {
                 Image(systemName: "globe").font(.system(size: 19, weight: .medium)).foregroundStyle(.white)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.blue.gradient)
             }
         }
-        .frame(width: 36, height: 36)
-        .background(source.flag == nil ? AnyShapeStyle(Color.blue.gradient) : AnyShapeStyle(.fill.tertiary), in: .rect(cornerRadius: 9))
+        .frame(width: 32, height: 32)
+        .clipShape(.circle)
+        .overlay(Circle().strokeBorder(.separator, lineWidth: 0.5))
     }
 }

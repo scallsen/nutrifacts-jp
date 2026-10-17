@@ -4,7 +4,7 @@ import SwiftUI
 struct ResultView: View {
     @Environment(AppModel.self) private var model
     @AppStorage("referenceSource") private var sourceID = ReferenceSource.japan.id
-    @AppStorage("showJapanese") private var showJapanese = true
+    @AppStorage("showJapanese") private var showJapanese = false
     @State private var basis: Basis = .asLabelled
 
     let scan: Scan
@@ -17,7 +17,7 @@ struct ResultView: View {
     var body: some View {
         let a = analysis
         List {
-            HealthScoreSection(analysis: a, scan: model.latest(scan))
+            if !a.knowsBasisAmount { BasisSizeSection(panel: a.panel, scan: model.latest(scan)) }
             ThingsToKnowSection(analysis: a)
             Section {
                 Picker("Amount", selection: $basis) {
@@ -26,9 +26,6 @@ struct ResultView: View {
                 .pickerStyle(.segmented)
                 .listRowBackground(Color.clear)
                 .listRowInsets(EdgeInsets())
-            } footer: {
-                Text((basis == .asLabelled ? "As labelled " : "Converted from ") + a.panel.basisDescription
-                     + (showJapanese ? " · \(a.panel.basisJapanese)" : ""))
             }
             NutritionSection(analysis: a, showJapanese: showJapanese)
             CarbBreakdownSection(analysis: a)
@@ -90,8 +87,6 @@ private struct ThingsToKnowSection: View {
             }
         } header: {
             Text("Things to know")
-        } footer: {
-            Text("Levels per 100 \(analysis.panel.unit.rawValue), using UK bands.")
         }
     }
 }
@@ -162,9 +157,9 @@ private struct NutrientRow: View {
                 Text(key.english).font(depth > 0 ? .callout : .body)
                 HStack(spacing: 6) {
                     if showJapanese { Text(key.japanese) }
-                    if shown?.isCalculated == true { Tag(text: "Calculated", tint: .indigo) }
-                    if shown?.isUpperBound == true { Text("printed as 0") }
-                    else if let note, shown != nil { Text(note) }
+                    if shown?.isCalculated == true { Text("Calculated") }
+                    else if analysis.panel.isEstimate, shown != nil { Text("Estimated") }
+                    if let note, shown != nil, level != .zero { Text(note) }
                 }
                 .font(.footnote)
                 .foregroundStyle(.secondary)
@@ -180,12 +175,14 @@ private struct NutrientRow: View {
                         if let level {
                             Text(level.word).fontWeight(.semibold).foregroundStyle(level.color)
                         }
-                        if let percent {
+                        if level == .zero {
+                            // "Low" says it all; a % of a "0" line isn't meaningful.
+                        } else if let percent {
                             if level != nil { Text("·").foregroundStyle(.secondary) }
                             Text(percent.text)
                                 .fontWeight(level == nil ? .regular : .semibold)
                                 .foregroundStyle(level?.color ?? .secondary)
-                            if percent.fromWHO { Tag(text: "WHO", tint: .teal) }
+                            if percent.fromWHO { Text("WHO").foregroundStyle(.secondary) }
                         } else if key != .netCarbs, !analysis.hasReference(key) {
                             Text("No reference").foregroundStyle(.secondary)
                         }
@@ -234,9 +231,10 @@ private struct CarbBreakdownSection: View {
                 GeometryReader { proxy in
                     HStack(spacing: 2) {
                         ForEach(segments) { segment in
-                            let width = max(4, (proxy.size.width - CGFloat(segments.count - 1) * 2) * segment.grams / max(total, 0.01))
+                            let available = proxy.size.width - CGFloat(segments.count - 1) * 2
+                            let width = total > 0 ? max(4, available * segment.grams / total) : available / CGFloat(segments.count)
                             Group {
-                                if let color = segment.color { Rectangle().fill(color) } else { Hatch() }
+                                if let color = segment.color { Rectangle().fill(color) } else { UnknownFill(cornerRadius: 0) }
                             }
                             .frame(width: width)
                         }
@@ -248,7 +246,7 @@ private struct CarbBreakdownSection: View {
                     ForEach(segments) { segment in
                         HStack(spacing: 8) {
                             Group {
-                                if let color = segment.color { RoundedRectangle(cornerRadius: 3).fill(color) } else { Hatch().clipShape(.rect(cornerRadius: 3)) }
+                                if let color = segment.color { RoundedRectangle(cornerRadius: 3).fill(color) } else { UnknownFill(cornerRadius: 3) }
                             }
                             .frame(width: 11, height: 11)
                             Text(segment.name)
@@ -266,19 +264,18 @@ private struct CarbBreakdownSection: View {
                 Spacer()
                 Text(String(format: "%.1f g", total)).textCase(nil).fontWeight(.regular)
             }
-        } footer: {
-            Text(footer(total: total))
         }
     }
 
     private func segments(total: Double) -> [Segment] {
         let p = analysis.panel
+        if p.number(.carbohydrate) == 0 { return [Segment(name: "Low (printed as 0)", grams: 0, color: .green.opacity(0.35))] }
         switch analysis.carbState {
         case .totalOnly:
-            return [Segment(name: "Not broken down", grams: total)]
+            return [Segment(name: "Unknown carbohydrates", grams: total)]
         case .sugarsOnly:
             let s = p.number(.sugars) ?? 0
-            return [Segment(name: "Sugars", grams: s, color: .pink), Segment(name: "Rest, not broken down", grams: total - s)]
+            return [Segment(name: "Sugars", grams: s, color: .pink), Segment(name: "Unknown carbohydrates", grams: total - s)]
         case .splitNoSugars:
             let net = p.number(.netCarbs) ?? (total - (p.number(.fibre) ?? 0))
             return [Segment(name: "Net carbs", grams: net, color: .orange), Segment(name: "Fibre", grams: total - net, color: .green)]
@@ -290,33 +287,19 @@ private struct CarbBreakdownSection: View {
                     Segment(name: "Fibre", grams: f, color: .green)]
         }
     }
-
-    private func footer(total: Double) -> String {
-        switch analysis.carbState {
-        case .totalOnly: return "Only the total is listed."
-        case .sugarsOnly:
-            let s = analysis.panel.number(.sugars) ?? 0
-            return String(format: "Fibre isn’t listed, so net carbs are %.1f–%.1f g.", s, total)
-        case .splitNoSugars: return "Sugars aren’t split out of net carbs."
-        case .full: return "Net carbs = carbohydrate minus fibre."
-        }
-    }
 }
 
-/// Diagonal hatching for "not broken down".
-private struct Hatch: View {
+/// Grey with a dashed outline: carbohydrate the label doesn't break down.
+private struct UnknownFill: View {
+    let cornerRadius: CGFloat
+
     var body: some View {
-        Canvas { context, size in
-            context.fill(Path(CGRect(origin: .zero, size: size)), with: .color(.secondary.opacity(0.12)))
-            var x: CGFloat = -size.height
-            while x < size.width {
-                var line = Path()
-                line.move(to: CGPoint(x: x, y: size.height))
-                line.addLine(to: CGPoint(x: x + size.height, y: 0))
-                context.stroke(line, with: .color(.secondary.opacity(0.35)), lineWidth: 2)
-                x += 7
+        RoundedRectangle(cornerRadius: cornerRadius)
+            .fill(Color.secondary.opacity(0.15))
+            .overlay {
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .strokeBorder(Color.secondary.opacity(0.6), style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
             }
-        }
     }
 }
 
