@@ -67,8 +67,9 @@ struct PanelAnalysis {
 
     var availableBases: [Basis] {
         var bases: [Basis] = [.asLabelled]
-        if panel.basisAmount != 100 { bases.append(.per100) }
-        if panel.packAmount != panel.basisAmount { bases.append(.wholePack) }
+        guard let amount = panel.basisAmount else { return bases }
+        if amount != 100 { bases.append(.per100) }
+        if let pack = panel.packAmount, pack != amount { bases.append(.wholePack) }
         return bases
     }
 
@@ -80,7 +81,8 @@ struct PanelAnalysis {
         }
     }
 
-    var targetAmount: Double {
+    /// Nil when the label's basis has no size, so values can only be shown as printed.
+    var targetAmount: Double? {
         switch basis {
         case .asLabelled: panel.basisAmount
         case .per100: 100
@@ -88,11 +90,14 @@ struct PanelAnalysis {
         }
     }
 
+    /// False for a basis like 1個当たり until its size is confirmed.
+    var knowsBasisAmount: Bool { panel.basisAmount != nil }
+
     var basisDescription: String {
         switch basis {
         case .asLabelled: panel.basisDescription
         case .per100: "per 100 \(panel.unit.rawValue)"
-        case .wholePack: "whole pack (\(NumberFormat.amount(panel.packAmount, .protein)) \(panel.unit.rawValue))"
+        case .wholePack: "whole pack (\(NumberFormat.amount(panel.packAmount ?? 0, .protein)) \(panel.unit.rawValue))"
         }
     }
 
@@ -101,11 +106,14 @@ struct PanelAnalysis {
     func printedValue(_ key: NutrientKey) -> ShownValue? {
         guard let raw = panel.printed[key], let number = Double(raw) else { return nil }
         if number == 0 {
-            let limit = key.zeroThreshold * targetAmount / 100
+            // "0" means under a threshold per 100 g/ml; without the basis size it can't be scaled.
+            guard let target = targetAmount else { return ShownValue(amount: 0, text: "0 \(key.unit)", isUpperBound: true) }
+            let limit = key.zeroThreshold * target / 100
             return ShownValue(amount: limit, text: "< \(NumberFormat.amount(limit, key)) \(key.unit)", isUpperBound: true)
         }
         if basis == .asLabelled { return ShownValue(amount: number, text: "\(raw) \(key.unit)") }
-        let scaled = number * targetAmount / panel.basisAmount
+        guard let target = targetAmount, let basisAmount = panel.basisAmount else { return nil }
+        let scaled = number * target / basisAmount
         return ShownValue(amount: scaled, text: "\(NumberFormat.amount(scaled, key)) \(key.unit)")
     }
 
@@ -143,11 +151,13 @@ struct PanelAnalysis {
 
     /// The possible range per 100 g/ml for each line, using the label's own limits
     /// (sugars ≤ net carbs ≤ carbohydrate, saturated fat ≤ fat).
+    /// Empty when the basis size isn't known.
     var bounds: [NutrientKey: ClosedRange<Double>] {
+        guard let basisAmount = panel.basisAmount else { return [:] }
         func per100(_ key: NutrientKey) -> ClosedRange<Double>? {
             guard let number = panel.number(key) else { return nil }
             if number == 0 { return 0...key.zeroThreshold }
-            let value = number * 100 / panel.basisAmount
+            let value = number * 100 / basisAmount
             return value...value
         }
         var result: [NutrientKey: ClosedRange<Double>] = [:]
@@ -245,7 +255,10 @@ struct PanelAnalysis {
             calculated = protein * 4 + fat * 9 + carbs * 4
         }
         guard let energy = p.number(.energy) else { return true }
-        if energy == 0 { return calculated < NutrientKey.energy.zeroThreshold * p.basisAmount / 100 }
+        if energy == 0 {
+            guard let basisAmount = p.basisAmount else { return true }
+            return calculated < NutrientKey.energy.zeroThreshold * basisAmount / 100
+        }
         return abs(calculated - energy) / energy <= 0.2
     }
 

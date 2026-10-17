@@ -83,7 +83,10 @@ nonisolated struct AppleIntelligenceReader: LabelReader {
     - Ranges such as 120〜150kcal: minValue 120, maxValue 150.
     - Convert full-width digits (０-９, ．) to normal numbers. Keep the printed precision.
     - Caffeine, collagen and other items printed outside the panel are nutrient "other".
-    - basisText is the per-what phrase, e.g. 1食分（50g）当たり. basisAmount is the grams or ml in it, or 0 if none is printed.
+    - basisText is only the per-what phrase, e.g. 1食分（50g）当たり or 1個当たり, without 栄養成分表示 or outer brackets. \
+    basisAmount is the grams or ml in it, or 0 if none is printed. Never take basisAmount from 内容量.
+    - 内容量 (net contents) is often printed away from the panel. Give its weight or volume and unit if visible, \
+    and how many pieces it holds if it says (6個入り). A bare count like 2個 is not a weight.
     - If there is no nutrition panel in the image, set panelFound to false and leave lines empty.
     """
 }

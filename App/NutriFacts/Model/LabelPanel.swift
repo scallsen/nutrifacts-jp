@@ -15,10 +15,13 @@ struct LabelPanel: Identifiable, Hashable, Sendable {
     /// Only the mocks know the product. A real scan doesn't.
     var nickname: String
     var basisJapanese: String
-    var basisAmount: Double
+    /// Grams or ml the printed values describe. Nil when the label doesn't say (e.g. 1個当たり),
+    /// until the user confirms it. Without it nothing can be put per 100 g, so there's no score.
+    var basisAmount: Double?
     var basisDescription: String
     var basisShort: String
-    var packAmount: Double
+    /// Whole-pack weight, when known.
+    var packAmount: Double?
     var packShort: String
     var unit: PackUnit
     /// Values as printed, e.g. "21.6". A missing key means the line isn't on the label.
@@ -34,5 +37,30 @@ struct LabelPanel: Identifiable, Hashable, Sendable {
     /// The screenshot or photo a real scan was read from. Nil for the mock samples.
     var photo: Data? = nil
 
+    /// A likely size for a basis printed without one, worked out from 内容量. Shown for the user to confirm, never applied on its own.
+    var basisSuggestion: BasisSuggestion? = nil
+
     func number(_ key: NutrientKey) -> Double? { printed[key].flatMap(Double.init) }
+
+    /// The basis as printed without its 当たり, e.g. "1個".
+    var basisUnitName: String {
+        basisJapanese.replacingOccurrences(of: "当たり", with: "").replacingOccurrences(of: "あたり", with: "")
+    }
+
+    /// Sets the size of a basis printed without one, once the user has confirmed it.
+    mutating func confirmBasis(amount: Double, unit: PackUnit) {
+        self.unit = unit
+        basisAmount = amount
+        let text = "\(NumberFormat.amount(amount, .protein)) \(unit.rawValue)"
+        basisDescription = "per \(basisUnitName) (\(text))"
+        basisShort = "\(basisUnitName) · \(text)"
+        basisSuggestion = nil
+    }
+}
+
+struct BasisSuggestion: Hashable, Sendable {
+    var amount: Double
+    var unit: PackUnit
+    /// How it was worked out, e.g. "内容量 350 ml" or "内容量 120 g ÷ 6".
+    var reason: String
 }

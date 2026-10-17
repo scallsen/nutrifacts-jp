@@ -24,7 +24,9 @@ struct HistoryView: View {
                                         .font(.footnote).foregroundStyle(.secondary)
                                 }
                                 Spacer()
-                                GradeBadge(score: PanelAnalysis(panel: scan.panel, basis: .per100, source: .japan).healthScore(), size: 26)
+                                if let score = PanelAnalysis(panel: scan.panel, basis: .per100, source: .japan).healthScore() {
+                                    GradeBadge(score: score, size: 26)
+                                }
                             }
                         }
                     }

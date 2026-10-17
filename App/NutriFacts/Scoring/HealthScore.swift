@@ -61,7 +61,9 @@ struct HealthScore: Hashable, Sendable {
 extension PanelAnalysis {
     /// The health score, per 100 g/ml. Uses `bounds`, so a missing line is scored across every
     /// value the label allows (sugars ≤ net carbs ≤ carbohydrate, saturated fat ≤ fat), never as 0.
-    func healthScore(rubric: ScoreRubric = .shared) -> HealthScore {
+    /// Nil while the basis size is unknown (1個当たり), because nothing can be put per 100 g.
+    func healthScore(rubric: ScoreRubric = .shared) -> HealthScore? {
+        guard knowsBasisAmount else { return nil }
         let drink = panel.unit.isDrink
         let b = bounds
         var components: [HealthScore.Component] = []

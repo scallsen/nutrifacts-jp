@@ -11,13 +11,13 @@ struct ResultView: View {
     var showsScanAgain = true
 
     private var analysis: PanelAnalysis {
-        PanelAnalysis(panel: scan.panel, basis: basis, source: .with(id: sourceID))
+        PanelAnalysis(panel: model.latest(scan).panel, basis: basis, source: .with(id: sourceID))
     }
 
     var body: some View {
         let a = analysis
         List {
-            HealthScoreSection(analysis: a)
+            HealthScoreSection(analysis: a, scan: model.latest(scan))
             ThingsToKnowSection(analysis: a)
             Section {
                 Picker("Amount", selection: $basis) {
@@ -78,7 +78,11 @@ private struct ThingsToKnowSection: View {
     var body: some View {
         Section {
             let warnings = analysis.warnings
-            if warnings.isEmpty {
+            if !analysis.knowsBasisAmount {
+                NoticeRow(notice: Notice(symbol: "questionmark", tint: .orange, title: "Levels need the size of \(analysis.panel.basisUnitName)",
+                                         detail: "High and low are per 100 \(analysis.panel.unit.rawValue). Add the size above."))
+                ForEach(warnings) { NoticeRow(notice: $0) }
+            } else if warnings.isEmpty {
                 NoticeRow(notice: Notice(symbol: "checkmark", tint: .green, title: "Nothing high",
                                          detail: "Fat, saturated fat, sugars and salt are medium or low."))
             } else {

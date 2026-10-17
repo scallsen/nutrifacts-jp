@@ -11,7 +11,7 @@ nonisolated struct ExtractedLabel: Codable, Sendable, Hashable {
     @Guide(description: "Product name if visible, in its original language. Empty if not visible.")
     var productName: String
 
-    @Guide(description: "The basis text exactly as printed after 栄養成分表示, e.g. 1袋（60g）当たり or 100ml当たり. Empty if not printed.")
+    @Guide(description: "Only the per-what phrase, without 栄養成分表示 or surrounding brackets, e.g. 1袋（60g）当たり, 100ml当たり or 1個当たり. Empty if not printed.")
     var basisText: String
 
     @Guide(description: "Weight or volume in the basis text, e.g. 60 for 1袋（60g）当たり, 100 for 100g当たり. 0 if the basis gives no amount (e.g. 1袋当たり).")
@@ -20,8 +20,14 @@ nonisolated struct ExtractedLabel: Codable, Sendable, Hashable {
     @Guide(description: "Unit of basisAmount: g or ml. Use ml for drinks labelled per ml.")
     var basisUnit: ExtractedUnit
 
-    @Guide(description: "Net contents (内容量) amount if printed anywhere in the image, else 0.")
+    @Guide(description: "Net contents (内容量) weight or volume if printed anywhere in the image, e.g. 350 for 内容量 350ml or 120 for 120g（6個入り）. 0 if 内容量 is not visible or is only a count such as 2個.")
     var netContentsAmount: Double
+
+    @Guide(description: "Unit of netContentsAmount: g, ml, or none when netContentsAmount is 0.")
+    var netContentsUnit: ExtractedContentsUnit
+
+    @Guide(description: "Number of pieces or servings the pack holds if 内容量 states it, e.g. 6 for 6個入り or 120g（6個）, 2 for 2本. 0 if not stated.")
+    var netContentsCount: Int
 
     @Guide(description: "One entry per nutrient line that is actually printed. Never add lines that are not printed.")
     var lines: [ExtractedLine]
@@ -32,6 +38,9 @@ nonisolated struct ExtractedLabel: Codable, Sendable, Hashable {
 
 @Generable
 nonisolated enum ExtractedUnit: String, Codable, Sendable, Hashable { case g, ml }
+
+@Generable
+nonisolated enum ExtractedContentsUnit: String, Codable, Sendable, Hashable { case g, ml, none }
 
 @Generable
 nonisolated struct ExtractedLine: Codable, Sendable, Hashable {
@@ -59,28 +68,16 @@ nonisolated enum ExtractedNutrient: String, Codable, Sendable, Hashable {
 extension ExtractedLabel {
     enum MappingError: LocalizedError {
         case noPanel
-        /// The basis has no weight (e.g. 1袋当たり), so values can't be put per 100 g.
-        case noBasisAmount(basis: String, netContents: Double?)
 
         var errorDescription: String? {
-            switch self {
-            case .noPanel:
-                "No nutrition panel found. Small packs, alcohol, tea and spices may legally have none."
-            case .noBasisAmount(let basis, let net):
-                "The label is per “\(basis)” but doesn't say how much that is"
-                    + (net.map { ", and 内容量 (\(NumberFormat.amount($0, .protein))) may cover several servings" } ?? "")
-                    + ". Try a photo that includes the weight."
-            }
+            "No nutrition panel found. Small packs, alcohol, tea and spices may legally have none."
         }
     }
 
     /// Converts a transcription into the app's panel. Lines that weren't printed stay absent (rule 3).
+    /// A basis without a size (1個当たり) keeps `basisAmount` nil; 内容量 only becomes a suggestion.
     func toPanel(photo: Data?) throws -> LabelPanel {
         guard panelFound, !lines.isEmpty else { throw MappingError.noPanel }
-        // A basis without a weight isn't filled from 内容量: a bag can hold several servings or pieces.
-        guard basisAmount > 0 else {
-            throw MappingError.noBasisAmount(basis: basisText, netContents: netContentsAmount > 0 ? netContentsAmount : nil)
-        }
 
         var values: [NutrientKey: Double] = [:]
         var sodiumMg: Double?
@@ -105,23 +102,56 @@ extension ExtractedLabel {
         // Only foods without added sodium salts may print sodium. Derive salt if it's missing.
         if values[.salt] == nil, let sodiumMg { values[.salt] = sodiumMg * 2.54 / 1000 }
 
-        let unit: PackUnit = basisUnit == .ml ? .millilitres : .grams
-        let amount = NumberFormat.amount(basisAmount, .protein)
-        let pack = netContentsAmount > 0 ? netContentsAmount : basisAmount
-        return LabelPanel(
+        // 内容量 as a weight or volume, if it was in the photo. A bare count (2個) isn't a size.
+        let contentsUnit: PackUnit? = switch netContentsUnit {
+        case .g: .grams
+        case .ml: .millilitres
+        case .none: nil
+        }
+        let contents = netContentsAmount > 0 ? contentsUnit.map { (amount: netContentsAmount, unit: $0) } : nil
+        let unit: PackUnit = basisAmount > 0 ? (basisUnit == .ml ? .millilitres : .grams) : (contents?.unit ?? (basisUnit == .ml ? .millilitres : .grams))
+        let pack = contents?.unit == unit ? contents?.amount : nil
+        let basis = Self.cleanBasis(basisText)
+
+        var panel = LabelPanel(
             nickname: productName.isEmpty ? "Scanned label" : productName,
-            basisJapanese: basisText.isEmpty ? "\(amount)\(unit.rawValue)当たり" : basisText,
-            basisAmount: basisAmount,
-            basisDescription: "per \(amount) \(unit.rawValue)",
-            basisShort: basisAmount == 100 ? "100 \(unit.rawValue)" : "Label · \(amount) \(unit.rawValue)",
+            basisJapanese: basis.isEmpty ? (basisAmount > 0 ? "\(NumberFormat.amount(basisAmount, .protein))\(unit.rawValue)当たり" : "Basis not printed") : basis,
+            basisAmount: nil,
+            basisDescription: "per \(basis.isEmpty ? "serving" : basis.replacingOccurrences(of: "当たり", with: ""))",
+            basisShort: basis.isEmpty ? "As labelled" : basis.replacingOccurrences(of: "当たり", with: ""),
             packAmount: pack,
-            packShort: "Pack · \(NumberFormat.amount(pack, .protein)) \(unit.rawValue)",
+            packShort: pack.map { "Pack · \(NumberFormat.amount($0, .protein)) \(unit.rawValue)" } ?? "Pack",
             unit: unit,
             printed: values.mapValues(Self.printed),
             isEstimate: isEstimate,
             ingredients: "",
             packColors: [0x8E8E93, 0x48484A],
             photo: photo)
+
+        if basisAmount > 0 {
+            let amount = NumberFormat.amount(basisAmount, .protein)
+            panel.basisAmount = basisAmount
+            panel.basisDescription = "per \(amount) \(unit.rawValue)"
+            panel.basisShort = basisAmount == 100 ? "100 \(unit.rawValue)" : "Label · \(amount) \(unit.rawValue)"
+        } else if let contents {
+            // Never applied automatically: a pack can hold several pieces or servings.
+            let count = max(netContentsCount, 1)
+            let text = "内容量 \(NumberFormat.amount(contents.amount, .protein)) \(contents.unit.rawValue)"
+            panel.basisSuggestion = BasisSuggestion(amount: contents.amount / Double(count), unit: contents.unit,
+                                                    reason: count > 1 ? "\(text) ÷ \(count)" : text)
+        }
+        return panel
+    }
+
+    /// "栄養成分表示（1個当たり）" → "1個当たり". Brackets inside the phrase, as in 1食分（50g）当たり, stay.
+    static func cleanBasis(_ text: String) -> String {
+        var s = text.trimmingCharacters(in: .whitespaces)
+        for prefix in ["栄養成分表示", "栄養成分"] where s.hasPrefix(prefix) { s.removeFirst(prefix.count) }
+        s = s.trimmingCharacters(in: .whitespaces)
+        if let first = s.first, let last = s.last, "（(".contains(first), "）)".contains(last) {
+            s = String(s.dropFirst().dropLast()).trimmingCharacters(in: .whitespaces)
+        }
+        return s
     }
 
     /// As a label would print it: "0", "336", "21.6", "0.08".

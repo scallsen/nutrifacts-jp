@@ -60,11 +60,20 @@ struct ScoreRangeBar: View {
 }
 
 /// Top of the result: grade, score and why it's a range.
+/// For a basis printed without a size (1個当たり), asks for the size first.
 struct HealthScoreSection: View {
     let analysis: PanelAnalysis
+    let scan: Scan
 
     var body: some View {
-        let score = analysis.healthScore()
+        if let score = analysis.healthScore() {
+            scored(score)
+        } else {
+            BasisSizeSection(panel: analysis.panel, scan: scan)
+        }
+    }
+
+    private func scored(_ score: HealthScore) -> some View {
         Section {
             HStack(spacing: 16) {
                 GradeBadge(score: score, size: 56)
@@ -87,6 +96,53 @@ struct HealthScoreSection: View {
         guard !score.widenedBy.isEmpty else { return per }
         let names = ListFormatter.localizedString(byJoining: score.widenedBy.map { $0.english.lowercased() })
         return "A range, because the label doesn't list \(names). \(per)"
+    }
+}
+
+/// "Per 1個" with no size: offer the 内容量-based suggestion to confirm, or let the user type it.
+private struct BasisSizeSection: View {
+    @Environment(AppModel.self) private var model
+    let panel: LabelPanel
+    let scan: Scan
+    @State private var amount = ""
+    @State private var unit: PackUnit = .grams
+
+    var body: some View {
+        let name = panel.basisUnitName
+        Section {
+            if let suggestion = panel.basisSuggestion {
+                Button {
+                    model.confirmBasis(of: scan, amount: suggestion.amount, unit: suggestion.unit)
+                } label: {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Use \(NumberFormat.amount(suggestion.amount, .protein)) \(suggestion.unit.rawValue) for \(name)")
+                        Text("From \(suggestion.reason)").font(.footnote).foregroundStyle(.secondary)
+                    }
+                }
+            }
+            HStack {
+                TextField(panel.basisSuggestion == nil ? "Size of \(name)" : "Or type it", text: $amount)
+                    .keyboardType(.decimalPad)
+                Picker("Unit", selection: $unit) {
+                    Text("g").tag(PackUnit.grams)
+                    Text("ml").tag(PackUnit.millilitres)
+                }
+                .pickerStyle(.segmented)
+                .fixedSize()
+                Button("Score") {
+                    if let value = Double(amount.replacingOccurrences(of: ",", with: ".")), value > 0 {
+                        model.confirmBasis(of: scan, amount: value, unit: unit)
+                    }
+                }
+                .disabled((Double(amount.replacingOccurrences(of: ",", with: ".")) ?? 0) <= 0)
+            }
+        } header: {
+            Text("Health score")
+        } footer: {
+            Text("The label is per \(name) but doesn't say how much that is, so it can't be scored per 100 \(panel.unit.rawValue) yet. "
+                 + (panel.basisSuggestion == nil ? "It's usually printed as 内容量 on the pack." : "Check the suggestion: a pack can hold several pieces."))
+        }
+        .onAppear { unit = panel.basisSuggestion?.unit ?? panel.unit }
     }
 }
 
@@ -141,9 +197,8 @@ struct ScoreSnippetView: View {
     var message: String
 
     var body: some View {
-        if let panel {
+        if let panel, let score = PanelAnalysis(panel: panel, basis: .per100, source: .japan).healthScore() {
             let a = PanelAnalysis(panel: panel, basis: .per100, source: .with(id: UserDefaults.standard.string(forKey: "referenceSource") ?? "jp"))
-            let score = a.healthScore()
             HStack(spacing: 14) {
                 GradeBadge(score: score, size: 48)
                 VStack(alignment: .leading, spacing: 4) {

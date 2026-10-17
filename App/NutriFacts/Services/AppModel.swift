@@ -5,7 +5,7 @@ import SwiftUI
 struct Scan: Identifiable, Hashable {
     let id = UUID()
     let date: Date
-    let panel: LabelPanel
+    var panel: LabelPanel
     /// What read the label. Nil for the simulated camera.
     var backend: Backend? = nil
 }
@@ -98,6 +98,17 @@ final class AppModel {
     }
 
     func clearHistory() { history.removeAll() }
+
+    /// The latest version of a scan, e.g. after its basis size was confirmed.
+    func latest(_ scan: Scan) -> Scan { history.first { $0.id == scan.id } ?? scan }
+
+    /// Sets the size of a basis printed without one (1個当たり) once the user confirms it.
+    func confirmBasis(of scan: Scan, amount: Double, unit: PackUnit) {
+        var updated = latest(scan)
+        updated.panel.confirmBasis(amount: amount, unit: unit)
+        if let i = history.firstIndex(where: { $0.id == scan.id }) { history[i] = updated }
+        if current?.id == scan.id { current = updated }
+    }
 
     // MARK: Live camera
 

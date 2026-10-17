@@ -22,9 +22,12 @@ struct ScoreLabelIntent: AppIntent {
         let summary: String
         switch result {
         case .success(let scan):
-            let score = PanelAnalysis(panel: scan.panel, basis: .per100, source: .japan).healthScore()
-            summary = "Grade \(score.gradeText) · \(score.scoreText)/100"
-                + (score.widenedBy.isEmpty ? "" : ". Not listed: \(score.widenedBy.map(\.english).joined(separator: ", ")).")
+            if let score = PanelAnalysis(panel: scan.panel, basis: .per100, source: .japan).healthScore() {
+                summary = "Grade \(score.gradeText) · \(score.scoreText)/100"
+                    + (score.widenedBy.isEmpty ? "" : ". Not listed: \(score.widenedBy.map(\.english).joined(separator: ", ")).")
+            } else {
+                summary = "Read the label. It's per \(scan.panel.basisUnitName) with no size, so open NutriFacts to confirm it and see the grade."
+            }
         case .failure(let error):
             summary = error.localizedDescription
         }

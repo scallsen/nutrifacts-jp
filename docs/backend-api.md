@@ -34,6 +34,8 @@ Content-Type: application/json
   "basisAmount": 60,
   "basisUnit": "g",
   "netContentsAmount": 60,
+  "netContentsUnit": "g",
+  "netContentsCount": 0,
   "isEstimate": true,
   "lines": [
     { "nutrient": "energy",       "printedName": "熱量",       "minValue": 336,  "maxValue": 336,  "unit": "kcal" },
@@ -48,7 +50,10 @@ Content-Type: application/json
 | Field | Rule |
 |---|---|
 | `panelFound` | `false` when there's no 栄養成分表示 panel. That's legal for some products, so it isn't an error; send `lines: []`. |
-| `basisAmount` | Grams or ml in the basis text. `0` when the basis gives none (`1袋当たり`). Never fill it from 内容量: put that in `netContentsAmount` and the app asks the user. |
+| `basisText` | Only the per-what phrase, e.g. `1食分（50g）当たり` or `1個当たり`, without 栄養成分表示 or outer brackets. |
+| `basisAmount` | Grams or ml in the basis text. `0` when the basis gives none (`1個当たり`). Never fill it from 内容量. The app shows the label as printed and asks the user to confirm a size. |
+| `netContentsAmount` / `netContentsUnit` | 内容量 as a weight or volume (`g` or `ml`), if it's in the image. `0` / `none` when it isn't, or when it's only a count (`2個`). The app offers it as a suggestion for a basis without a size. |
+| `netContentsCount` | Pieces or servings in the pack if 内容量 says (`6個入り` → 6), else `0`. The suggestion becomes 内容量 ÷ count. |
 | `basisUnit` | `g` or `ml` (drinks). |
 | `lines` | **Only lines that are printed.** A missing line is "not disclosed", never 0 (rule 3). |
 | `nutrient` | One of `energy`, `protein`, `fat`, `saturatedFat`, `carbohydrate`, `netCarbs` (糖質), `sugars` (糖類), `fibre`, `salt` (食塩相当量), `sodium` (ナトリウム), `other`. Never map 糖質 to `sugars`. |

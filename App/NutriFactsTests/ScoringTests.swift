@@ -5,7 +5,7 @@ import Testing
 @MainActor
 @Suite struct ScoringTests {
     private func score(_ panel: LabelPanel) -> HealthScore {
-        PanelAnalysis(panel: panel, basis: .per100, source: .japan).healthScore()
+        PanelAnalysis(panel: panel, basis: .per100, source: .japan).healthScore()!
     }
 
     @Test func fullLabelGetsExactScore() {
@@ -51,7 +51,7 @@ import Testing
 @Suite struct ExtractionMappingTests {
     private func label(_ lines: [ExtractedLine], basis: String = "100g当たり", amount: Double = 100) -> ExtractedLabel {
         ExtractedLabel(panelFound: true, productName: "", basisText: basis, basisAmount: amount, basisUnit: .g,
-                       netContentsAmount: 0, lines: lines, isEstimate: false)
+                       netContentsAmount: 0, netContentsUnit: .none, netContentsCount: 0, lines: lines, isEstimate: false)
     }
 
     private func line(_ n: ExtractedNutrient, _ v: Double, _ unit: String = "g", max: Double? = nil) -> ExtractedLine {
@@ -77,10 +77,45 @@ import Testing
         #expect(abs(panel.number(.salt)! - 3.048) < 0.001)
     }
 
-    @Test func basisWithoutAmountIsNotGuessed() {
+    @Test func basisWithoutAmountIsNotGuessed() throws {
         var l = label([line(.fat, 3)], basis: "1袋当たり", amount: 0)
         l.netContentsAmount = 85
-        #expect(throws: ExtractedLabel.MappingError.self) { try l.toPanel(photo: nil) }
+        l.netContentsUnit = .g
+        let panel = try l.toPanel(photo: nil)
+        #expect(panel.basisAmount == nil)
+        // No score until the user confirms a size; 内容量 is only offered.
+        #expect(PanelAnalysis(panel: panel, basis: .asLabelled, source: .japan).healthScore() == nil)
+        #expect(panel.basisSuggestion == BasisSuggestion(amount: 85, unit: .grams, reason: "内容量 85 g"))
+    }
+
+    @Test func multipackSuggestionIsPerPiece() throws {
+        var l = label([line(.fat, 3)], basis: "1個当たり", amount: 0)
+        l.netContentsAmount = 120
+        l.netContentsUnit = .g
+        l.netContentsCount = 6
+        #expect(try l.toPanel(photo: nil).basisSuggestion?.amount == 20)
+    }
+
+    @Test func countOnlyContentsGivesNoSuggestion() throws {
+        var l = label([line(.fat, 3)], basis: "1個当たり", amount: 0)
+        l.netContentsCount = 2
+        #expect(try l.toPanel(photo: nil).basisSuggestion == nil)
+    }
+
+    @Test @MainActor func confirmingTheBasisEnablesTheScore() throws {
+        var l = label([line(.energy, 140, "kcal"), line(.fat, 0), line(.carbohydrate, 35), line(.salt, 0.1)], basis: "1個当たり", amount: 0)
+        l.netContentsAmount = 350
+        l.netContentsUnit = .ml
+        var panel = try l.toPanel(photo: nil)
+        panel.confirmBasis(amount: 350, unit: .millilitres)
+        #expect(panel.basisShort == "1個 · 350 ml")
+        #expect(PanelAnalysis(panel: panel, basis: .per100, source: .japan).healthScore() != nil)
+    }
+
+    @Test func basisTextLosesHeadingAndOuterBrackets() {
+        #expect(ExtractedLabel.cleanBasis("栄養成分表示（1個当たり）") == "1個当たり")
+        #expect(ExtractedLabel.cleanBasis("1食分（50g）当たり") == "1食分（50g）当たり")
+        #expect(ExtractedLabel.cleanBasis("(100ml当たり)") == "100ml当たり")
     }
 
     @Test func drinksUseMillilitres() throws {
