@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>NutriFacts — Japanese nutrition labels, in English</title>
+  <meta name="description" content="Point your iPhone at the nutrition facts on any Japanese food pack and read every line in English, with daily values, sodium in mg and an honest health score. Join the TestFlight beta.">
+  <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta property="og:title" content="NutriFacts — Japanese nutrition labels, in English">
+  <meta property="og:description" content="Scan the 栄養成分表示 on any Japanese food pack and see it translated, with daily values and an honest health score.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top">
+        <img src="icon.svg" alt="" width="28" height="28">
+        <span>NutriFacts</span>
+      </a>
+      <a class="button button-small" href="#join">Join the Beta</a>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- Hero -->
+    <section class="hero wrap">
+      <div class="hero-copy">
+        <p class="eyebrow">Coming soon to TestFlight</p>
+        <h1>Read any Japanese nutrition label.</h1>
+        <p class="lede">
+          Point your iPhone at the 栄養成分表示 on a food pack. NutriFacts reads every line, translates it
+          into plain English, and tells you how much is a lot.
+        </p>
+
+        <form class="signup" data-signup novalidate>
+          <label class="visually-hidden" for="email-hero">Email address</label>
+          <div class="field">
+            <input id="email-hero" name="email" type="email" inputmode="email" autocomplete="email"
+                   placeholder="you@example.com" required>
+            <button class="button" type="submit">Get Early Access</button>
+          </div>
+          <p class="form-note" data-status aria-live="polite">One email when the beta opens. No spam.</p>
+        </form>
+      </div>
+
+      <!-- Phone mock: a result screen built in HTML so it's easy to tweak -->
+      <div class="hero-visual" aria-hidden="true">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="mock-photo">
+              <div class="mock-label">
+                <div>栄養成分表示</div>
+                <div>1食分（50g）当たり</div>
+                <div>熱量 220kcal</div>
+                <div>たんぱく質 4.3g</div>
+                <div>脂質 7.6g</div>
+                <div>炭水化物 36.0g</div>
+                <div>食塩相当量 0.2g</div>
+              </div>
+            </div>
+            <div class="mock-sheet">
+              <div class="grabber"></div>
+              <div class="mock-head">
+                <div class="grade grade-c">C</div>
+                <div>
+                  <div class="mock-title">Chocolate Biscuits</div>
+                  <div class="mock-sub">Score 50 · per 50 g serving</div>
+                </div>
+              </div>
+
+              <div class="mock-group">
+                <div class="row"><span>Energy</span><span class="val">220 kcal <em>10%</em></span></div>
+                <div class="row"><span>Protein</span><span class="val">4.3 g <em>5%</em></span></div>
+                <div class="row"><span>Fat</span><span class="val">7.6 g <em>11%</em></span></div>
+                <div class="row sub"><span>Saturated fat</span><span class="val">2.9 g <em class="high">High</em></span></div>
+                <div class="row"><span>Salt</span><span class="val">0.2 g <em class="low">Low</em></span></div>
+                <div class="row sub"><span>Sodium</span><span class="val">≈ 79 mg</span></div>
+              </div>
+
+              <div class="mock-group">
+                <div class="row"><span>Carbohydrate</span><span class="val">36.0 g</span></div>
+                <div class="carb-bar">
+                  <span class="seg seg-sugar" style="flex: 11.2"></span>
+                  <span class="seg seg-net" style="flex: 20.9"></span>
+                  <span class="seg seg-fibre" style="flex: 3.9"></span>
+                </div>
+                <div class="legend">
+                  <span><i class="dot seg-sugar"></i>Sugars 11.2 g</span>
+                  <span><i class="dot seg-net"></i>Other 20.9 g</span>
+                  <span><i class="dot seg-fibre"></i>Fibre 3.9 g</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="section">
+      <div class="wrap">
+        <h2 class="section-title">Everything the label says.<br><span class="muted">And what it doesn’t.</span></h2>
+
+        <div class="grid">
+          <article class="card">
+            <div class="symbol" style="--tint: var(--blue)">
+              <svg viewBox="0 0 24 24"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M8 10h8M8 14h5"/></svg>
+            </div>
+            <h3>Scan and read in English</h3>
+            <p>Hold your phone over the panel. NutriFacts finds it, captures it on its own, and translates every line.</p>
+          </article>
+
+          <article class="card">
+            <div class="symbol" style="--tint: var(--orange)">
+              <svg viewBox="0 0 24 24"><path d="M5 20V12M12 20V5M19 20v-5"/></svg>
+            </div>
+            <h3>See how much is a lot</h3>
+            <p>Japanese labels have no daily values. We add them, with high and low levels, from the guidelines you choose: Japan, EU, US or Canada.</p>
+          </article>
+
+          <article class="card">
+            <div class="symbol" style="--tint: var(--indigo)">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4M12 16h.01"/></svg>
+            </div>
+            <h3>Honest about what’s missing</h3>
+            <p>Most labels only list five lines. When sugar or fibre isn’t printed, we say “not disclosed”, never zero.</p>
+          </article>
+
+          <article class="card">
+            <div class="symbol" style="--tint: var(--green)">
+              <svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <h3>A grade you can trust</h3>
+            <p>A simple A–E score from official thresholds. If the label leaves things out, you see a range, not a guess.</p>
+          </article>
+
+          <article class="card">
+            <div class="symbol" style="--tint: var(--teal)">
+              <svg viewBox="0 0 24 24"><path d="M12 3c3 4 6 7.5 6 11a6 6 0 0 1-12 0c0-3.5 3-7 6-11z"/></svg>
+            </div>
+            <h3>Salt, and sodium too</h3>
+            <p>Japan prints salt equivalent (食塩相当量). We convert it to sodium in mg, so you can compare it with home.</p>
+          </article>
+
+          <article class="card">
+            <div class="symbol" style="--tint: var(--gray)">
+              <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+            </div>
+            <h3>Private by design</h3>
+            <p>Your scan history is saved only on your iPhone. Choose how labels are read, including Apple Intelligence.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Explainer: the carb problem -->
+    <section class="section">
+      <div class="wrap split">
+        <div>
+          <p class="eyebrow">Why it matters</p>
+          <h2>糖質 isn’t sugar.</h2>
+          <p class="body-large">
+            It’s the most common mistranslation on Japanese packs. 糖質 means <strong>net carbs</strong>, starch
+            included. 糖類 means <strong>sugars</strong>. And most labels don’t print either.
+          </p>
+          <p class="body-large muted">
+            NutriFacts shows you exactly how much of the carbohydrate figure the label explains, and how much it
+            leaves out.
+          </p>
+        </div>
+
+        <div class="explainer card">
+          <div class="explainer-row">
+            <div class="explainer-head">
+              <span>Full label</span><span class="muted">36.0 g carbs</span>
+            </div>
+            <div class="carb-bar">
+              <span class="seg seg-sugar" style="flex: 11.2"></span>
+              <span class="seg seg-net" style="flex: 20.9"></span>
+              <span class="seg seg-fibre" style="flex: 3.9"></span>
+            </div>
+            <div class="legend">
+              <span><i class="dot seg-sugar"></i>Sugars</span>
+              <span><i class="dot seg-net"></i>Other net carbs</span>
+              <span><i class="dot seg-fibre"></i>Fibre</span>
+            </div>
+          </div>
+
+          <div class="explainer-row">
+            <div class="explainer-head">
+              <span>Typical label</span><span class="muted">36.0 g carbs</span>
+            </div>
+            <div class="carb-bar">
+              <span class="seg seg-hidden" style="flex: 1"></span>
+            </div>
+            <div class="legend">
+              <span><i class="dot seg-hidden"></i>Sugars, starch and fibre not disclosed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main CTA -->
+    <section class="section" id="join">
+      <div class="wrap">
+        <div class="cta">
+          <img class="cta-icon" src="icon.svg" alt="" width="72" height="72">
+          <h2>Be first to try NutriFacts.</h2>
+          <p class="body-large muted">
+            We’re opening a free TestFlight beta for iPhone soon. Leave your email and we’ll send you the
+            invite link the day it’s ready.
+          </p>
+
+          <form class="signup signup-large" data-signup novalidate>
+            <label class="visually-hidden" for="email-cta">Email address</label>
+            <div class="field">
+              <input id="email-cta" name="email" type="email" inputmode="email" autocomplete="email"
+                     placeholder="you@example.com" required>
+              <button class="button" type="submit">Join the Beta</button>
+            </div>
+            <p class="form-note" data-status aria-live="polite">One email when the beta opens. Unsubscribe anytime.</p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section">
+      <div class="wrap narrow">
+        <h2 class="section-title">Questions</h2>
+        <div class="list">
+          <details>
+            <summary>What is TestFlight?</summary>
+            <p>TestFlight is Apple’s free app for trying beta versions of iPhone apps. When the beta opens, we’ll email you a link. Tap it on your iPhone to install TestFlight and NutriFacts.</p>
+          </details>
+          <details>
+            <summary>Which iPhones are supported?</summary>
+            <p>NutriFacts needs iOS 26 or later. Reading labels with Apple Intelligence needs an iPhone that supports it.</p>
+          </details>
+          <details>
+            <summary>Does it cost anything?</summary>
+            <p>The beta is free.</p>
+          </details>
+          <details>
+            <summary>Do I need to read Japanese?</summary>
+            <p>No. That’s the point. NutriFacts is made for people living in or visiting Japan who want to know what’s in their food.</p>
+          </details>
+          <details>
+            <summary>What will you do with my email?</summary>
+            <p>We’ll use it to send you the beta invite and occasional updates about NutriFacts. We won’t share it. Every email has an unsubscribe link.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <span>© <span data-year>2026</span> NutriFacts</span>
+      <span class="muted">Not affiliated with Apple. iPhone and TestFlight are trademarks of Apple Inc.</span>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
