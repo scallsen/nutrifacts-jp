@@ -3,6 +3,9 @@
 <plist version="1.0">
 <dict>
 	<!-- Custom keys only; the rest is generated (GENERATE_INFOPLIST_FILE). Values come from Config/*.xcconfig. -->
+	<!-- Also set inside CFBundleIcons by the asset catalog; App Store validation asks for it here too. -->
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
 	<key>NutriFactsAPIURL</key>
 	<string>$(NUTRIFACTS_API_URL)</string>
 	<key>NutriFactsAppToken</key>
