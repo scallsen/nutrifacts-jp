@@ -96,3 +96,60 @@ struct LabelPhotoView: View {
         return result
     }
 }
+
+/// The ingredients box photo next to what was read from it, to check the reading.
+struct BoxPhotoView: View {
+    let box: ExtractedIngredientsBox
+    let photo: Data
+
+    var body: some View {
+        List {
+            if let image = UIImage(data: photo) {
+                Section {
+                    Image(uiImage: image).resizable().scaledToFit()
+                        .listRowInsets(EdgeInsets())
+                }
+            }
+            Section {
+                line("原材料名", "Ingredients", "")
+                ForEach(Array(box.ingredients.enumerated()), id: \.offset) { _, item in
+                    line(item.japanese, item.english, item.isAdditive ? "Additive" : "")
+                        .padding(.leading, 16)
+                }
+                if !box.allergens.isEmpty {
+                    line(box.allergens.joined(separator: "・"), "Allergens listed", "")
+                }
+                field("名称", "Food type", box.category)
+                if !box.netContentsText.isEmpty { line(box.netContentsText, "Net contents (内容量)", "") }
+                field(box.isUseBy ? "消費期限" : "賞味期限", box.isUseBy ? "Use by" : "Best before", box.date)
+                field("保存方法", "Storage", box.storage)
+                field("原産国名", "Country of origin", box.countryOfOrigin)
+                if !box.maker.isEmpty { line(box.maker, "Made by", "") }
+            } header: {
+                Text("What we read")
+            } footer: {
+                Text("Compare these with the photo. The English is a translation.")
+            }
+        }
+        .navigationTitle("Ingredients Photo")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func line(_ japanese: String, _ english: String, _ value: String) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(japanese)
+                Text(english).font(.footnote).foregroundStyle(.secondary)
+            }
+            Spacer()
+            Text(value).font(.footnote).foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private func field(_ heading: String, _ english: String, _ text: TranslatedText) -> some View {
+        if !text.japanese.isEmpty {
+            line("\(heading)：\(text.japanese)", text.english.isEmpty ? english : "\(english): \(text.english)", "")
+        }
+    }
+}

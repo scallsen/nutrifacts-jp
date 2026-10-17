@@ -9,7 +9,8 @@ struct RootView: View {
         @Bindable var model = model
         Group {
             if let live = model.liveScanner {
-                LiveCameraBackdrop(scanner: live, frozenFrame: model.frozenFrame, phase: model.phase)
+                LiveCameraBackdrop(scanner: live, frozenFrame: model.frozenFrame, phase: model.phase,
+                                   otherLabelColor: model.ingredientsFor != nil ? .orange : model.savedBox != nil ? .green : .yellow)
             } else {
                 CameraBackdrop(target: model.cameraTarget, phase: model.phase, labelFound: model.labelFound)
             }

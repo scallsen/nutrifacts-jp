@@ -30,6 +30,6 @@ The bundle ID is `com.justingarcia.NutrifactsJP` on team `XDWKSAH7W3`, where it'
    - Carbohydrate breakdown
    - About this label
    - Label photo
-4. Scan Again cycles to the next sample label.
+4. New Scan cycles to the next sample label.
 
 Design decisions come from the mock at https://claude.ai/artifact/2QUjq5DayY8kimW7ryX7LC and the docs in `../docs`.
