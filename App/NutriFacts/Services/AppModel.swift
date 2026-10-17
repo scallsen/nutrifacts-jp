@@ -11,6 +11,8 @@ struct Scan: Identifiable, Hashable {
     var readBy: ReadBy? = nil
     /// Where the time went. Nil for the simulated camera.
     var timing: ScanTiming? = nil
+    /// The ingredients box (一括表示), from an optional second scan.
+    var box: ExtractedIngredientsBox? = nil
 }
 
 extension PresentationDetent {
@@ -36,6 +38,8 @@ final class AppModel {
     private(set) var captureCount = 0
     /// Why the last real scan failed, shown on the scanning sheet.
     var readError: String?
+    /// Set while the camera is looking for the ingredients box of this scan, instead of a new label.
+    private(set) var ingredientsFor: Scan.ID?
 
     /// The real camera. Nil in the Simulator, which uses the simulated camera instead.
     let liveScanner: LiveScanner?
@@ -61,6 +65,8 @@ final class AppModel {
     /// Shows the live camera and captures automatically once the panel is steady.
     func startScanning() {
         autoCapture?.cancel()
+        ingredientsFor = nil
+        liveScanner?.lookingFor = .panel
         labelFound = false
         phase = .scanning
         detent = .scanning
@@ -85,9 +91,43 @@ final class AppModel {
         }
     }
 
+    /// Opens the camera for the ingredients box of a scan. The result comes back with the box added.
+    func scanIngredients(for scan: Scan) {
+        autoCapture?.cancel()
+        readError = nil
+        ingredientsFor = scan.id
+        labelFound = false
+        frozenFrame = nil
+        autoCaptureSuppressed = false
+        liveScanner?.lookingFor = .ingredientsBox
+        liveScanner?.isActive = liveScanner?.access == .granted
+        withAnimation(.snappy) {
+            phase = .scanning
+            detent = .scanning
+        }
+    }
+
+    /// Leaves the ingredients scan and goes back to the result without a box.
+    func cancelIngredientsScan() {
+        autoCapture?.cancel()
+        ingredientsFor = nil
+        readError = nil
+        labelFound = false
+        liveScanner?.isActive = false
+        liveScanner?.lookingFor = .panel
+        withAnimation(.snappy) {
+            phase = .result
+            detent = .medium
+        }
+    }
+
     func capture(fromAutoCapture: Bool = false) async {
         if !fromAutoCapture { autoCapture?.cancel() }
         if liveScanner != nil { return await captureLive() }
+        guard ingredientsFor == nil else {
+            readError = "Scanning the ingredients box needs the camera."
+            return
+        }
         guard phase == .scanning else { return }
         captureCount += 1
         guard let panel = try? await scanner.scan(cameraTarget) else { return }
@@ -161,6 +201,16 @@ final class AppModel {
         frozenFrame = UIImage(data: data)
         liveScanner.isActive = false
         labelFound = false
+        if let id = ingredientsFor {
+            if await readIngredients(imageData: data, for: id) {
+                frozenFrame = nil
+            } else {
+                autoCaptureSuppressed = true
+                frozenFrame = nil
+                liveScanner.isActive = true
+            }
+            return
+        }
         switch await read(imageData: data, capture: clock.now - captureStarted) {
         case .success(let scan):
             current = scan
@@ -213,10 +263,48 @@ final class AppModel {
         }
     }
 
+    /// Reads the ingredients box and adds it to the scan, then goes back to its result.
+    /// Returns false when it couldn't be read; the error is in `readError`.
+    private func readIngredients(imageData: Data, for id: Scan.ID) async -> Bool {
+        isReading = true
+        readError = nil
+        defer { isReading = false }
+        do {
+            guard let source = CGImageSourceCreateWithData(imageData as CFData, nil),
+                  let image = Self.uprightImage(from: source) else { throw ImageError.unreadable }
+            let (box, _) = try await ExtractedIngredientsBox.read(image)
+            guard var scan = history.first(where: { $0.id == id }) ?? (current?.id == id ? current : nil) else { return false }
+            scan.box = box
+            if let contents = box.netContents {
+                scan.panel.apply(netContents: contents.amount, unit: contents.unit, count: box.netContentsCount,
+                                 printed: box.netContentsText)
+            }
+            if let i = history.firstIndex(where: { $0.id == id }) { history[i] = scan }
+            current = scan
+            ingredientsFor = nil
+            liveScanner?.lookingFor = .panel
+            withAnimation(.snappy) {
+                phase = .result
+                detent = .medium
+            }
+            return true
+        } catch {
+            ScanTiming.logger.error("ingredients read failed: \(error.localizedDescription, privacy: .public)")
+            readError = error.localizedDescription
+            return false
+        }
+    }
+
     /// Reads an image from the app and shows the result sheet.
     func readAndShow(imageData: Data) async {
         autoCapture?.cancel()
         liveScanner?.isActive = false
+        if let id = ingredientsFor {
+            if await !readIngredients(imageData: imageData, for: id) {
+                liveScanner?.isActive = liveScanner?.access == .granted
+            }
+            return
+        }
         guard case .success(let scan) = await read(imageData: imageData) else {
             liveScanner?.isActive = liveScanner?.access == .granted
             return

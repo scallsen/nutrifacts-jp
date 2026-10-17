@@ -5,6 +5,7 @@ struct ResultView: View {
     @Environment(AppModel.self) private var model
     @AppStorage("referenceSource") private var sourceID = ReferenceSource.japan.id
     @AppStorage("showJapanese") private var showJapanese = false
+    @AppStorage("showsScanTiming") private var showsTiming = false
     @State private var basis: Basis = .asLabelled
     @State private var editingPack = false
     @State private var packText = ""
@@ -27,13 +28,15 @@ struct ResultView: View {
                 }
             }
             ThingsToKnowSection(analysis: a)
-            Section {
-                Picker("Amount", selection: $basis) {
-                    ForEach(a.availableBases) { Text(a.title(for: $0)).tag($0) }
+            if a.availableBases.count > 1 {
+                Section {
+                    Picker("Amount", selection: $basis) {
+                        ForEach(a.availableBases) { Text(a.title(for: $0)).tag($0) }
+                    }
+                    .pickerStyle(.segmented)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets())
                 }
-                .pickerStyle(.segmented)
-                .listRowBackground(Color.clear)
-                .listRowInsets(EdgeInsets())
             }
             if a.knowsBasisAmount {
                 Section {
@@ -49,13 +52,14 @@ struct ResultView: View {
             }
             NutritionSection(analysis: a, showJapanese: showJapanese)
             CarbBreakdownSection(analysis: a)
+            IngredientsSection(scan: model.latest(scan), showJapanese: showJapanese, canScan: showsScanAgain)
             if !a.labelNotes.isEmpty {
                 Section("About this label") {
                     ForEach(a.labelNotes) { NoticeRow(notice: $0) }
                 }
             }
             #if DEBUG
-            if let timing = model.latest(scan).timing {
+            if showsTiming, let timing = model.latest(scan).timing {
                 TimingSection(timing: timing)
             }
             #endif
@@ -73,6 +77,9 @@ struct ResultView: View {
                 }
             }
         }
+        // One even gap between sections, and no padding around the size tabs' row.
+        .listSectionSpacing(.compact)
+        .environment(\.defaultMinListRowHeight, 0)
         .navigationTitle("Nutrition Facts")
         .navigationBarTitleDisplayMode(.inline)
         .safeAreaInset(edge: .bottom) {
@@ -102,6 +109,82 @@ struct ResultView: View {
         guard let amount = Double(packText.replacingOccurrences(of: ",", with: ".")), amount > 0 else { return }
         model.setPackSize(of: scan, amount: amount)
         if analysis.availableBases.contains(.wholePack) { basis = .wholePack }
+    }
+}
+
+// MARK: - Ingredients
+
+/// The ingredients box (一括表示) from a second scan, or a button to scan it.
+private struct IngredientsSection: View {
+    @Environment(AppModel.self) private var model
+    let scan: Scan
+    let showJapanese: Bool
+    let canScan: Bool
+
+    var body: some View {
+        if let box = scan.box {
+            Section("Ingredients") {
+                ForEach(Array(box.ingredients.enumerated()), id: \.offset) { _, item in
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack(alignment: .firstTextBaseline) {
+                            Text(item.english.isEmpty ? item.japanese : item.english)
+                            Spacer()
+                            if item.isAdditive { Text("Additive").font(.footnote).foregroundStyle(.secondary) }
+                        }
+                        if showJapanese { Text(item.japanese).font(.footnote).foregroundStyle(.secondary) }
+                    }
+                }
+            }
+            Section {
+                if !box.allergens.isEmpty {
+                    LabeledContent("Allergens Listed") {
+                        Text(box.allergens.map(Self.allergenName).joined(separator: ", ")).multilineTextAlignment(.trailing)
+                    }
+                }
+                row("Food Type", box.category)
+                if !box.netContentsText.isEmpty {
+                    LabeledContent("Net Contents", value: box.netContentsPrintedElsewhere ? "Printed elsewhere" : box.netContentsText)
+                }
+                row(box.isUseBy ? "Use By" : "Best Before", box.date)
+                row("Storage", box.storage)
+                row("Country of Origin", box.countryOfOrigin)
+                if !box.maker.isEmpty {
+                    LabeledContent("Made By") { Text(box.maker).multilineTextAlignment(.trailing) }
+                }
+            } footer: {
+                Text("Translated by Apple Intelligence. Check the pack if you have an allergy: a pack that names no allergen hasn't promised it's free of one.")
+            }
+        } else if canScan {
+            Section {
+                Button("Scan Ingredients", systemImage: "list.bullet.rectangle") { model.scanIngredients(for: scan) }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func row(_ title: String, _ text: TranslatedText) -> some View {
+        if !text.japanese.isEmpty {
+            LabeledContent(title) {
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text(text.english.isEmpty ? text.japanese : text.english)
+                    if showJapanese && !text.english.isEmpty { Text(text.japanese).font(.footnote) }
+                }
+                .multilineTextAlignment(.trailing)
+            }
+        }
+    }
+
+    /// English names for the 28 allergens Japan lists (8 required, 20 recommended). Unknown words stay as printed.
+    static func allergenName(_ japanese: String) -> String {
+        let names = ["えび": "Shrimp", "かに": "Crab", "くるみ": "Walnut", "小麦": "Wheat", "そば": "Buckwheat",
+                     "卵": "Egg", "乳": "Milk", "乳成分": "Milk", "落花生": "Peanut", "ピーナッツ": "Peanut",
+                     "アーモンド": "Almond", "あわび": "Abalone", "いか": "Squid", "いくら": "Salmon roe",
+                     "オレンジ": "Orange", "カシューナッツ": "Cashew", "キウイフルーツ": "Kiwi", "牛肉": "Beef",
+                     "ごま": "Sesame", "さけ": "Salmon", "さば": "Mackerel", "大豆": "Soy", "鶏肉": "Chicken",
+                     "バナナ": "Banana", "豚肉": "Pork", "まつたけ": "Matsutake", "もも": "Peach",
+                     "やまいも": "Yam", "りんご": "Apple", "ゼラチン": "Gelatin"]
+        let key = japanese.trimmingCharacters(in: .whitespaces)
+        return names[key].map { "\($0) (\(key))" } ?? key
     }
 }
 
@@ -190,22 +273,23 @@ private struct NutrientRow: View {
         let shown = analysis.value(key)
         let level = shown == nil ? nil : analysis.level(key)
         let percent = analysis.percent(key)
-        HStack(alignment: .firstTextBaseline) {
+        let textFont: Font = depth > 0 ? .callout : .body
+        HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(key.english).font(depth > 0 ? .callout : .body)
+                Text(key.english).font(textFont)
                 HStack(spacing: 6) {
                     if showJapanese { Text(key.japanese) }
                     if shown?.isCalculated == true { Text("Calculated") }
                     else if analysis.panel.isEstimate, shown != nil { Text("Estimated") }
                     if let note, shown != nil, level != .zero { Text(note) }
                 }
-                .font(.footnote)
+                .font(textFont)
                 .foregroundStyle(.secondary)
             }
             Spacer(minLength: 12)
             VStack(alignment: .trailing, spacing: 2) {
                 Text(shown?.text ?? "Not listed")
-                    .font(depth > 0 ? .callout : .body)
+                    .font(textFont)
                     .monospacedDigit()
                     .foregroundStyle(shown == nil ? .secondary : .primary)
                 if shown != nil {
@@ -225,7 +309,7 @@ private struct NutrientRow: View {
                             Text("No reference").foregroundStyle(.secondary)
                         }
                     }
-                    .font(.footnote)
+                    .font(textFont)
                     .monospacedDigit()
                 }
             }

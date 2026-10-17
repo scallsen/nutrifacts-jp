@@ -140,6 +140,30 @@ import Testing
         #expect(pack.value(.energy)?.text == "200 kcal")
     }
 
+    @Test func boxNetContentsFillsAMissingPackSize() throws {
+        var l = label([line(.energy, 40, "kcal")], basis: "100ml当たり")
+        l.basisUnit = .ml
+        var panel = try l.toPanel(photo: nil)
+        panel.apply(netContents: 500, unit: .millilitres, count: 0, printed: "500ml")
+        #expect(panel.packAmount == 500)
+        // It never replaces a pack size that's already known, e.g. one the user typed.
+        panel.apply(netContents: 350, unit: .millilitres, count: 0, printed: "350ml")
+        #expect(panel.packAmount == 500)
+    }
+
+    @Test func boxNetContentsInAnotherUnitIsIgnored() throws {
+        var panel = try label([line(.fat, 3)]).toPanel(photo: nil) // per 100 g
+        panel.apply(netContents: 500, unit: .millilitres, count: 0, printed: "500ml")
+        #expect(panel.packAmount == nil)
+    }
+
+    @Test func boxNetContentsIsOnlySuggestedForASizelessBasis() throws {
+        var panel = try label([line(.fat, 3)], basis: "1個当たり", amount: 0).toPanel(photo: nil)
+        panel.apply(netContents: 120, unit: .grams, count: 6, printed: "120g（6個入）")
+        #expect(panel.basisAmount == nil)
+        #expect(panel.basisSuggestion == BasisSuggestion(amount: 20, unit: .grams, reason: "内容量 120g（6個入） ÷ 6"))
+    }
+
     @Test func basisTextLosesHeadingAndOuterBrackets() {
         #expect(ExtractedLabel.cleanBasis("栄養成分表示（1個当たり）") == "1個当たり")
         #expect(ExtractedLabel.cleanBasis("1食分（50g）当たり") == "1食分（50g）当たり")

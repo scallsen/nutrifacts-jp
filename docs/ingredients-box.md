@@ -1,6 +1,6 @@
 # Pack Size and the Ingredients Box (一括表示)
 
-Status: exploration. Only the manual pack size (step 1) is built.
+Status: step 1 (typed pack size) is built. Step 2 is built in the app with Apple Intelligence only: `ExtractedIngredientsBox` holds the schema and prompt. The ai& Worker doesn't have the route yet.
 
 ## The problem
 
@@ -26,7 +26,7 @@ The result screen has a **Pack Size** row under the size tabs. It shows only whe
 - A pack read from the photo shows in the same row, so it can be corrected.
 - Zeros scale the same way as on the other tabs. A printed 0 still shows as "0 g" and "Low", because the label only promises "below the threshold per 100 g/ml".
 
-## Step 2 (proposed): scan the ingredients box
+## Step 2: scan the ingredients box
 
 A second, optional scan from the result: **Scan Ingredients**. It reads the 一括表示 and does two things:
 
