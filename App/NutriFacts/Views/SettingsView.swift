@@ -124,8 +124,18 @@ private struct AIAndSection: View {
                 Label("Not set up in this build", systemImage: "exclamationmark.triangle").foregroundStyle(.orange)
             } else if let server {
                 Picker(selection: $effort) {
-                    Text("Default (\(server.defaultReasoningEffort.map(Self.name) ?? "model's own"))").tag("")
-                    ForEach(server.reasoningEfforts, id: \.self) { Text(Self.name($0)).tag($0) }
+                    // The server's default is listed once, as "Low (Default)", and stored as "" so it
+                    // follows the server if its default changes. Without one, the model decides.
+                    if server.defaultReasoningEffort == nil {
+                        Text("Model Default").tag("")
+                    }
+                    ForEach(server.reasoningEfforts, id: \.self) { level in
+                        if level == server.defaultReasoningEffort {
+                            Text("\(Self.name(level)) (Default)").tag("")
+                        } else {
+                            Text(Self.name(level)).tag(level)
+                        }
+                    }
                 } label: {
                     Label("Reasoning", systemImage: "brain")
                 }
@@ -144,8 +154,9 @@ private struct AIAndSection: View {
             do {
                 let config = try await AIAndReader.serverConfig()
                 server = config
-                // A level saved for a previous model may not exist on this one.
-                if !effort.isEmpty, !config.reasoningEfforts.contains(effort) { effort = "" }
+                // A level saved for a previous model may not exist on this one, and picking the
+                // default's own level is the same as "Default".
+                if !config.reasoningEfforts.contains(effort) || effort == config.defaultReasoningEffort { effort = "" }
             } catch {
                 loadFailed = true
             }
