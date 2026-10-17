@@ -1,6 +1,7 @@
 import CoreGraphics
 import ImageIO
 import SwiftUI
+import Vision
 
 struct Scan: Identifiable, Hashable {
     let id = UUID()
@@ -29,6 +30,8 @@ final class AppModel {
     private(set) var history: [Scan] = []
     /// A real scan in progress (a screenshot or photo).
     private(set) var isReading = false
+    /// Goes up each time a photo is taken, for the shutter flash and haptic.
+    private(set) var captureCount = 0
     /// Why the last real scan failed, shown on the scanning sheet.
     var readError: String?
 
@@ -83,7 +86,9 @@ final class AppModel {
     func capture(fromAutoCapture: Bool = false) async {
         if !fromAutoCapture { autoCapture?.cancel() }
         if liveScanner != nil { return await captureLive() }
-        guard phase == .scanning, let panel = try? await scanner.scan(cameraTarget) else { return }
+        guard phase == .scanning else { return }
+        captureCount += 1
+        guard let panel = try? await scanner.scan(cameraTarget) else { return }
         let scan = Scan(date: .now, panel: panel)
         history.insert(scan, at: 0)
         current = scan
@@ -132,6 +137,7 @@ final class AppModel {
     /// Takes a full-resolution photo, freezes it behind the sheet and reads it.
     private func captureLive() async {
         guard let liveScanner, phase == .scanning, !isReading, frozenFrame == nil else { return }
+        captureCount += 1
         let data: Data
         do { data = try await liveScanner.capturePhoto() } catch CameraEngine.CaptureError.busy {
             return // the shutter and auto-capture fired together; the first one wins
@@ -166,8 +172,11 @@ final class AppModel {
         do {
             guard let source = CGImageSourceCreateWithData(imageData as CFData, nil),
                   let image = Self.uprightImage(from: source) else { throw ImageError.unreadable }
+            // Find the panel while the model reads, so the saved photo is just the label.
+            async let crop = Self.panelCrop(of: image)
             let label = try await LabelReaders.make(backend).read(image)
-            let scan = Scan(date: .now, panel: try label.toPanel(photo: Self.photo(from: source)), backend: backend)
+            let photo = await crop.flatMap { AIAndReader.jpeg($0, quality: 0.8) } ?? Self.photo(from: source)
+            let scan = Scan(date: .now, panel: try label.toPanel(photo: photo), backend: backend)
             history.insert(scan, at: 0)
             return .success(scan)
         } catch {
@@ -204,6 +213,24 @@ final class AppModel {
                                         kCGImageSourceThumbnailMaxPixelSize: 3000,
                                         kCGImageSourceCreateThumbnailWithTransform: true]
         return CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary)
+    }
+
+    /// The nutrition panel cut out of a photo: lines with panel words, plus the text level with them
+    /// (the values), with a margin. Nil when no panel words are found, so the whole photo is kept.
+    private nonisolated static func panelCrop(of image: CGImage) async -> CGImage? {
+        var request = RecognizeTextRequest()
+        request.recognitionLanguages = [Locale.Language(identifier: "ja-JP"), Locale.Language(identifier: "en-US")]
+        request.recognitionLevel = .accurate // the fast recogniser only reads Latin text
+        guard let observations = try? await request.perform(on: image) else { return nil }
+        let size = CGSize(width: image.width, height: image.height)
+        let boxes = observations.map { ($0.topCandidates(1).first?.string ?? "", $0.boundingBox.toImageCoordinates(size, origin: .upperLeft)) }
+        let panelBoxes = boxes.filter { text, _ in CameraEngine.panelWords.contains { text.contains($0) } }.map(\.1)
+        guard var panel = panelBoxes.first else { return nil }
+        for box in panelBoxes.dropFirst() { panel = panel.union(box) }
+        for (_, box) in boxes where box.midY >= panel.minY && box.midY <= panel.maxY { panel = panel.union(box) }
+        let margin = max(panel.width, panel.height) * 0.06
+        let rect = panel.insetBy(dx: -margin, dy: -margin).intersection(CGRect(origin: .zero, size: size)).integral
+        return image.cropping(to: rect)
     }
 
     private static func photo(from source: CGImageSource) -> Data? {

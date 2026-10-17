@@ -18,11 +18,12 @@ struct ShownValue {
 /// High / low levels per 100 g/ml. Fat, saturated fat, sugars and salt use UK front-of-pack bands.
 /// Fibre and protein use EU claim levels and are shown as positive.
 enum Level {
-    case low, medium, high, source, rich
+    /// The label prints "0": under the legal threshold per 100 g/ml, so low but not guaranteed none.
+    case zero, low, medium, high, source, rich
 
     var word: String {
         switch self {
-        case .low: "Low"
+        case .zero, .low: "Low"
         case .medium: "Medium"
         case .high, .rich: "High"
         case .source: "Source"
@@ -31,7 +32,7 @@ enum Level {
 
     var color: Color {
         switch self {
-        case .low: .green
+        case .zero, .low: .green
         case .medium: .orange
         case .high: .red
         case .source, .rich: .teal
@@ -107,9 +108,9 @@ struct PanelAnalysis {
         guard let raw = panel.printed[key], let number = Double(raw) else { return nil }
         if number == 0 {
             // "0" means under a threshold per 100 g/ml; without the basis size it can't be scaled.
-            guard let target = targetAmount else { return ShownValue(amount: 0, text: "0 \(key.unit)", isUpperBound: true) }
-            let limit = key.zeroThreshold * target / 100
-            return ShownValue(amount: limit, text: "< \(NumberFormat.amount(limit, key)) \(key.unit)", isUpperBound: true)
+            // Shown as printed, with the level "Low"; the amount is the upper limit for calculations.
+            let limit = targetAmount.map { key.zeroThreshold * $0 / 100 } ?? 0
+            return ShownValue(amount: limit, text: "0 \(key.unit)", isUpperBound: true)
         }
         if basis == .asLabelled { return ShownValue(amount: number, text: "\(raw) \(key.unit)") }
         guard let target = targetAmount, let basisAmount = panel.basisAmount else { return nil }
@@ -189,6 +190,7 @@ struct PanelAnalysis {
 
     /// The level, but only when every possible value falls in the same band.
     func level(_ key: NutrientKey) -> Level? {
+        if let printed = panel.number(key), printed == 0 { return .zero }
         let b = bounds
         if let limits = (panel.unit.isDrink ? Self.drinkBands : Self.foodBands)[key] {
             guard panel.printed[key] != nil, let range = b[key] else { return nil }
@@ -298,13 +300,6 @@ struct PanelAnalysis {
         var notes: [Notice] = []
         if panel.frontClaim == "カロリーゼロ" {
             notes.append(Notice(symbol: "checkmark", tint: .green, title: "“カロリーゼロ” on the pack", detail: "Regulated: under 5 kcal per 100 ml."))
-        }
-        if panel.printed.values.contains("0") {
-            notes.append(Notice(symbol: "0.circle", tint: .indigo, title: "“0” means very little",
-                                detail: "Under a legal limit, e.g. fat under 0.5 g per 100 \(panel.unit.rawValue)."))
-        }
-        if panel.isEstimate {
-            notes.append(Notice(symbol: "info", tint: .blue, title: "Estimated values", detail: "Marked 推定値: calculated, not lab tested."))
         }
         if energyAddsUp {
             notes.append(Notice(symbol: "checkmark", tint: .green, title: "Numbers add up", detail: "Energy matches protein, fat and carbs."))

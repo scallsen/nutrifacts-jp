@@ -158,8 +158,8 @@ private struct NutrientRow: View {
                 HStack(spacing: 6) {
                     if showJapanese { Text(key.japanese) }
                     if shown?.isCalculated == true { Text("Calculated") }
-                    if shown?.isUpperBound == true { Text("printed as 0") }
-                    else if let note, shown != nil { Text(note) }
+                    else if analysis.panel.isEstimate, shown != nil { Text("Estimated") }
+                    if let note, shown != nil, level != .zero { Text(note) }
                 }
                 .font(.footnote)
                 .foregroundStyle(.secondary)
@@ -175,7 +175,9 @@ private struct NutrientRow: View {
                         if let level {
                             Text(level.word).fontWeight(.semibold).foregroundStyle(level.color)
                         }
-                        if let percent {
+                        if level == .zero {
+                            // "Low" says it all; a % of a "0" line isn't meaningful.
+                        } else if let percent {
                             if level != nil { Text("·").foregroundStyle(.secondary) }
                             Text(percent.text)
                                 .fontWeight(level == nil ? .regular : .semibold)
@@ -229,9 +231,10 @@ private struct CarbBreakdownSection: View {
                 GeometryReader { proxy in
                     HStack(spacing: 2) {
                         ForEach(segments) { segment in
-                            let width = max(4, (proxy.size.width - CGFloat(segments.count - 1) * 2) * segment.grams / max(total, 0.01))
+                            let available = proxy.size.width - CGFloat(segments.count - 1) * 2
+                            let width = total > 0 ? max(4, available * segment.grams / total) : available / CGFloat(segments.count)
                             Group {
-                                if let color = segment.color { Rectangle().fill(color) } else { Hatch() }
+                                if let color = segment.color { Rectangle().fill(color) } else { UnknownFill(cornerRadius: 0) }
                             }
                             .frame(width: width)
                         }
@@ -243,7 +246,7 @@ private struct CarbBreakdownSection: View {
                     ForEach(segments) { segment in
                         HStack(spacing: 8) {
                             Group {
-                                if let color = segment.color { RoundedRectangle(cornerRadius: 3).fill(color) } else { Hatch().clipShape(.rect(cornerRadius: 3)) }
+                                if let color = segment.color { RoundedRectangle(cornerRadius: 3).fill(color) } else { UnknownFill(cornerRadius: 3) }
                             }
                             .frame(width: 11, height: 11)
                             Text(segment.name)
@@ -266,12 +269,13 @@ private struct CarbBreakdownSection: View {
 
     private func segments(total: Double) -> [Segment] {
         let p = analysis.panel
+        if p.number(.carbohydrate) == 0 { return [Segment(name: "Low (printed as 0)", grams: 0, color: .green.opacity(0.35))] }
         switch analysis.carbState {
         case .totalOnly:
-            return [Segment(name: "Not broken down", grams: total)]
+            return [Segment(name: "Unknown carbohydrates", grams: total)]
         case .sugarsOnly:
             let s = p.number(.sugars) ?? 0
-            return [Segment(name: "Sugars", grams: s, color: .pink), Segment(name: "Rest, not broken down", grams: total - s)]
+            return [Segment(name: "Sugars", grams: s, color: .pink), Segment(name: "Unknown carbohydrates", grams: total - s)]
         case .splitNoSugars:
             let net = p.number(.netCarbs) ?? (total - (p.number(.fibre) ?? 0))
             return [Segment(name: "Net carbs", grams: net, color: .orange), Segment(name: "Fibre", grams: total - net, color: .green)]
@@ -285,20 +289,17 @@ private struct CarbBreakdownSection: View {
     }
 }
 
-/// Diagonal hatching for "not broken down".
-private struct Hatch: View {
+/// Grey with a dashed outline: carbohydrate the label doesn't break down.
+private struct UnknownFill: View {
+    let cornerRadius: CGFloat
+
     var body: some View {
-        Canvas { context, size in
-            context.fill(Path(CGRect(origin: .zero, size: size)), with: .color(.secondary.opacity(0.12)))
-            var x: CGFloat = -size.height
-            while x < size.width {
-                var line = Path()
-                line.move(to: CGPoint(x: x, y: size.height))
-                line.addLine(to: CGPoint(x: x + size.height, y: 0))
-                context.stroke(line, with: .color(.secondary.opacity(0.35)), lineWidth: 2)
-                x += 7
+        RoundedRectangle(cornerRadius: cornerRadius)
+            .fill(Color.secondary.opacity(0.15))
+            .overlay {
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .strokeBorder(Color.secondary.opacity(0.6), style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
             }
-        }
     }
 }
 
