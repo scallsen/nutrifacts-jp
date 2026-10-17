@@ -146,6 +146,15 @@ import Testing
         #expect(Backend.defaultBackend == .aiAnd)
     }
 
+    @Test func reasoningLevelComesFromSettings() {
+        let defaults = UserDefaults.standard
+        defer { defaults.removeObject(forKey: AIAndConfig.reasoningEffortKey) }
+        defaults.set("", forKey: AIAndConfig.reasoningEffortKey)
+        #expect(AIAndConfig.current.reasoningEffort == nil) // "Default" lets the Worker decide
+        defaults.set("medium", forKey: AIAndConfig.reasoningEffortKey)
+        #expect(AIAndConfig.current.reasoningEffort == "medium")
+    }
+
     @Test func appPointsAtTheDeployedWorker() {
         // From Config/NutriFacts.xcconfig via Info.plist.
         #expect(AIAndConfig.current.apiURL?.absoluteString == "https://nutrifacts-api.justin-garcia.workers.dev")

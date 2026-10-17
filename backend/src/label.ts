@@ -76,10 +76,11 @@ export const LABEL_SCHEMA = {
 } as const;
 
 /** The chat completion request for AI&'s OpenAI-compatible API. */
-export function completionRequest(model: string, imageBase64: string, mimeType: string) {
+export function completionRequest(model: string, imageBase64: string, mimeType: string, reasoningEffort?: string) {
   return {
     model,
     temperature: 0,
+    ...(reasoningEffort ? { reasoning_effort: reasoningEffort } : {}),
     messages: [
       { role: "system", content: INSTRUCTIONS },
       {

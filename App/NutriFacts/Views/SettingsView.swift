@@ -40,17 +40,7 @@ struct SettingsView: View {
                     PCCStatusSection()
                 }
                 if backend == .aiAnd {
-                    Section {
-                        if AIAndConfig.current.apiURL == nil {
-                            Label("Not set up in this build", systemImage: "exclamationmark.triangle").foregroundStyle(.orange)
-                        } else {
-                            Label("Ready", systemImage: "checkmark.circle").foregroundStyle(.green)
-                        }
-                    } header: {
-                        Text("ai&")
-                    } footer: {
-                        Text("Photos are sent to the NutriFacts server, which reads them with an AI& model in Japan.")
-                    }
+                    AIAndSection()
                 }
                 Section {
                     NavigationLink {
@@ -118,6 +108,55 @@ private struct PCCStatusSection: View {
             case .unavailable:
                 Label("Not ready yet. Unavailable in the Simulator.", systemImage: "hourglass")
             }
+        }
+    }
+}
+
+/// ai& status and the reasoning level, offered from what the server's model supports.
+private struct AIAndSection: View {
+    @AppStorage(AIAndConfig.reasoningEffortKey) private var effort = ""
+    @State private var server: AIAndReader.ServerConfig?
+    @State private var loadFailed = false
+
+    var body: some View {
+        Section {
+            if AIAndConfig.current.apiURL == nil {
+                Label("Not set up in this build", systemImage: "exclamationmark.triangle").foregroundStyle(.orange)
+            } else if let server {
+                Picker(selection: $effort) {
+                    Text("Default (\(server.defaultReasoningEffort.map(Self.name) ?? "model's own"))").tag("")
+                    ForEach(server.reasoningEfforts, id: \.self) { Text(Self.name($0)).tag($0) }
+                } label: {
+                    Label("Reasoning", systemImage: "brain")
+                }
+            } else if loadFailed {
+                Label("Couldn't reach the server", systemImage: "wifi.exclamationmark").foregroundStyle(.secondary)
+            } else {
+                Label { Text("Loading…") } icon: { ProgressView() }
+            }
+        } header: {
+            Text("ai&")
+        } footer: {
+            Text("Photos are sent to the NutriFacts server, which reads them with an AI& model in Japan. More reasoning can help with hard-to-read labels, but it's slower and costs more.")
+        }
+        .task {
+            guard server == nil, AIAndConfig.current.apiURL != nil else { return }
+            do {
+                let config = try await AIAndReader.serverConfig()
+                server = config
+                // A level saved for a previous model may not exist on this one.
+                if !effort.isEmpty, !config.reasoningEfforts.contains(effort) { effort = "" }
+            } catch {
+                loadFailed = true
+            }
+        }
+    }
+
+    static func name(_ level: String) -> String {
+        switch level {
+        case "none": "Off"
+        case "xhigh": "Extra high"
+        default: level.capitalized
         }
     }
 }

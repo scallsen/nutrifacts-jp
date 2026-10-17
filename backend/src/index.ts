@@ -7,6 +7,8 @@ import { completionRequest, parseCompletion } from "./label.ts";
 export interface Env {
   AIAND_API_KEY: string;
   AIAND_MODEL: string;
+  /** Reasoning level when the app doesn't ask for one. Ignored if the model doesn't offer it. */
+  AIAND_REASONING_EFFORT?: string;
   /** Optional. When set, requests need a matching X-App-Token header. */
   APP_TOKEN?: string;
   READ_LIMITER: RateLimit;
@@ -21,19 +23,25 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     if (url.pathname === "/health") return json({ ok: true });
-    if (url.pathname !== "/v1/nutrition-label/read") return error(404, "Not found.");
-    if (request.method !== "POST") return error(405, "Use POST.");
+    if (url.pathname !== "/v1/nutrition-label/read" && url.pathname !== "/v1/config") return error(404, "Not found.");
 
     if (env.APP_TOKEN && request.headers.get("X-App-Token") !== env.APP_TOKEN) {
       return error(401, "Missing or wrong app token.");
     }
+    if (!env.AIAND_API_KEY || !env.AIAND_MODEL) return error(500, "The server isn't configured yet.");
+
+    // What the app's Settings can offer: the reasoning levels this model supports.
+    if (url.pathname === "/v1/config") {
+      if (request.method !== "GET") return error(405, "Use GET.");
+      const efforts = await reasoningEfforts(env);
+      return json({ model: env.AIAND_MODEL, reasoningEfforts: efforts, defaultReasoningEffort: pickEffort(env, efforts) ?? null });
+    }
+    if (request.method !== "POST") return error(405, "Use POST.");
     const client = request.headers.get("CF-Connecting-IP") ?? "unknown";
     const { success } = await env.READ_LIMITER.limit({ key: client });
     if (!success) return error(429, "Too many label reads. Wait a minute and try again.");
 
-    if (!env.AIAND_API_KEY || !env.AIAND_MODEL) return error(500, "The server isn't configured yet.");
-
-    let body: { image?: unknown; mimeType?: unknown };
+    let body: { image?: unknown; mimeType?: unknown; reasoningEffort?: unknown };
     try {
       body = await request.json();
     } catch {
@@ -45,15 +53,20 @@ export default {
     if (!MIME_TYPES.has(mimeType)) return error(400, "Send a JPEG, PNG or WebP image.");
     if ((image.length * 3) / 4 > MAX_IMAGE_BYTES) return error(413, "The image is too large.");
 
-    const upstream = await fetch(`${env.AIAND_BASE_URL ?? "https://api.aiand.com/v1"}/chat/completions`, {
+    const effort = pickEffort(env, await reasoningEfforts(env), body.reasoningEffort);
+    const upstream = await fetch(`${base(env)}/chat/completions`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${env.AIAND_API_KEY}` },
-      body: JSON.stringify(completionRequest(env.AIAND_MODEL, image, mimeType)),
+      body: JSON.stringify(completionRequest(env.AIAND_MODEL, image, mimeType, effort)),
     });
     if (!upstream.ok) return upstreamError(upstream);
 
     try {
-      return json(parseCompletion(await upstream.json()));
+      const res = json(parseCompletion(await upstream.json()));
+      // The level AI& actually applied, for checking it took effect.
+      const applied = upstream.headers.get("X-Reasoning-Effort") ?? effort;
+      if (applied) res.headers.set("X-Reasoning-Effort", applied);
+      return res;
     } catch {
       return error(502, "The model's answer couldn't be read. Try again.");
     }
@@ -78,6 +91,36 @@ async function upstreamError(upstream: Response): Promise<Response> {
     default:
       return error(502, `AI& returned HTTP ${upstream.status}. Try again.`);
   }
+}
+
+function base(env: Env): string {
+  return env.AIAND_BASE_URL ?? "https://api.aiand.com/v1";
+}
+
+// The model's reasoning levels, from AI&'s model list. Cached per Worker instance for an hour.
+let effortsCache: { model: string; efforts: string[]; at: number } | undefined;
+
+export async function reasoningEfforts(env: Env): Promise<string[]> {
+  if (effortsCache && effortsCache.model === env.AIAND_MODEL && Date.now() - effortsCache.at < 3_600_000) {
+    return effortsCache.efforts;
+  }
+  const res = await fetch(`${base(env)}/models`, { headers: { Authorization: `Bearer ${env.AIAND_API_KEY}` } });
+  if (!res.ok) return [];
+  const list = (await res.json()) as { data?: { id: string; reasoning_efforts?: string[] }[] };
+  const efforts = list.data?.find((m) => m.id === env.AIAND_MODEL)?.reasoning_efforts ?? [];
+  effortsCache = { model: env.AIAND_MODEL, efforts, at: Date.now() };
+  return efforts;
+}
+
+export function resetEffortsCache() {
+  effortsCache = undefined;
+}
+
+/** The app's choice if the model offers it, else the configured default if the model offers that, else none sent. */
+export function pickEffort(env: Env, efforts: string[], requested?: unknown): string | undefined {
+  if (typeof requested === "string" && efforts.includes(requested)) return requested;
+  if (env.AIAND_REASONING_EFFORT && efforts.includes(env.AIAND_REASONING_EFFORT)) return env.AIAND_REASONING_EFFORT;
+  return undefined;
 }
 
 function json(value: unknown, status = 200): Response {

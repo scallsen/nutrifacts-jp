@@ -7,7 +7,10 @@
   "vars": {
     // A vision-capable model from your AI& account. List them with the command in README.md,
     // or compare them on real photos with `npm run compare -- photo.jpg`.
-    "AIAND_MODEL": "qwen/qwen3.8-27b"
+    "AIAND_MODEL": "qwen/qwen3.8-27b",
+    // Reasoning level when the app doesn't pick one. Must be in the model's reasoning_efforts
+    // (qwen3.8-27b: none, low, medium, xhigh). Its own default is xhigh, which is slow and costly.
+    "AIAND_REASONING_EFFORT": "low"
   },
   // Secrets (not in this file): AIAND_API_KEY, and optionally APP_TOKEN.
   // Set them with `npx wrangler secret put <NAME>`.

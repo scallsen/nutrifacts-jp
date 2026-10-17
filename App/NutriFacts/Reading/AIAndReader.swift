@@ -9,14 +9,20 @@ nonisolated struct AIAndConfig: Sendable {
     var apiURL: URL?
     /// Optional shared token the Worker can require (X-App-Token). From the git-ignored Secrets.xcconfig.
     var appToken: String?
+    /// Reasoning level picked in Settings. Nil uses the Worker's default (AIAND_REASONING_EFFORT).
+    var reasoningEffort: String?
+
+    static let reasoningEffortKey = "aiAndReasoningEffort"
 
     static var current: AIAndConfig {
         let info = Bundle.main.infoDictionary ?? [:]
         let url = (info["NutriFactsAPIURL"] as? String).flatMap(URL.init(string:))
         let token = info["NutriFactsAppToken"] as? String
         // The placeholder URL in the committed xcconfig means "not set up in this build".
+        let effort = UserDefaults.standard.string(forKey: reasoningEffortKey)
         return AIAndConfig(apiURL: url?.absoluteString.localizedCaseInsensitiveContains("YOUR-SUBDOMAIN") == true ? nil : url,
-                           appToken: token?.isEmpty == false ? token : nil)
+                           appToken: token?.isEmpty == false ? token : nil,
+                           reasoningEffort: effort?.isEmpty == false ? effort : nil)
     }
 }
 
@@ -29,6 +35,14 @@ nonisolated struct AIAndReader: LabelReader {
     private struct Body: Encodable {
         var image: String
         var mimeType = "image/jpeg"
+        var reasoningEffort: String?
+    }
+
+    /// What the Worker's model offers, for the Reasoning picker in Settings.
+    struct ServerConfig: Decodable, Sendable {
+        var model: String
+        var reasoningEfforts: [String]
+        var defaultReasoningEffort: String?
     }
 
     private struct ErrorBody: Decodable {
@@ -44,7 +58,7 @@ nonisolated struct AIAndReader: LabelReader {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         if let token = config.appToken { request.setValue(token, forHTTPHeaderField: "X-App-Token") }
         let jpeg = Self.jpeg(Self.downscaled(image, maxSide: 2048))
-        request.httpBody = try JSONEncoder().encode(Body(image: jpeg.base64EncodedString()))
+        request.httpBody = try JSONEncoder().encode(Body(image: jpeg.base64EncodedString(), reasoningEffort: config.reasoningEffort))
 
         let (data, response) = try await session.data(for: request)
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
@@ -53,6 +67,15 @@ nonisolated struct AIAndReader: LabelReader {
             throw LabelReaderError.aiAnd(message ?? "The ai& server returned HTTP \(status).")
         }
         return try JSONDecoder().decode(ExtractedLabel.self, from: data)
+    }
+
+    static func serverConfig(_ config: AIAndConfig = .current, session: URLSession = .shared) async throws -> ServerConfig {
+        guard let apiURL = config.apiURL else { throw LabelReaderError.backendNotConfigured }
+        var request = URLRequest(url: apiURL.appending(path: "v1/config"))
+        request.timeoutInterval = 15
+        if let token = config.appToken { request.setValue(token, forHTTPHeaderField: "X-App-Token") }
+        let (data, _) = try await session.data(for: request)
+        return try JSONDecoder().decode(ServerConfig.self, from: data)
     }
 
     // MARK: Image
