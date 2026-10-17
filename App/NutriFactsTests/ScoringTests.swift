@@ -127,6 +127,19 @@ import Testing
         #expect(PanelAnalysis(panel: panel, basis: .per100, source: .japan).healthScore() != nil)
     }
 
+    @Test @MainActor func typedPackSizeAddsTheWholePack() throws {
+        // A drink labelled per 100 ml whose 500 ml 内容量 isn't in the photo.
+        var l = label([line(.energy, 40, "kcal"), line(.sugars, 10)], basis: "100ml当たり")
+        l.basisUnit = .ml
+        var panel = try l.toPanel(photo: nil)
+        #expect(!PanelAnalysis(panel: panel, basis: .asLabelled, source: .japan).availableBases.contains(.wholePack))
+        panel.setPack(amount: 500)
+        let pack = PanelAnalysis(panel: panel, basis: .wholePack, source: .japan)
+        #expect(pack.availableBases.contains(.wholePack))
+        #expect(pack.title(for: .wholePack) == "Pack · 500 ml")
+        #expect(pack.value(.energy)?.text == "200 kcal")
+    }
+
     @Test func basisTextLosesHeadingAndOuterBrackets() {
         #expect(ExtractedLabel.cleanBasis("栄養成分表示（1個当たり）") == "1個当たり")
         #expect(ExtractedLabel.cleanBasis("1食分（50g）当たり") == "1食分（50g）当たり")

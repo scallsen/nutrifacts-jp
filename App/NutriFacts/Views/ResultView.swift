@@ -6,6 +6,8 @@ struct ResultView: View {
     @AppStorage("referenceSource") private var sourceID = ReferenceSource.japan.id
     @AppStorage("showJapanese") private var showJapanese = false
     @State private var basis: Basis = .asLabelled
+    @State private var editingPack = false
+    @State private var packText = ""
 
     let scan: Scan
     var showsScanAgain = true
@@ -32,6 +34,18 @@ struct ResultView: View {
                 .pickerStyle(.segmented)
                 .listRowBackground(Color.clear)
                 .listRowInsets(EdgeInsets())
+            }
+            if a.knowsBasisAmount {
+                Section {
+                    Button {
+                        packText = a.panel.packAmount.map { NumberFormat.amount($0, .protein) } ?? ""
+                        editingPack = true
+                    } label: {
+                        LabeledContent("Pack Size",
+                                       value: a.panel.packAmount.map { "\(NumberFormat.amount($0, .protein)) \(a.panel.unit.rawValue)" } ?? "Add")
+                    }
+                    .tint(.primary)
+                }
             }
             NutritionSection(analysis: a, showJapanese: showJapanese)
             CarbBreakdownSection(analysis: a)
@@ -75,6 +89,19 @@ struct ResultView: View {
             }
         }
         .onChange(of: scan) { basis = .asLabelled }
+        .alert("Pack Size", isPresented: $editingPack) {
+            TextField("Size in \(analysis.panel.unit.rawValue)", text: $packText).keyboardType(.decimalPad)
+            Button("Cancel", role: .cancel) {}
+            Button("Done") { setPack() }
+        } message: {
+            Text("The whole pack, printed as 内容量 (net contents), e.g. 500 \(analysis.panel.unit.rawValue).")
+        }
+    }
+
+    private func setPack() {
+        guard let amount = Double(packText.replacingOccurrences(of: ",", with: ".")), amount > 0 else { return }
+        model.setPackSize(of: scan, amount: amount)
+        if analysis.availableBases.contains(.wholePack) { basis = .wholePack }
     }
 }
 
@@ -230,7 +257,8 @@ private struct CarbBreakdownSection: View {
         let id = UUID()
         var name: String
         var grams: Double
-        var color: Color?
+        /// Grey for carbohydrate the label doesn't break down.
+        var color: Color = Color(.systemGray3)
     }
 
     var body: some View {
@@ -244,10 +272,8 @@ private struct CarbBreakdownSection: View {
                         ForEach(segments) { segment in
                             let available = proxy.size.width - CGFloat(segments.count - 1) * 2
                             let width = total > 0 ? max(4, available * segment.grams / total) : available / CGFloat(segments.count)
-                            Group {
-                                if let color = segment.color { Rectangle().fill(color) } else { UnknownFill(cornerRadius: 0) }
-                            }
-                            .frame(width: width)
+                            Rectangle().fill(segment.color)
+                                .frame(width: width)
                         }
                     }
                     .clipShape(.rect(cornerRadius: 8))
@@ -256,10 +282,8 @@ private struct CarbBreakdownSection: View {
                 VStack(alignment: .leading, spacing: 5) {
                     ForEach(segments) { segment in
                         HStack(spacing: 8) {
-                            Group {
-                                if let color = segment.color { RoundedRectangle(cornerRadius: 3).fill(color) } else { UnknownFill(cornerRadius: 3) }
-                            }
-                            .frame(width: 11, height: 11)
+                            RoundedRectangle(cornerRadius: 3).fill(segment.color)
+                                .frame(width: 11, height: 11)
                             Text(segment.name)
                             Spacer()
                             Text(String(format: "%.1f g", segment.grams)).foregroundStyle(.secondary).monospacedDigit()
@@ -297,20 +321,6 @@ private struct CarbBreakdownSection: View {
                     Segment(name: sweetened ? "Starch and sugar alcohols" : "Starch and other carbs", grams: net - s, color: .orange),
                     Segment(name: "Fibre", grams: f, color: .green)]
         }
-    }
-}
-
-/// Grey with a dashed outline: carbohydrate the label doesn't break down.
-private struct UnknownFill: View {
-    let cornerRadius: CGFloat
-
-    var body: some View {
-        RoundedRectangle(cornerRadius: cornerRadius)
-            .fill(Color.secondary.opacity(0.15))
-            .overlay {
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .strokeBorder(Color.secondary.opacity(0.6), style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
-            }
     }
 }
 
