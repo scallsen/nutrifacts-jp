@@ -33,15 +33,27 @@ struct ScanningView: View {
                 }
             }
             HStack(spacing: 8) {
+                let sight = model.liveScanner?.sight ?? .nothing
                 if model.isReading {
                     ProgressView()
                     Text(forIngredients ? "Reading the ingredients…" : "Reading the label…")
+                } else if model.labelFound {
+                    Circle().fill(.yellow).frame(width: 12, height: 12)
+                    Text(sight == .otherLabel ? "Found the ingredients. Hold still…" : "Found it. Hold still…")
+                } else if sight == .otherLabel, !forIngredients, model.savedBox != nil {
+                    Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
+                    Text("Ingredients saved. Now find the table titled 栄養成分表示.").lineLimit(3)
+                } else if sight == .otherLabel {
+                    Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                    Text(forIngredients ? "That's the nutrition label. Look for the box with 原材料名 (ingredients)."
+                                        : "That's the ingredients box. Look for the table titled 栄養成分表示.")
+                        .lineLimit(3)
                 } else if let error = model.readError {
                     Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
                     Text(error).lineLimit(3)
-                } else if model.labelFound {
-                    Circle().fill(.yellow).frame(width: 12, height: 12)
-                    Text("Found it. Hold still…")
+                } else if model.savedBox != nil {
+                    Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
+                    Text("Ingredients saved. Now scan the nutrition label.")
                 } else {
                     ProgressView()
                     Text(forIngredients ? "Looking for the ingredients…" : "Looking for the label…")

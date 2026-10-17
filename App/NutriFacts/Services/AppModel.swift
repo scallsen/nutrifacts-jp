@@ -13,6 +13,8 @@ struct Scan: Identifiable, Hashable {
     var timing: ScanTiming? = nil
     /// The ingredients box (一括表示), from an optional second scan.
     var box: ExtractedIngredientsBox? = nil
+    /// The photo the box was read from.
+    var boxPhoto: Data? = nil
 }
 
 extension PresentationDetent {
@@ -40,6 +42,13 @@ final class AppModel {
     var readError: String?
     /// Set while the camera is looking for the ingredients box of this scan, instead of a new label.
     private(set) var ingredientsFor: Scan.ID?
+    /// A photo of the ingredients box taken while looking for the nutrition panel. It's read alongside
+    /// the panel, so the box doesn't need a second scan. `reading` starts with the panel's read.
+    private(set) var savedBox: (photo: Data, reading: Task<(box: ExtractedIngredientsBox, photo: Data)?, Never>?)?
+    /// The scan whose saved box is being read, for the result's "Reading the ingredients…" row.
+    private(set) var readingBoxFor: Scan.ID?
+    /// Set when an ingredients scan finishes, so the result scrolls to the box. The result clears it.
+    var scrollToIngredients: Scan.ID?
 
     /// The real camera. Nil in the Simulator, which uses the simulated camera instead.
     let liveScanner: LiveScanner?
@@ -57,7 +66,7 @@ final class AppModel {
         self.scanner = scanner
         cameraTarget = SampleLabels.all[0]
         liveScanner = LiveScanner.isSupported ? LiveScanner() : nil
-        liveScanner?.onPanelChange = { [weak self] found in self?.panelChanged(found: found) }
+        liveScanner?.onSightChange = { [weak self] sight in self?.sightChanged(sight) }
     }
 
     var availableDetents: Set<PresentationDetent> { phase == .result ? [.medium, .large] : [.scanning] }
@@ -66,6 +75,7 @@ final class AppModel {
     func startScanning() {
         autoCapture?.cancel()
         ingredientsFor = nil
+        savedBox = nil
         liveScanner?.lookingFor = .panel
         labelFound = false
         phase = .scanning
@@ -165,9 +175,11 @@ final class AppModel {
     // MARK: Live camera
 
     /// Starts the hold-still countdown when a panel comes into view, and cancels it when it leaves.
-    private func panelChanged(found: Bool) {
+    /// While looking for the panel, an ingredients box in view is captured too, once, and saved for later.
+    private func sightChanged(_ sight: LiveScanner.Sight) {
         guard phase == .scanning, frozenFrame == nil else { return }
         autoCapture?.cancel()
+        let found = sight == .label || (sight == .otherLabel && canSaveBox && savedBox == nil)
         withAnimation { labelFound = found }
         guard found else {
             autoCaptureSuppressed = false
@@ -184,6 +196,9 @@ final class AppModel {
         }
     }
 
+    /// Only the nutrition scan saves a box for later; the ingredients scan reads it straight away.
+    private var canSaveBox: Bool { ingredientsFor == nil }
+
     /// Takes a full-resolution photo, freezes it behind the sheet and reads it.
     private func captureLive() async {
         guard let liveScanner, phase == .scanning, !isReading, frozenFrame == nil else { return }
@@ -198,6 +213,14 @@ final class AppModel {
             return
         }
         autoCapture?.cancel()
+        // Only the ingredients box in view, while looking for the panel: keep it and look on.
+        if canSaveBox, liveScanner.sight == .otherLabel {
+            savedBox = (data, nil)
+            readError = nil
+            autoCaptureSuppressed = true
+            withAnimation { labelFound = false }
+            return
+        }
         frozenFrame = UIImage(data: data)
         liveScanner.isActive = false
         labelFound = false
@@ -211,9 +234,11 @@ final class AppModel {
             }
             return
         }
+        let boxReading = startSavedBoxRead()
         switch await read(imageData: data, capture: clock.now - captureStarted) {
         case .success(let scan):
             current = scan
+            attachSavedBox(boxReading, to: scan.id)
             withAnimation(.snappy) {
                 phase = .result
                 detent = .medium
@@ -244,7 +269,7 @@ final class AppModel {
                   let image = Self.uprightImage(from: source) else { throw ImageError.unreadable }
             let prepared = clock.now
             // Find the panel while the model reads, so the saved photo is just the label.
-            async let crop = Self.panelCrop(of: image)
+            async let crop = Self.labelCrop(of: image)
             let reading = try await LabelReaders.make(backend).read(image)
             let readDone = clock.now
             let photo = await crop.flatMap { AIAndReader.jpeg($0, quality: 0.8) } ?? Self.photo(from: source)
@@ -270,19 +295,11 @@ final class AppModel {
         readError = nil
         defer { isReading = false }
         do {
-            guard let source = CGImageSourceCreateWithData(imageData as CFData, nil),
-                  let image = Self.uprightImage(from: source) else { throw ImageError.unreadable }
-            let (box, _) = try await ExtractedIngredientsBox.read(image)
-            guard var scan = history.first(where: { $0.id == id }) ?? (current?.id == id ? current : nil) else { return false }
-            scan.box = box
-            if let contents = box.netContents {
-                scan.panel.apply(netContents: contents.amount, unit: contents.unit, count: box.netContentsCount,
-                                 printed: box.netContentsText)
-            }
-            if let i = history.firstIndex(where: { $0.id == id }) { history[i] = scan }
-            current = scan
+            let (box, photo) = try await Self.readBox(imageData: imageData)
+            add(box, photo: photo, to: id)
             ingredientsFor = nil
             liveScanner?.lookingFor = .panel
+            scrollToIngredients = id
             withAnimation(.snappy) {
                 phase = .result
                 detent = .medium
@@ -292,6 +309,55 @@ final class AppModel {
             ScanTiming.logger.error("ingredients read failed: \(error.localizedDescription, privacy: .public)")
             readError = error.localizedDescription
             return false
+        }
+    }
+
+    /// Reads a photo of the ingredients box, and makes the smaller copy the scan keeps.
+    private static func readBox(imageData: Data) async throws -> (box: ExtractedIngredientsBox, photo: Data) {
+        guard let source = CGImageSourceCreateWithData(imageData as CFData, nil),
+              let image = uprightImage(from: source) else { throw ImageError.unreadable }
+        // Find the box while the model reads, so the saved photo is just the box, like the panel's.
+        async let crop = labelCrop(of: image, words: CameraEngine.boxWords)
+        let (box, _) = try await ExtractedIngredientsBox.read(image)
+        return (box, await crop.flatMap { AIAndReader.jpeg($0, quality: 0.8) } ?? photo(from: source) ?? imageData)
+    }
+
+    /// Adds a box to a scan, and fills its pack size from 内容量.
+    private func add(_ box: ExtractedIngredientsBox, photo: Data, to id: Scan.ID) {
+        guard var scan = history.first(where: { $0.id == id }) ?? (current?.id == id ? current : nil) else { return }
+        scan.box = box
+        scan.boxPhoto = photo
+        if let contents = box.netContents {
+            scan.panel.apply(netContents: contents.amount, unit: contents.unit, count: box.netContentsCount,
+                             printed: box.netContentsText)
+        }
+        if let i = history.firstIndex(where: { $0.id == id }) { history[i] = scan }
+        if current?.id == id { current = scan }
+    }
+
+    /// Starts reading the saved ingredients box, if there is one, alongside the panel's read.
+    /// A read that already ran (the panel failed last time) is reused.
+    private func startSavedBoxRead() -> Task<(box: ExtractedIngredientsBox, photo: Data)?, Never>? {
+        guard let saved = savedBox else { return nil }
+        if let reading = saved.reading { return reading }
+        let reading = Task { () -> (box: ExtractedIngredientsBox, photo: Data)? in
+            do { return try await Self.readBox(imageData: saved.photo) } catch {
+                ScanTiming.logger.error("saved ingredients read failed: \(error.localizedDescription, privacy: .public)")
+                return nil
+            }
+        }
+        savedBox = (saved.photo, reading)
+        return reading
+    }
+
+    /// Adds the saved box to the panel's scan once its read finishes. The result shows it reading meanwhile.
+    private func attachSavedBox(_ reading: Task<(box: ExtractedIngredientsBox, photo: Data)?, Never>?, to id: Scan.ID) {
+        guard let reading else { return }
+        savedBox = nil
+        readingBoxFor = id
+        Task {
+            if let (box, photo) = await reading.value { add(box, photo: photo, to: id) }
+            if readingBoxFor == id { readingBoxFor = nil }
         }
     }
 
@@ -305,11 +371,13 @@ final class AppModel {
             }
             return
         }
+        let boxReading = startSavedBoxRead()
         guard case .success(let scan) = await read(imageData: imageData) else {
             liveScanner?.isActive = liveScanner?.access == .granted
             return
         }
         current = scan
+        attachSavedBox(boxReading, to: scan.id)
         withAnimation(.snappy) {
             labelFound = false
             phase = .result
@@ -331,16 +399,17 @@ final class AppModel {
         return CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary)
     }
 
-    /// The nutrition panel cut out of a photo: lines with panel words, plus the text level with them
-    /// (the values), with a margin. Nil when no panel words are found, so the whole photo is kept.
-    private nonisolated static func panelCrop(of image: CGImage) async -> CGImage? {
+    /// The label cut out of a photo: lines with the label's words (the nutrition panel's, or the ingredients
+    /// box's headings), plus the text level with them (the values), with a margin. Nil when none of the
+    /// words are found, so the whole photo is kept.
+    private nonisolated static func labelCrop(of image: CGImage, words: [String] = CameraEngine.panelWords) async -> CGImage? {
         var request = RecognizeTextRequest()
         request.recognitionLanguages = [Locale.Language(identifier: "ja-JP"), Locale.Language(identifier: "en-US")]
         request.recognitionLevel = .accurate // the fast recogniser only reads Latin text
         guard let observations = try? await request.perform(on: image) else { return nil }
         let size = CGSize(width: image.width, height: image.height)
         let boxes = observations.map { ($0.topCandidates(1).first?.string ?? "", $0.boundingBox.toImageCoordinates(size, origin: .upperLeft)) }
-        let panelBoxes = boxes.filter { text, _ in CameraEngine.panelWords.contains { text.contains($0) } }.map(\.1)
+        let panelBoxes = boxes.filter { text, _ in words.contains { text.contains($0) } }.map(\.1)
         guard var panel = panelBoxes.first else { return nil }
         for box in panelBoxes.dropFirst() { panel = panel.union(box) }
         for (_, box) in boxes where box.midY >= panel.minY && box.midY <= panel.maxY { panel = panel.union(box) }

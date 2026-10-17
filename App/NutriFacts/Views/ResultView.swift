@@ -19,77 +19,106 @@ struct ResultView: View {
 
     var body: some View {
         let a = analysis
-        List {
-            if !a.knowsBasisAmount { BasisSizeSection(panel: a.panel, scan: model.latest(scan)) }
-            if model.latest(scan).readBy == .onDevice {
-                Section {
-                    NoticeRow(notice: Notice(symbol: "iphone", tint: .orange, title: "Read on this iPhone",
-                                             detail: "Private Cloud Compute wasn't available, so the smaller on-device model read this label. Check the numbers against the photo."))
-                }
-            }
-            ThingsToKnowSection(analysis: a)
-            if a.availableBases.count > 1 {
-                Section {
-                    Picker("Amount", selection: $basis) {
-                        ForEach(a.availableBases) { Text(a.title(for: $0)).tag($0) }
+        ScrollViewReader { proxy in
+            List {
+                if !a.knowsBasisAmount { BasisSizeSection(panel: a.panel, scan: model.latest(scan)) }
+                if model.latest(scan).readBy == .onDevice {
+                    Section {
+                        NoticeRow(notice: Notice(symbol: "iphone", tint: .orange, title: "Read on this iPhone",
+                                                 detail: "Private Cloud Compute wasn't available, so the smaller on-device model read this label. Check the numbers against the photo."))
                     }
-                    .pickerStyle(.segmented)
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(EdgeInsets())
                 }
-            }
-            if a.knowsBasisAmount {
+                ThingsToKnowSection(analysis: a)
+                if a.availableBases.count > 1 {
+                    Section {
+                        Picker("Amount", selection: $basis) {
+                            ForEach(a.availableBases) { Text(a.title(for: $0)).tag($0) }
+                        }
+                        .pickerStyle(.segmented)
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets())
+                    }
+                }
+                if a.knowsBasisAmount {
+                    Section {
+                        Button {
+                            packText = a.panel.packAmount.map { NumberFormat.amount($0, .protein) } ?? ""
+                            editingPack = true
+                        } label: {
+                            LabeledContent("Pack Size",
+                                           value: a.panel.packAmount.map { "\(NumberFormat.amount($0, .protein)) \(a.panel.unit.rawValue)" } ?? "Add")
+                        }
+                        .tint(.primary)
+                    }
+                }
+                NutritionSection(analysis: a, showJapanese: showJapanese)
+                CarbBreakdownSection(analysis: a)
+                IngredientsSection(scan: model.latest(scan), showJapanese: showJapanese)
+                if !a.labelNotes.isEmpty {
+                    Section("About this label") {
+                        ForEach(a.labelNotes) { NoticeRow(notice: $0) }
+                    }
+                }
+                #if DEBUG
+                if showsTiming, let timing = model.latest(scan).timing {
+                    TimingSection(timing: timing)
+                }
+                #endif
                 Section {
-                    Button {
-                        packText = a.panel.packAmount.map { NumberFormat.amount($0, .protein) } ?? ""
-                        editingPack = true
+                    NavigationLink {
+                        LabelPhotoView(panel: scan.panel)
                     } label: {
-                        LabeledContent("Pack Size",
-                                       value: a.panel.packAmount.map { "\(NumberFormat.amount($0, .protein)) \(a.panel.unit.rawValue)" } ?? "Add")
+                        HStack(spacing: 12) {
+                            LabelThumbnail(panel: scan.panel)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("View Label Photo")
+                                Text("Compare with what we read").font(.footnote).foregroundStyle(.secondary)
+                            }
+                        }
                     }
-                    .tint(.primary)
-                }
-            }
-            NutritionSection(analysis: a, showJapanese: showJapanese)
-            CarbBreakdownSection(analysis: a)
-            IngredientsSection(scan: model.latest(scan), showJapanese: showJapanese, canScan: showsScanAgain)
-            if !a.labelNotes.isEmpty {
-                Section("About this label") {
-                    ForEach(a.labelNotes) { NoticeRow(notice: $0) }
-                }
-            }
-            #if DEBUG
-            if showsTiming, let timing = model.latest(scan).timing {
-                TimingSection(timing: timing)
-            }
-            #endif
-            Section {
-                NavigationLink {
-                    LabelPhotoView(panel: scan.panel)
-                } label: {
-                    HStack(spacing: 12) {
-                        LabelThumbnail(panel: scan.panel)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("View Label Photo")
-                            Text("Compare with what we read").font(.footnote).foregroundStyle(.secondary)
+                    let latest = model.latest(scan)
+                    if let box = latest.box, let photo = latest.boxPhoto {
+                        NavigationLink {
+                            BoxPhotoView(box: box, photo: photo)
+                        } label: {
+                            HStack(spacing: 12) {
+                                PhotoThumbnail(data: photo)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("View Ingredients Photo")
+                                    Text("Compare with what we read").font(.footnote).foregroundStyle(.secondary)
+                                }
+                            }
                         }
                     }
                 }
             }
+            // One even gap between sections, and no padding around the size tabs' row.
+            .listSectionSpacing(.compact)
+            .environment(\.defaultMinListRowHeight, 0)
+            .onAppear { scrollToIngredients(proxy) }
+            .onChange(of: model.scrollToIngredients) { scrollToIngredients(proxy) }
         }
-        // One even gap between sections, and no padding around the size tabs' row.
-        .listSectionSpacing(.compact)
-        .environment(\.defaultMinListRowHeight, 0)
         .navigationTitle("Nutrition Facts")
         .navigationBarTitleDisplayMode(.inline)
         .safeAreaInset(edge: .bottom) {
             if showsScanAgain {
-                Button {
-                    model.startScanning()
-                } label: {
-                    Label("Scan Again", systemImage: "camera").frame(maxWidth: .infinity)
+                VStack(spacing: 10) {
+                    let latest = model.latest(scan)
+                    if latest.box == nil, model.readingBoxFor != scan.id {
+                        Button {
+                            model.scanIngredients(for: latest)
+                        } label: {
+                            Label("Scan Ingredients", systemImage: "list.bullet.rectangle").frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.glass)
+                    }
+                    Button {
+                        model.startScanning()
+                    } label: {
+                        Label("New Scan", systemImage: "camera").frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.glassProminent)
                 }
-                .buttonStyle(.glassProminent)
                 .controlSize(.large)
                 .padding(.horizontal, 20)
                 .padding(.bottom, 8)
@@ -105,6 +134,16 @@ struct ResultView: View {
         }
     }
 
+    /// After an ingredients scan, brings the new box into view once the sheet has settled.
+    private func scrollToIngredients(_ proxy: ScrollViewProxy) {
+        guard model.scrollToIngredients == scan.id else { return }
+        model.scrollToIngredients = nil
+        Task {
+            try? await Task.sleep(for: .seconds(0.4))
+            withAnimation(.snappy) { proxy.scrollTo(IngredientsSection.anchor, anchor: .top) }
+        }
+    }
+
     private func setPack() {
         guard let amount = Double(packText.replacingOccurrences(of: ",", with: ".")), amount > 0 else { return }
         model.setPackSize(of: scan, amount: amount)
@@ -114,19 +153,22 @@ struct ResultView: View {
 
 // MARK: - Ingredients
 
-/// The ingredients box (一括表示) from a second scan, or a button to scan it.
+/// The ingredients box (一括表示) from a second scan. The Scan Ingredients button floats at the bottom.
 private struct IngredientsSection: View {
     @Environment(AppModel.self) private var model
     let scan: Scan
     let showJapanese: Bool
-    let canScan: Bool
 
     @State private var showsOther = false
+
+    /// Scrolled to after an ingredients scan.
+    static let anchor = "ingredients"
 
     var body: some View {
         if let box = scan.box {
             Section("Ingredients") {
                 AllergenRow(allergens: box.allergens, showJapanese: showJapanese)
+                    .id(Self.anchor)
             }
             let (ingredients, additives) = (box.ingredients.filter { !$0.isAdditive }, box.ingredients.filter(\.isAdditive))
             if !ingredients.isEmpty {
@@ -167,9 +209,12 @@ private struct IngredientsSection: View {
                     }
                 }
             }
-        } else if canScan {
-            Section {
-                Button("Scan Ingredients", systemImage: "list.bullet.rectangle") { model.scanIngredients(for: scan) }
+        } else if model.readingBoxFor == scan.id {
+            Section("Ingredients") {
+                HStack(spacing: 10) {
+                    ProgressView()
+                    Text("Reading the ingredients…").foregroundStyle(.secondary)
+                }
             }
         }
     }
@@ -465,6 +510,21 @@ private struct CarbBreakdownSection: View {
             return [Segment(name: "Sugars", grams: s, color: .pink),
                     Segment(name: sweetened ? "Starch and sugar alcohols" : "Starch and other carbs", grams: net - s, color: .orange),
                     Segment(name: "Fibre", grams: f, color: .green)]
+        }
+    }
+}
+
+/// A small square crop of a photo, for the rows that open one.
+struct PhotoThumbnail: View {
+    let data: Data
+
+    var body: some View {
+        if let image = UIImage(data: data) {
+            Image(uiImage: image).resizable().scaledToFill()
+                .frame(width: 56, height: 56)
+                .clipShape(.rect(cornerRadius: 9))
+        } else {
+            RoundedRectangle(cornerRadius: 9).fill(.quaternary).frame(width: 56, height: 56)
         }
     }
 }

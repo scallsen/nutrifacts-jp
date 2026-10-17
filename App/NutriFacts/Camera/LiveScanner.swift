@@ -14,8 +14,14 @@ final class LiveScanner {
     private(set) var access: Access = .unknown
     /// Where the panel is on screen, in the preview's coordinates. Nil while no panel is in view.
     private(set) var panelRect: CGRect?
-    /// Called when a panel comes into or goes out of view.
-    var onPanelChange: ((Bool) -> Void)?
+    /// Where the other kind of label is: the ingredients box while looking for the panel, or the other
+    /// way round. Nil while it isn't in view, or while the right one is.
+    private(set) var wrongRect: CGRect?
+    /// What's in view: the label being looked for, the other kind, or neither.
+    enum Sight { case nothing, label, otherLabel }
+    private(set) var sight = Sight.nothing
+    /// Called when what's in view changes.
+    var onSightChange: ((Sight) -> Void)?
     /// Size of the preview on screen, for placing the brackets.
     var viewSize: CGSize = .zero
 
@@ -58,16 +64,24 @@ final class LiveScanner {
 
     private func update(_ detection: CameraEngine.Detection) {
         guard isActive else { return }
-        let newRect = detection.rect.map { toView($0, imageSize: detection.imageSize) }
-        let changed = (newRect == nil) != (panelRect == nil)
-        withAnimation(.snappy) { panelRect = newRect }
-        if changed { onPanelChange?(newRect != nil) }
+        withAnimation(.snappy) {
+            panelRect = detection.rect.map { toView($0, imageSize: detection.imageSize) }
+            wrongRect = detection.wrongRect.map { toView($0, imageSize: detection.imageSize) }
+        }
+        let now: Sight = panelRect != nil ? .label : wrongRect != nil ? .otherLabel : .nothing
+        if now != sight {
+            sight = now
+            onSightChange?(now)
+        }
     }
 
     func clearPanel() {
-        let had = panelRect != nil
         panelRect = nil
-        if had { onPanelChange?(false) }
+        wrongRect = nil
+        if sight != .nothing {
+            sight = .nothing
+            onSightChange?(.nothing)
+        }
     }
 
     /// Maps a normalised rect in the frame to the preview, which fills the screen (aspect fill).
@@ -113,6 +127,9 @@ struct LiveCameraBackdrop: View {
     let scanner: LiveScanner
     let frozenFrame: UIImage?
     let phase: AppModel.Phase
+    /// The colour for the other kind of label: yellow while it's about to be saved for later,
+    /// green once it's saved, and orange when it's simply the wrong label.
+    var otherLabelColor: Color = .orange
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -137,6 +154,12 @@ struct LiveCameraBackdrop: View {
                         .frame(width: rect.width + 24, height: rect.height + 24)
                         .offset(x: rect.minX - 12, y: rect.minY - 12)
                         .shadow(color: .yellow.opacity(0.5), radius: 6)
+                        .allowsHitTesting(false)
+                } else if let rect = scanner.wrongRect {
+                    CornerBrackets()
+                        .stroke(otherLabelColor, style: StrokeStyle(lineWidth: 3.5, lineCap: .round))
+                        .frame(width: rect.width + 24, height: rect.height + 24)
+                        .offset(x: rect.minX - 12, y: rect.minY - 12)
                         .allowsHitTesting(false)
                 }
             case .denied:
