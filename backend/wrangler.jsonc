@@ -7,10 +7,12 @@
   "vars": {
     // A vision-capable model from your AI& account. List them with the command in README.md,
     // or compare them on real photos with `npm run compare -- photo.jpg`.
-    "AIAND_MODEL": "qwen/qwen3.8-27b",
+    // Chosen with `npm run eval:models` (eval/README.md): as accurate as qwen/qwen3.8-27b on the
+    // 57 labels, about 4× faster and 3.5× cheaper.
+    "AIAND_MODEL": "deepseek-ai/deepseek-v4.1-flash",
     // Reasoning level when the app doesn't pick one. Must be in the model's reasoning_efforts
-    // (qwen3.8-27b: none, low, medium, xhigh). Its own default is xhigh, which is slow and costly.
-    "AIAND_REASONING_EFFORT": "low"
+    // (deepseek-v4.1-flash: none, high, max). Its own default is high, which is slower and billed as output.
+    "AIAND_REASONING_EFFORT": "none"
   },
   // Secrets (not in this file): AIAND_API_KEY, and optionally APP_TOKEN.
   // Set them with `npx wrangler secret put <NAME>`.
