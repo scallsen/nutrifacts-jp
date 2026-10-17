@@ -1,6 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "nutrifacts-api",
+  // The justin.garcia@gmail.com Cloudflare account. Not a secret; it lets CI deploy with just an API token.
+  "account_id": "e55f224854d9d92acc44912ed036cf0c",
   "main": "src/index.ts",
   "compatibility_date": "2026-10-01",
   "observability": { "enabled": true },

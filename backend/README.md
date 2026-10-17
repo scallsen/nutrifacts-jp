@@ -48,6 +48,21 @@ You need an AI& account with credit and a Cloudflare account.
 
 Check it's up with `curl https://nutrifacts-api.<your-subdomain>.workers.dev/health`.
 
+## Deploying from GitHub
+
+[`.github/workflows/worker.yml`](../.github/workflows/worker.yml) runs the typecheck and tests on every pull request that touches `backend/`. On pushes to `main` it also deploys the Worker and checks `/health`. You can start it by hand from the Actions tab too.
+
+It needs one repository secret, **`CLOUDFLARE_API_TOKEN`**:
+
+1. In Cloudflare (justin.garcia@gmail.com): **My Profile › API Tokens › Create Token**, use the **Edit Cloudflare Workers** template, set **Account Resources** to that account, and create it.
+2. A repo admin adds it in GitHub: **Settings › Secrets and variables › Actions › New repository secret**, name `CLOUDFLARE_API_TOKEN`. Or from a terminal:
+
+   ```bash
+   gh secret set CLOUDFLARE_API_TOKEN -R scallsen/nutrifacts-jp
+   ```
+
+The account ID is in `wrangler.jsonc`; it isn't a secret. The AI& key stays a Worker secret in Cloudflare (`wrangler secret put`). Deploys keep it, and GitHub never sees it. Changing `AIAND_MODEL` or `AIAND_REASONING_EFFORT` in `wrangler.jsonc` and merging to `main` deploys the change.
+
 ## Develop
 
 ```bash
