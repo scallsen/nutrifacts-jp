@@ -1,0 +1,79 @@
+{
+  "photo": "calbee-chips-70g.jpg",
+  "notes": "推定値 next to basis; 糖質/食物繊維",
+  "source": {
+    "title": "ポテトチップス　絶品うすしお味",
+    "url": "https://images.openfoodfacts.org/images/products/490/133/040/6608/nutrition_ja.16.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4901330406608",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "1袋（70g）あたり",
+    "basisAmount": 70,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 388,
+        "maxValue": 388,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 3.2,
+        "maxValue": 3.2,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 25.6,
+        "maxValue": 25.6,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 37.7,
+        "maxValue": 37.7,
+        "unit": "g"
+      },
+      {
+        "nutrient": "netCarbs",
+        "printedName": "糖質",
+        "minValue": 34.8,
+        "maxValue": 34.8,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fibre",
+        "printedName": "食物繊維",
+        "minValue": 2.9,
+        "maxValue": 2.9,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.8,
+        "maxValue": 0.8,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": true
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

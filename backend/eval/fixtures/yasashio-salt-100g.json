@@ -1,0 +1,79 @@
+{
+  "photo": "yasashio-salt-100g.jpg",
+  "notes": "Low-sodium salt; カリウム/マグネシウム as other; mg with thousands separator",
+  "source": {
+    "title": "やさしお",
+    "url": "https://images.openfoodfacts.org/images/products/490/100/108/7235/nutrition_ja.10.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4901001087235",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "100gあたり",
+    "basisAmount": 100,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 1.6,
+        "maxValue": 1.6,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 0.4,
+        "maxValue": 0.4,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 46.0,
+        "maxValue": 46.0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "カリウム",
+        "minValue": 27600,
+        "maxValue": 27600,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "マグネシウム",
+        "minValue": 220,
+        "maxValue": 220,
+        "unit": "mg"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

@@ -1,0 +1,86 @@
+{
+  "photo": "cc-lemon-ranges.jpg",
+  "notes": "Basis cut off; パントテン酸 range. Left out (unreadable): Panel header with the basis (per-what) is cut off above the photo, so basisText is empty and basisUnit=ml is a guess for a drink",
+  "source": {
+    "title": "C.C. Lemon",
+    "url": "https://images.openfoodfacts.org/images/products/490/177/729/2529/nutrition_ja.10.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4901777292529",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "",
+    "basisAmount": 0,
+    "basisUnit": "ml",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 36,
+        "maxValue": 36,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 9.0,
+        "maxValue": 9.0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.05,
+        "maxValue": 0.05,
+        "unit": "g"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンB6",
+        "minValue": 0.3,
+        "maxValue": 0.3,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンC",
+        "minValue": 160,
+        "maxValue": 160,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "パントテン酸",
+        "minValue": 0.1,
+        "maxValue": 1.4,
+        "unit": "mg"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

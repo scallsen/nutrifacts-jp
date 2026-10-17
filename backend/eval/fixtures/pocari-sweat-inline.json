@@ -1,0 +1,86 @@
+{
+  "photo": "pocari-sweat-inline.jpg",
+  "notes": "Inline on curved bottle; electrolytes in mEq/L. Left out (unreadable): 食塩相当量 0.12g is partly blurred at the curve of the bottle but reads 0.12 on zoom. 電解質濃度 (mEq/L) block not transcribed.",
+  "source": {
+    "title": "Pocari Sweat",
+    "url": "https://images.openfoodfacts.org/images/products/498/703/533/2510/nutrition_ja.13.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4987035332510",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "100ml当たり",
+    "basisAmount": 100,
+    "basisUnit": "ml",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 25,
+        "maxValue": 25,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "タンパク質",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 6.2,
+        "maxValue": 6.2,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.12,
+        "maxValue": 0.12,
+        "unit": "g"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "カリウム",
+        "minValue": 20,
+        "maxValue": 20,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "カルシウム",
+        "minValue": 2,
+        "maxValue": 2,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "マグネシウム",
+        "minValue": 0.6,
+        "maxValue": 0.6,
+        "unit": "mg"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

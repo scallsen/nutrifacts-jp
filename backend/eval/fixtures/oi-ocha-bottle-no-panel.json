@@ -1,0 +1,29 @@
+{
+  "photo": "oi-ocha-bottle-no-panel.jpg",
+  "notes": "Whole bottle; no nutrition panel readable. Left out (unreadable): No nutrition panel; only a '0 kcal' badge and 600ml on the bottle.",
+  "source": {
+    "title": "Itoen Ohi Ocha Ryokucha (green Tea)",
+    "url": "https://images.openfoodfacts.org/images/products/490/108/500/3800/nutrition_ja.10.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4901085003800",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": false,
+    "productName": "お～いお茶",
+    "basisText": "",
+    "basisAmount": 0,
+    "basisUnit": "g",
+    "netContentsAmount": 600,
+    "netContentsUnit": "ml",
+    "netContentsCount": 0,
+    "lines": [],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

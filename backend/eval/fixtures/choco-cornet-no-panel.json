@@ -1,0 +1,28 @@
+{
+  "photo": "choco-cornet-no-panel.jpg",
+  "notes": "Bakery label with ingredients, no nutrition panel. Left out (unreadable): No nutrition panel. 内容量：1個 is a bare count; netContentsCount=1 is a judgement call (could be 0)",
+  "source": {
+    "title": "Choco corone 1.png",
+    "page": "https://commons.wikimedia.org/wiki/File:Choco_corone_1.png",
+    "license": "CC BY-SA 3.0",
+    "author": "okoge"
+  },
+  "expected": {
+    "panelFound": false,
+    "productName": "チョココルネ",
+    "basisText": "",
+    "basisAmount": 0,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 1,
+    "lines": [],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

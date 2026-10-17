@@ -54,7 +54,10 @@ Check it's up with `curl https://nutrifacts-api.<your-subdomain>.workers.dev/hea
 npm test            # Node's test runner, AI& mocked
 npm run typecheck
 npm run dev         # local Worker; put secrets in .dev.vars (git-ignored)
+npm run eval        # send 57 real label photos to the deployed Worker and score the readings
 ```
+
+After changing the prompt, schema or model, run `npm run eval`. It scores real label photos against checked readings; see [`eval/README.md`](eval/README.md).
 
 `src/label.ts` holds the prompt and JSON schema. Keep them in step with `ExtractedLabel` and `AppleIntelligenceReader.instructions` in the app.
 

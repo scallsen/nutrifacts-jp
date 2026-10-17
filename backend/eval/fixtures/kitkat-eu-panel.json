@@ -1,0 +1,29 @@
+{
+  "photo": "kitkat-eu-panel.jpg",
+  "notes": "EU multilingual panel, not Japanese; kJ/kcal",
+  "source": {
+    "title": "Kitkat thé matcha",
+    "url": "https://images.openfoodfacts.org/images/products/490/220/117/4657/nutrition_ja.30.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4902201174657",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": false,
+    "productName": "",
+    "basisText": "",
+    "basisAmount": 0,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

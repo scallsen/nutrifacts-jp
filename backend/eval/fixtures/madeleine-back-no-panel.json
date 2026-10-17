@@ -1,0 +1,28 @@
+{
+  "photo": "madeleine-back-no-panel.jpg",
+  "notes": "Back of pack with 一括表示 but no nutrition panel. Left out (unreadable): No nutrition panel on the pack. 内容量 is printed as 1個 only (no weight); recorded as netContentsCount 1.",
+  "source": {
+    "title": "Madeleine of Kanda-Seiyoken, y 2017. Package back.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Madeleine_of_Kanda-Seiyoken,_y_2017._Package_back.jpg",
+    "license": "CC BY-SA 4.0",
+    "author": "みゅーらー (talk)"
+  },
+  "expected": {
+    "panelFound": false,
+    "productName": "",
+    "basisText": "",
+    "basisAmount": 0,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 1,
+    "lines": [],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

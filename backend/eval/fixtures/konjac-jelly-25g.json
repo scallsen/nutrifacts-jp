@@ -1,0 +1,86 @@
+{
+  "photo": "konjac-jelly-25g.jpg",
+  "notes": "No 炭水化物 line, only 糖質 + 食物繊維; crumpled. Left out (unreadable): Blurry, distorted vertical labels; 食物繊維 value read as 0.4g (glare on the 'g'); bracket width in basis uncertain.",
+  "source": {
+    "title": "蒟蒻畑　白桃味",
+    "url": "https://images.openfoodfacts.org/images/products/490/273/825/2040/nutrition_ja.18.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4902738252040",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "1個（25g）あたり",
+    "basisAmount": 25,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 25,
+        "maxValue": 25,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "netCarbs",
+        "printedName": "糖質",
+        "minValue": 5.9,
+        "maxValue": 5.9,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fibre",
+        "printedName": "食物繊維",
+        "minValue": 0.4,
+        "maxValue": 0.4,
+        "unit": "g"
+      },
+      {
+        "nutrient": "sodium",
+        "printedName": "ナトリウム",
+        "minValue": 9,
+        "maxValue": 9,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "リン",
+        "minValue": 25,
+        "maxValue": 25,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "カリウム",
+        "minValue": 52,
+        "maxValue": 52,
+        "unit": "mg"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

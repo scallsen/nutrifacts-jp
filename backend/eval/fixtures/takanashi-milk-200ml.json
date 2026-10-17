@@ -1,0 +1,72 @@
+{
+  "photo": "takanashi-milk-200ml.jpg",
+  "notes": "コップ1杯(200ml); カルシウム",
+  "source": {
+    "title": "酪農牛乳",
+    "url": "https://images.openfoodfacts.org/images/products/490/207/001/0131/nutrition_ja.10.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4902070010131",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "コップ1杯（200ml）当たり",
+    "basisAmount": 200,
+    "basisUnit": "ml",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 137,
+        "maxValue": 137,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 6.8,
+        "maxValue": 6.8,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 7.8,
+        "maxValue": 7.8,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 10.0,
+        "maxValue": 10.0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.2,
+        "maxValue": 0.2,
+        "unit": "g"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "カルシウム",
+        "minValue": 227,
+        "maxValue": 227,
+        "unit": "mg"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

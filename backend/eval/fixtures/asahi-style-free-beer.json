@@ -1,0 +1,79 @@
+{
+  "photo": "asahi-style-free-beer.jpg",
+  "notes": "Small vertical text; ranges 0.1〜0.7g; 内容量 350ml nearby",
+  "source": {
+    "title": "アサヒスタイルフリー(生)",
+    "url": "https://images.openfoodfacts.org/images/products/490/100/403/9040/nutrition_ja.13.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4901004039040",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "100㎖当たり",
+    "basisAmount": 100,
+    "basisUnit": "ml",
+    "netContentsAmount": 350,
+    "netContentsUnit": "ml",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 24,
+        "maxValue": 24,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 0.1,
+        "maxValue": 0.7,
+        "unit": "g"
+      },
+      {
+        "nutrient": "netCarbs",
+        "printedName": "糖質",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fibre",
+        "printedName": "食物繊維",
+        "minValue": 0.1,
+        "maxValue": 0.7,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0,
+        "maxValue": 0.03,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

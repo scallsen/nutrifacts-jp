@@ -1,0 +1,86 @@
+{
+  "photo": "seafood-noodle-split-salt.jpg",
+  "notes": "食塩相当量 split めん・かやく / スープ; 参考値 energy split below",
+  "source": {
+    "title": "シーフードヌードル",
+    "url": "https://images.openfoodfacts.org/images/products/49698633/nutrition_ja.25.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/49698633",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "1食（75g）当たり",
+    "basisAmount": 75,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "熱量",
+        "minValue": 340,
+        "maxValue": 340,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 8.9,
+        "maxValue": 8.9,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 13.6,
+        "maxValue": 13.6,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 45.5,
+        "maxValue": 45.5,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 4.7,
+        "maxValue": 4.7,
+        "unit": "g"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンB1",
+        "minValue": 1.01,
+        "maxValue": 1.01,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンB2",
+        "minValue": 0.31,
+        "maxValue": 0.31,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "カルシウム",
+        "minValue": 96,
+        "maxValue": 96,
+        "unit": "mg"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

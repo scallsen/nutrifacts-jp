@@ -1,0 +1,93 @@
+{
+  "photo": "organic-soy-milk-100ml.jpg",
+  "notes": "糖質/食物繊維; 0.0g salt. Left out (unreadable): A line below the panel is cut off at the photo edge (looks like 'この表示値は…'); cannot confirm 目安 wording, so isEstimate left false.",
+  "source": {
+    "title": "オーガニック成分無調整豆乳",
+    "url": "https://images.openfoodfacts.org/images/products/490/212/131/7301/nutrition_ja.26.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4902121317301",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "100ml当たり",
+    "basisAmount": 100,
+    "basisUnit": "ml",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 50,
+        "maxValue": 50,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 4.2,
+        "maxValue": 4.2,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 3.1,
+        "maxValue": 3.1,
+        "unit": "g"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "コレステロール",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 1.8,
+        "maxValue": 1.8,
+        "unit": "g"
+      },
+      {
+        "nutrient": "netCarbs",
+        "printedName": "糖質",
+        "minValue": 1.6,
+        "maxValue": 1.6,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fibre",
+        "printedName": "食物繊維",
+        "minValue": 0.2,
+        "maxValue": 0.2,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.0,
+        "maxValue": 0.0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "カリウム",
+        "minValue": 212,
+        "maxValue": 212,
+        "unit": "mg"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

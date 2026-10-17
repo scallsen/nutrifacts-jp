@@ -1,0 +1,86 @@
+{
+  "photo": "sapporo-classic-beer.jpg",
+  "notes": "100ml; 食物繊維 0〜0.2g; 純アルコール量 (500ml). Left out (unreadable): 純アルコール量 20g is per 500ml (different basis), recorded as other.",
+  "source": {
+    "title": "サッポロクラシック - Sapporo Classic",
+    "url": "https://images.openfoodfacts.org/images/products/490/188/019/1313/nutrition_ja.10.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4901880191313",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "100ml当たり",
+    "basisAmount": 100,
+    "basisUnit": "ml",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 40,
+        "maxValue": 40,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 0.5,
+        "maxValue": 0.5,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 2.9,
+        "maxValue": 2.9,
+        "unit": "g"
+      },
+      {
+        "nutrient": "netCarbs",
+        "printedName": "糖質",
+        "minValue": 2.8,
+        "maxValue": 2.8,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fibre",
+        "printedName": "食物繊維",
+        "minValue": 0,
+        "maxValue": 0.2,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "純アルコール量",
+        "minValue": 20,
+        "maxValue": 20,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

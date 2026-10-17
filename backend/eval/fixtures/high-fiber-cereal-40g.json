@@ -1,0 +1,86 @@
+{
+  "photo": "high-fiber-cereal-40g.jpg",
+  "notes": "糖質/食物繊維 nested; ナトリウム with 食塩相当量 in brackets",
+  "source": {
+    "title": "ハイファイバープレミアム",
+    "url": "https://images.openfoodfacts.org/images/products/454/460/504/6019/nutrition_ja.14.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4544605046019",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "1食40g当たり",
+    "basisAmount": 40,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "熱量",
+        "minValue": 157,
+        "maxValue": 157,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "タンパク質",
+        "minValue": 4.1,
+        "maxValue": 4.1,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 5.3,
+        "maxValue": 5.3,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 25.5,
+        "maxValue": 25.5,
+        "unit": "g"
+      },
+      {
+        "nutrient": "netCarbs",
+        "printedName": "糖質",
+        "minValue": 21.0,
+        "maxValue": 21.0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fibre",
+        "printedName": "食物繊維",
+        "minValue": 4.5,
+        "maxValue": 4.5,
+        "unit": "g"
+      },
+      {
+        "nutrient": "sodium",
+        "printedName": "ナトリウム",
+        "minValue": 9,
+        "maxValue": 9,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.02,
+        "maxValue": 0.02,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

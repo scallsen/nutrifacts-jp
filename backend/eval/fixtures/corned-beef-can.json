@@ -1,0 +1,71 @@
+{
+  "photo": "corned-beef-can.jpg",
+  "notes": "Left can only (cropped); 炭水化物 range 0〜1.6g; ナトリウム and 食塩相当量; 内容量 100g",
+  "source": {
+    "title": "Nozaki corned beef (Makura-can).jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Nozaki_corned_beef_(Makura-can).jpg",
+    "license": "CC BY-SA 4.0",
+    "author": "切干大根"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "コンビーフ",
+    "basisText": "1缶（100g）当たり",
+    "basisAmount": 100,
+    "basisUnit": "g",
+    "netContentsAmount": 100,
+    "netContentsUnit": "g",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 243,
+        "maxValue": 243,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 20.9,
+        "maxValue": 20.9,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 17.3,
+        "maxValue": 17.3,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 0,
+        "maxValue": 1.6,
+        "unit": "g"
+      },
+      {
+        "nutrient": "sodium",
+        "printedName": "ナトリウム",
+        "minValue": 588,
+        "maxValue": 588,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 1.5,
+        "maxValue": 1.5,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

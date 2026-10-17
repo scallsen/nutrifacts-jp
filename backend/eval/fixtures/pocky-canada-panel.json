@@ -1,0 +1,29 @@
+{
+  "photo": "pocky-canada-panel.jpg",
+  "notes": "Canadian bilingual Nutrition Facts, not a Japanese panel. Left out (unreadable): Canadian Nutrition Facts panel, not Japanese (rule 4).",
+  "source": {
+    "title": "Glico Pocky With Chocolate Coating 119G (9 Packs)",
+    "url": "https://images.openfoodfacts.org/images/products/490/100/511/8720/nutrition_ja.27.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4901005118720",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": false,
+    "productName": "",
+    "basisText": "",
+    "basisAmount": 0,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

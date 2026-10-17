@@ -1,0 +1,114 @@
+{
+  "photo": "prune-yogurt-drink-190g.jpg",
+  "notes": "Iron, folic acid, B12 in µg",
+  "source": {
+    "title": "鉄分のむヨーグルト プルーンFe",
+    "url": "https://images.openfoodfacts.org/images/products/490/801/162/1633/nutrition_ja.10.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4908011621633",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "1本（190g）当たり",
+    "basisAmount": 190,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 129,
+        "maxValue": 129,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 5.7,
+        "maxValue": 5.7,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 1.7,
+        "maxValue": 1.7,
+        "unit": "g"
+      },
+      {
+        "nutrient": "saturatedFat",
+        "printedName": "飽和脂肪酸",
+        "minValue": 1.0,
+        "maxValue": 1.0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 22.8,
+        "maxValue": 22.8,
+        "unit": "g"
+      },
+      {
+        "nutrient": "netCarbs",
+        "printedName": "糖質",
+        "minValue": 22.8,
+        "maxValue": 22.8,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fibre",
+        "printedName": "食物繊維",
+        "minValue": 0.0,
+        "maxValue": 0.0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.18,
+        "maxValue": 0.18,
+        "unit": "g"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "カルシウム",
+        "minValue": 190,
+        "maxValue": 190,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "鉄",
+        "minValue": 6.8,
+        "maxValue": 6.8,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "葉酸",
+        "minValue": 120,
+        "maxValue": 120,
+        "unit": "µg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンB12",
+        "minValue": 2.4,
+        "maxValue": 2.4,
+        "unit": "µg"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

@@ -1,0 +1,135 @@
+{
+  "photo": "in-bar-protein-ranges.jpg",
+  "notes": "Ranges for salt and vitamins; crumpled wrapper. Left out (unreadable): Glare over たんぱく質 row (10.3g readable but first digit partly washed out) and パントテン酸 name; 酵素処理ルチン 42mg配合 is printed below the panel.",
+  "source": {
+    "title": "in Protein Bar　ウェファーバニラ",
+    "url": "https://images.openfoodfacts.org/images/products/490/288/872/2226/nutrition_ja.10.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4902888722226",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "1本（標準37g）当たり",
+    "basisAmount": 37,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 197,
+        "maxValue": 197,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 10.3,
+        "maxValue": 10.3,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 12.4,
+        "maxValue": 12.4,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 12.8,
+        "maxValue": 12.8,
+        "unit": "g"
+      },
+      {
+        "nutrient": "netCarbs",
+        "printedName": "糖質",
+        "minValue": 9.2,
+        "maxValue": 9.2,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fibre",
+        "printedName": "食物繊維",
+        "minValue": 3.6,
+        "maxValue": 3.6,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.1,
+        "maxValue": 0.6,
+        "unit": "g"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ナイアシン",
+        "minValue": 5.5,
+        "maxValue": 19.2,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "パントテン酸",
+        "minValue": 1.9,
+        "maxValue": 5.6,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンB1",
+        "minValue": 0.08,
+        "maxValue": 1.12,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンB2",
+        "minValue": 0.45,
+        "maxValue": 1.3,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンB6",
+        "minValue": 0.4,
+        "maxValue": 1.4,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンB12",
+        "minValue": 0.6,
+        "maxValue": 2.4,
+        "unit": "µg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "葉酸",
+        "minValue": 56,
+        "maxValue": 192,
+        "unit": "µg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "酵素処理ルチン",
+        "minValue": 42,
+        "maxValue": 42,
+        "unit": "mg"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

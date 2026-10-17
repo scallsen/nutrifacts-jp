@@ -1,0 +1,65 @@
+{
+  "photo": "soy-sauce-15ml.jpg",
+  "notes": "熱量; 大さじ1杯(15mℓ). Left out (unreadable): Values are staggered one row below their names; mapped 熱量15kcal, たんぱく質1.3g, 脂質0g, 炭水化物2.1g, 食塩相当量2.3g. Printed unit is mℓ.",
+  "source": {
+    "title": "しょうゆ",
+    "url": "https://images.openfoodfacts.org/images/products/490/151/521/5209/nutrition_ja.12.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4901515215209",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "大さじ1杯（15ml）当り",
+    "basisAmount": 15,
+    "basisUnit": "ml",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "熱量",
+        "minValue": 15,
+        "maxValue": 15,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 1.3,
+        "maxValue": 1.3,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 2.1,
+        "maxValue": 2.1,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 2.3,
+        "maxValue": 2.3,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

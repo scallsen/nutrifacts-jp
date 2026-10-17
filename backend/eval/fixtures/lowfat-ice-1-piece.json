@@ -1,0 +1,65 @@
+{
+  "photo": "lowfat-ice-1-piece.jpg",
+  "notes": "1個当たり, no grams in basis",
+  "source": {
+    "title": "Coolish (クーリッシュ)　ベルギーチョコレート",
+    "url": "https://images.openfoodfacts.org/images/products/45189630/nutrition_ja.9.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/45189630",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "1個当り",
+    "basisAmount": 0,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 138,
+        "maxValue": 138,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 2.0,
+        "maxValue": 2.0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 5.0,
+        "maxValue": 5.0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 21.3,
+        "maxValue": 21.3,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.08,
+        "maxValue": 0.08,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

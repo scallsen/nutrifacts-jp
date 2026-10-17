@@ -1,0 +1,65 @@
+{
+  "photo": "wakame-ramen-75g.jpg",
+  "notes": "ナトリウム in g with めん・かやく / スープ split; blurry. Left out (unreadable): Photo blurry but digits legible on enlargement. Sodium breakdown (めん・かやく/スープ) omitted per rule 2.",
+  "source": {
+    "title": "わかめ醤油らぁめん",
+    "url": "https://images.openfoodfacts.org/images/products/490/110/430/5137/nutrition_ja.15.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4901104305137",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "1食（75g）当たり",
+    "basisAmount": 75,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 340,
+        "maxValue": 340,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 7.4,
+        "maxValue": 7.4,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 15.5,
+        "maxValue": 15.5,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 42.8,
+        "maxValue": 42.8,
+        "unit": "g"
+      },
+      {
+        "nutrient": "sodium",
+        "printedName": "ナトリウム",
+        "minValue": 2.1,
+        "maxValue": 2.1,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

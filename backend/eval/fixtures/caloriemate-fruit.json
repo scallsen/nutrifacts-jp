@@ -1,0 +1,184 @@
+{
+  "photo": "caloriemate-fruit.jpg",
+  "notes": "4本(80g); dense vitamin grid",
+  "source": {
+    "title": "カロリーメイト ブロック(フルーツ味)",
+    "url": "https://images.openfoodfacts.org/images/products/498/703/509/0014/nutrition_ja.11.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4987035090014",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "4本（80g）当たり",
+    "basisAmount": 80,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 400,
+        "maxValue": 400,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "タンパク質",
+        "minValue": 8.2,
+        "maxValue": 8.2,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 22.2,
+        "maxValue": 22.2,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 43.4,
+        "maxValue": 43.4,
+        "unit": "g"
+      },
+      {
+        "nutrient": "netCarbs",
+        "printedName": "糖質",
+        "minValue": 41.4,
+        "maxValue": 41.4,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fibre",
+        "printedName": "食物繊維",
+        "minValue": 2,
+        "maxValue": 2,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.79,
+        "maxValue": 0.79,
+        "unit": "g"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "カルシウム",
+        "minValue": 200,
+        "maxValue": 200,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "鉄",
+        "minValue": 2.0,
+        "maxValue": 2.0,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "マグネシウム",
+        "minValue": 50,
+        "maxValue": 50,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "リン",
+        "minValue": 80,
+        "maxValue": 80,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンA",
+        "minValue": 385,
+        "maxValue": 385,
+        "unit": "µg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンB1",
+        "minValue": 0.6,
+        "maxValue": 0.6,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンB2",
+        "minValue": 0.7,
+        "maxValue": 0.7,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンB6",
+        "minValue": 0.65,
+        "maxValue": 0.65,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンB12",
+        "minValue": 1.2,
+        "maxValue": 1.2,
+        "unit": "µg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ナイアシン",
+        "minValue": 6.5,
+        "maxValue": 6.5,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "パントテン酸",
+        "minValue": 2.4,
+        "maxValue": 2.4,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "葉酸",
+        "minValue": 120,
+        "maxValue": 120,
+        "unit": "µg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンC",
+        "minValue": 50,
+        "maxValue": 50,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンD",
+        "minValue": 2.8,
+        "maxValue": 2.8,
+        "unit": "µg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンE",
+        "minValue": 3.2,
+        "maxValue": 3.2,
+        "unit": "mg"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

@@ -1,0 +1,79 @@
+{
+  "photo": "natto-with-tare.jpg",
+  "notes": "Two sets of values: with たれ and (natto only)",
+  "source": {
+    "title": null,
+    "url": "https://images.openfoodfacts.org/images/products/490/210/601/2047/nutrition_ja.10.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4902106012047",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "納豆、たれ（標準4.6g）、1セット：49.6g当たり",
+    "basisAmount": 49.6,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 87,
+        "maxValue": 87,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 7.1,
+        "maxValue": 7.1,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 4.1,
+        "maxValue": 4.1,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 6.9,
+        "maxValue": 6.9,
+        "unit": "g"
+      },
+      {
+        "nutrient": "netCarbs",
+        "printedName": "糖質",
+        "minValue": 3.7,
+        "maxValue": 3.7,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fibre",
+        "printedName": "食物繊維",
+        "minValue": 3.2,
+        "maxValue": 3.2,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.55,
+        "maxValue": 0.55,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": true
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

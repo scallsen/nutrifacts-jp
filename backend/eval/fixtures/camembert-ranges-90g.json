@@ -1,0 +1,93 @@
+{
+  "photo": "camembert-ranges-90g.jpg",
+  "notes": "炭水化物 and 糖質 as ranges 0.0〜4.5g",
+  "source": {
+    "title": "北海道カマンベールチーズ",
+    "url": "https://images.openfoodfacts.org/images/products/490/305/050/9850/nutrition_ja.9.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4903050509850",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "90g当たり",
+    "basisAmount": 90,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 280,
+        "maxValue": 280,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 16.7,
+        "maxValue": 16.7,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 23.5,
+        "maxValue": 23.5,
+        "unit": "g"
+      },
+      {
+        "nutrient": "saturatedFat",
+        "printedName": "飽和脂肪酸",
+        "minValue": 14.1,
+        "maxValue": 14.1,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 0.0,
+        "maxValue": 4.5,
+        "unit": "g"
+      },
+      {
+        "nutrient": "netCarbs",
+        "printedName": "糖質",
+        "minValue": 0.0,
+        "maxValue": 4.5,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fibre",
+        "printedName": "食物繊維",
+        "minValue": 0.0,
+        "maxValue": 0.0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 1.1,
+        "maxValue": 1.1,
+        "unit": "g"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "カルシウム",
+        "minValue": 378,
+        "maxValue": 378,
+        "unit": "mg"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

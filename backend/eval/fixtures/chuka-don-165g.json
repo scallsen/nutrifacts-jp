@@ -1,0 +1,65 @@
+{
+  "photo": "chuka-don-165g.jpg",
+  "notes": "Two-column grid; 当社分析",
+  "source": {
+    "title": "中華丼",
+    "url": "https://images.openfoodfacts.org/images/products/490/100/215/1867/nutrition_ja.16.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4901002151867",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "1食分（165g）あたり",
+    "basisAmount": 165,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 113,
+        "maxValue": 113,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 4.0,
+        "maxValue": 4.0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 6.3,
+        "maxValue": 6.3,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 10.1,
+        "maxValue": 10.1,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 2.2,
+        "maxValue": 2.2,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

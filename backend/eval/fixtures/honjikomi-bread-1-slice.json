@@ -1,0 +1,65 @@
+{
+  "photo": "honjikomi-bread-1-slice.jpg",
+  "notes": "1枚当たり (no grams)",
+  "source": {
+    "title": "本仕込食パン6枚スライス 1斤",
+    "url": "https://images.openfoodfacts.org/images/products/490/241/010/2724/nutrition_ja.15.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4902410102724",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "1枚当たり",
+    "basisAmount": 0,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 168,
+        "maxValue": 168,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 5.7,
+        "maxValue": 5.7,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 1.9,
+        "maxValue": 1.9,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 31.9,
+        "maxValue": 31.9,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.82,
+        "maxValue": 0.82,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": true
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

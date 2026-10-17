@@ -1,0 +1,28 @@
+{
+  "photo": "curry-pouch-ingredients-no-panel.jpg",
+  "notes": "Ingredients block only, no nutrition panel",
+  "source": {
+    "title": "原材料名（虚偽かもされない） (2100262175).jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:原材料名（虚偽かもされない）_(2100262175).jpg",
+    "license": "CC BY-SA 2.0",
+    "author": "ketou-daisuki from Kyoto, japansko"
+  },
+  "expected": {
+    "panelFound": false,
+    "productName": "ビーフカレーソース",
+    "basisText": "",
+    "basisAmount": 0,
+    "basisUnit": "g",
+    "netContentsAmount": 450,
+    "netContentsUnit": "g",
+    "netContentsCount": 0,
+    "lines": [],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

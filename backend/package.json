@@ -8,9 +8,13 @@
     "deploy": "wrangler deploy",
     "typecheck": "tsc --noEmit",
     "test": "node --test test/*.test.ts",
-    "compare": "node scripts/compare-models.ts"
+    "compare": "node scripts/compare-models.ts",
+    "eval": "node eval/run.ts",
+    "eval:reference": "node eval/reference.ts",
+    "eval:review": "node eval/review.ts"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.135.0",
     "@cloudflare/workers-types": "^5.20261016.1",
     "@types/node": "^26.6.5",
     "typescript": "^7.0.2",

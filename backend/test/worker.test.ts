@@ -51,11 +51,26 @@ test("request sends the photo inline with a strict schema", () => {
   assert.equal("reasoning_effort" in completionRequest("m", "QUJD", "image/jpeg"), false);
 });
 
-test("parses the label out of a completion and drops unknown nutrients", () => {
-  const odd = { ...label, lines: [...label.lines, { ...label.lines[0], nutrient: "caffeine" }] };
-  const parsed = parseCompletion({ choices: [{ message: { content: JSON.stringify(odd) } }] });
-  assert.equal(parsed.lines.length, 1);
+const parse = (l: unknown) => parseCompletion({ choices: [{ message: { content: JSON.stringify(l) } }] });
+const printed = (printedName: string, nutrient = "other") => ({ nutrient, printedName, minValue: 1, maxValue: 1, unit: "g" });
+
+test("parses the label out of a completion", () => {
+  assert.deepEqual(parse(label), label);
   assert.throws(() => parseCompletion({ choices: [] }));
+});
+
+test("the printed name decides the nutrient, whatever the model chose", () => {
+  const lines = parse({ ...label, lines: [
+    printed("糖質", "sugars"), printed("ー糖　類", "netCarbs"), printed("カリウム", "sodium"),
+    printed("(食塩相当量)", "other"), printed("スクロース", "sugars"), printed("熱量", "caffeine"),
+  ] }).lines;
+  assert.deepEqual(lines.map((l) => l.nutrient), ["netCarbs", "sugars", "other", "salt", "other", "energy"]);
+});
+
+test("a panel without any Japanese line names isn't a Japanese panel", () => {
+  const parsed = parse({ ...label, lines: [printed("Energy", "energy"), printed("Sugars", "sugars")] });
+  assert.equal(parsed.panelFound, false);
+  assert.deepEqual(parsed.lines, []);
 });
 
 test("reads a label through AI& with the key on the server and the default reasoning level", async () => {

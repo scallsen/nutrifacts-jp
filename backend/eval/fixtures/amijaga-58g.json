@@ -1,0 +1,65 @@
+{
+  "photo": "amijaga-58g.jpg",
+  "notes": "この表示値は目安です",
+  "source": {
+    "title": "あみじゃが　うすしお味",
+    "url": "https://images.openfoodfacts.org/images/products/490/194/011/4184/nutrition_ja.17.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4901940114184",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "1袋（標準58g）当たり",
+    "basisAmount": 58,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 313,
+        "maxValue": 313,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 1.6,
+        "maxValue": 1.6,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 18.4,
+        "maxValue": 18.4,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 35.1,
+        "maxValue": 35.1,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 1.3,
+        "maxValue": 1.3,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": true
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

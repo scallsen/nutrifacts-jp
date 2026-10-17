@@ -1,0 +1,29 @@
+{
+  "photo": "umaibo-front-no-panel.jpg",
+  "notes": "Front of a pack; no panel",
+  "source": {
+    "title": "うまい棒 たこ焼味",
+    "url": "https://images.openfoodfacts.org/images/products/49480795/nutrition_ja.32.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/49480795",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": false,
+    "productName": "うまい棒 たこ焼味",
+    "basisText": "",
+    "basisAmount": 0,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

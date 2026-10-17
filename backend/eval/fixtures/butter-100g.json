@@ -1,0 +1,65 @@
+{
+  "photo": "butter-100g.jpg",
+  "notes": "Simple; 1.04g salt. Left out (unreadable): Note under the panel is cut off at the bottom edge; only the tops of the characters show, which look like （推定値）, so isEstimate=true is an inference",
+  "source": {
+    "title": "よつ葉パンにおいしい発酵バター",
+    "url": "https://images.openfoodfacts.org/images/products/49765014/nutrition_ja.9.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/49765014",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "100g当たり",
+    "basisAmount": 100,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 741,
+        "maxValue": 741,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 0.9,
+        "maxValue": 0.9,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 81.6,
+        "maxValue": 81.6,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 0.8,
+        "maxValue": 0.8,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 1.04,
+        "maxValue": 1.04,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": true
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

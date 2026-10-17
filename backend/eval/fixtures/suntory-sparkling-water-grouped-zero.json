@@ -1,0 +1,72 @@
+{
+  "photo": "suntory-sparkling-water-grouped-zero.jpg",
+  "notes": "Grouped zero: エネルギー、たんぱく質、脂質、炭水化物(糖類) 0. Left out (unreadable): Grouped zero printed as bare '0' without unit; units assumed kcal/g.",
+  "source": {
+    "title": null,
+    "url": "https://images.openfoodfacts.org/images/products/490/177/731/7604/nutrition_ja.9.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4901777317604",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "100mlあたり",
+    "basisAmount": 100,
+    "basisUnit": "ml",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "sugars",
+        "printedName": "糖類",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.002,
+        "maxValue": 0.002,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

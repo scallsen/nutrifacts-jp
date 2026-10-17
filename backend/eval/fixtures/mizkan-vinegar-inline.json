@@ -1,0 +1,72 @@
+{
+  "photo": "mizkan-vinegar-inline.jpg",
+  "notes": "Inline; ナトリウム with 食塩相当量 in brackets",
+  "source": {
+    "title": "かんたん酢",
+    "url": "https://images.openfoodfacts.org/images/products/490/210/666/2549/nutrition_ja.22.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4902106662549",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "大さじ1杯15mlあたり",
+    "basisAmount": 15,
+    "basisUnit": "ml",
+    "netContentsAmount": 500,
+    "netContentsUnit": "ml",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 21,
+        "maxValue": 21,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 5.3,
+        "maxValue": 5.3,
+        "unit": "g"
+      },
+      {
+        "nutrient": "sodium",
+        "printedName": "ナトリウム",
+        "minValue": 290,
+        "maxValue": 290,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.7,
+        "maxValue": 0.7,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

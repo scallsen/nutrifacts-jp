@@ -26,20 +26,31 @@ export interface ExtractedLabel {
 }
 
 // Same rules the app gives Apple's models (AppleIntelligenceReader.instructions).
-export const INSTRUCTIONS = `You transcribe Japanese nutrition facts panels (栄養成分表示) into structured data. You never judge or score the food, and you never fill in values that aren't printed.
+export const INSTRUCTIONS = `You transcribe Japanese nutrition facts panels (栄養成分表示) into structured data, copying exactly what is printed. You never judge or score the food, and you never fill in values that aren't printed.
+
+Japanese panels use a fixed set of line names. The printed name decides the nutrient:
+- エネルギー or 熱量 → energy
+- たんぱく質, タンパク質, 蛋白質 → protein
+- 脂質 → fat; 飽和脂肪酸 → saturatedFat
+- 炭水化物 → carbohydrate (includes fibre)
+- 糖質 → netCarbs. 糖類 → sugars. They are different lines: 糖質 is not sugars.
+- 食物繊維 → fibre
+- 食塩相当量 → salt; ナトリウム → sodium
+- Anything else (コレステロール, カリウム, カルシウム, 鉄, vitamins, リコピン, イソフラボン …) → other
+Read each line's name character by character before choosing; カリウム (potassium) is not ナトリウム (sodium), and 糖質 is not 炭水化物.
 
 Rules:
-- Only output lines that are actually printed. A missing line is "not disclosed", never 0.
-- 炭水化物 is carbohydrate (includes fibre). 糖質 is netCarbs. 糖類 is sugars and sits under 糖質 or 炭水化物. 食物繊維 is fibre. Never map 糖質 to sugars.
-- 食塩相当量 is salt in grams. ナトリウム is sodium; keep its printed unit (mg, or g when ≥ 1000 mg).
-- エネルギー means energy (熱量). たんぱく, 蛋白質 and タンパク質 mean protein. 飽和脂肪酸 is saturatedFat.
+- Output one line per row you can actually see, in printed order, with its name and value both visible. Never add a row because labels usually have it: a missing line is "not disclosed", never 0.
+- Breakdowns of one value in brackets, such as 食塩相当量 4.7g (めん・かやく 2.2g)(スープ 2.5g), are not lines. Give only the total.
+- If the panel has several value columns (100g当たり and 大さじ1杯当たり), use the first column.
+- ナトリウム keeps its printed unit (mg, or g when ≥ 1000 mg).
 - Grouped zeros such as たんぱく質・脂質 0g give 0 to each named nutrient.
 - Ranges such as 120〜150kcal: minValue 120, maxValue 150.
 - Convert full-width digits (０-９, ．) to normal numbers. Keep the printed precision.
-- Caffeine, collagen and other items printed outside the panel are nutrient "other".
-- basisText is only the per-what phrase, e.g. 1食分（50g）当たり or 1個当たり, without 栄養成分表示 or outer brackets. basisAmount is the grams or ml in it, or 0 if none is printed. Never take basisAmount from 内容量.
-- 内容量 (net contents) is often printed away from the panel. Give its weight or volume and unit if visible, and how many pieces it holds if it says (6個入り). A bare count like 2個 is not a weight.
-- If there is no nutrition panel in the image, set panelFound to false and leave lines empty.`;
+- basisText is only the per-what phrase, e.g. 1食分（50g）当たり or 12個（標準59g）当たり, without 栄養成分表示 or outer brackets. basisAmount is the grams or ml in it, or 0 if none is printed. Never take basisAmount from 内容量.
+- 内容量 (net contents) is often printed away from the panel. Give its weight or volume and unit only if the word 内容量 is visible. netContentsCount comes only from 内容量 saying how many pieces the pack holds (6個入り → 6); the count in the basis (12個当たり, 4本当たり) is not 内容量. Otherwise 0.
+- isEstimate is true only if 推定値 or 目安 is printed near the panel.
+- panelFound is true only for a Japanese 栄養成分表示. An English, Chinese or other foreign nutrition table, a product front or an ingredients list is panelFound false with no lines.`;
 
 export const LABEL_SCHEMA = {
   type: "object",
@@ -98,13 +109,43 @@ export function completionRequest(model: string, imageBase64: string, mimeType: 
   };
 }
 
+// The names 食品表示基準 allows for each nutrient. Japanese panels use only these, so the Worker
+// sets `nutrient` from the printed name itself rather than trusting the model's choice, which
+// mixes up 糖質 and 糖類 because both contain 糖.
+const PRINTED_NAMES: Record<string, ExtractedLine["nutrient"]> = {
+  エネルギー: "energy", 熱量: "energy",
+  たんぱく質: "protein", タンパク質: "protein", 蛋白質: "protein", たん白質: "protein",
+  脂質: "fat", 飽和脂肪酸: "saturatedFat",
+  炭水化物: "carbohydrate", 糖質: "netCarbs", 糖類: "sugars", 食物繊維: "fibre",
+  食塩相当量: "salt", ナトリウム: "sodium",
+};
+
+/** `ー飽和脂肪酸`, `脂　質` or `食塩相当量(g)` → the bare name. */
+function bareName(printed: string): string {
+  return printed.normalize("NFKC").replace(/\s/g, "").replace(/^\((.*)\)$/, "$1").replace(/^[-‐−–—ー一・]+/, "").replace(/\(.*\)$/, "");
+}
+
+/** The nutrient a printed name stands for: one of the standard names, else `other`. */
+export function nutrientFor(printedName: string): ExtractedLine["nutrient"] {
+  return PRINTED_NAMES[bareName(printedName)] ?? "other";
+}
+
+/**
+ * Sets each line's nutrient from its printed name, and treats a panel with none of the standard
+ * Japanese names (a Canadian or EU table) as no Japanese panel.
+ */
+export function normaliseLabel(label: ExtractedLabel): ExtractedLabel {
+  if (!label.panelFound) return { ...label, lines: [] };
+  const lines = label.lines.map((l) => ({ ...l, nutrient: nutrientFor(l.printedName) }));
+  if (!lines.some((l) => l.nutrient !== "other")) return { ...label, panelFound: false, lines: [] };
+  return { ...label, lines };
+}
+
 /** Pulls the label out of a chat completion and checks it has the right shape. */
 export function parseCompletion(completion: unknown): ExtractedLabel {
   const content = (completion as { choices?: { message?: { content?: string } }[] })?.choices?.[0]?.message?.content;
   if (typeof content !== "string" || content.length === 0) throw new Error("empty answer");
   const label = JSON.parse(content) as ExtractedLabel;
   if (typeof label.panelFound !== "boolean" || !Array.isArray(label.lines)) throw new Error("answer doesn't match the schema");
-  // Strict schema mode should already guarantee this; drop anything outside the known nutrients regardless.
-  label.lines = label.lines.filter((l) => (NUTRIENTS as readonly string[]).includes(l.nutrient));
-  return label;
+  return normaliseLabel(label);
 }

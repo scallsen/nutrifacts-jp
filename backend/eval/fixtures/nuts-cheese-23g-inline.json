@@ -1,0 +1,142 @@
+{
+  "photo": "nuts-cheese-23g-inline.jpg",
+  "notes": "Inline with nested brackets: 糖質 and 食物繊維 inside 炭水化物 brackets. Left out (unreadable): n-3系脂肪酸 value (1.?g, second digit under glare) and リン value (?8mg, obscured by glare) omitted as unreadable. オレイン酸 5.6g is printed just below the panel box.",
+  "source": {
+    "title": "ロカボナッツチーズ入り",
+    "url": "https://images.openfoodfacts.org/images/products/494/532/911/5911/nutrition_ja.3.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4945329115911",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "1袋（23g）当り",
+    "basisAmount": 23,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 155,
+        "maxValue": 155,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 5.0,
+        "maxValue": 5.0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 14.0,
+        "maxValue": 14.0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 3.0,
+        "maxValue": 3.0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "netCarbs",
+        "printedName": "糖質",
+        "minValue": 1.6,
+        "maxValue": 1.6,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fibre",
+        "printedName": "食物繊維",
+        "minValue": 1.4,
+        "maxValue": 1.4,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.1,
+        "maxValue": 0.1,
+        "unit": "g"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "亜鉛",
+        "minValue": 0.7,
+        "maxValue": 0.7,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "カリウム",
+        "minValue": 109,
+        "maxValue": 109,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "カルシウム",
+        "minValue": 66,
+        "maxValue": 66,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "鉄",
+        "minValue": 0.5,
+        "maxValue": 0.5,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "マグネシウム",
+        "minValue": 37,
+        "maxValue": 37,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンB2",
+        "minValue": 0.1,
+        "maxValue": 0.1,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンE",
+        "minValue": 3.1,
+        "maxValue": 3.1,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "葉酸",
+        "minValue": 12,
+        "maxValue": 12,
+        "unit": "µg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "オレイン酸",
+        "minValue": 5.6,
+        "maxValue": 5.6,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

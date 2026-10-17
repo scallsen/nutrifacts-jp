@@ -1,0 +1,79 @@
+{
+  "photo": "chocolate-kouka-86.jpg",
+  "notes": "1枚(5.0g); 推定値; 0g salt. Left out (unreadable): カカオポリフェノール value below the panel is partly hidden by glare (looks like 147mg/1枚, middle digit uncertain); left out.",
+  "source": {
+    "title": "チョコレート効果　CACAO86%",
+    "url": "https://images.openfoodfacts.org/images/products/490/277/702/6398/nutrition_ja.10.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4902777026398",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "1枚(5.0g)当たり",
+    "basisAmount": 5.0,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 29,
+        "maxValue": 29,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 0.7,
+        "maxValue": 0.7,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 2.3,
+        "maxValue": 2.3,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 1.8,
+        "maxValue": 1.8,
+        "unit": "g"
+      },
+      {
+        "nutrient": "netCarbs",
+        "printedName": "糖質",
+        "minValue": 1.0,
+        "maxValue": 1.0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fibre",
+        "printedName": "食物繊維",
+        "minValue": 0.8,
+        "maxValue": 0.8,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": true
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

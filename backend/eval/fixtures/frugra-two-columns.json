@@ -1,0 +1,170 @@
+{
+  "photo": "frugra-two-columns.jpg",
+  "notes": "Two columns: 50g and with 200ml milk; long vitamin list",
+  "source": {
+    "title": "フルグラ",
+    "url": "https://images.openfoodfacts.org/images/products/490/133/074/0672/nutrition_ja.50.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4901330740672",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "1食分50g当たり",
+    "basisAmount": 50,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 219,
+        "maxValue": 219,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 4.1,
+        "maxValue": 4.1,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 7.6,
+        "maxValue": 7.6,
+        "unit": "g"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "コレステロール",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 35.9,
+        "maxValue": 35.9,
+        "unit": "g"
+      },
+      {
+        "nutrient": "netCarbs",
+        "printedName": "糖質",
+        "minValue": 31.4,
+        "maxValue": 31.4,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fibre",
+        "printedName": "食物繊維",
+        "minValue": 4.5,
+        "maxValue": 4.5,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.2,
+        "maxValue": 0.2,
+        "unit": "g"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "カリウム",
+        "minValue": 137,
+        "maxValue": 137,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "カルシウム",
+        "minValue": 14,
+        "maxValue": 14,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "リン",
+        "minValue": 98,
+        "maxValue": 98,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "鉄",
+        "minValue": 5.0,
+        "maxValue": 5.0,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンA",
+        "minValue": 257,
+        "maxValue": 257,
+        "unit": "µg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンD",
+        "minValue": 1.84,
+        "maxValue": 1.84,
+        "unit": "µg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンB1",
+        "minValue": 0.4,
+        "maxValue": 0.4,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ナイアシン",
+        "minValue": 4.4,
+        "maxValue": 4.4,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンB6",
+        "minValue": 0.44,
+        "maxValue": 0.44,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "ビタミンB12",
+        "minValue": 0.8,
+        "maxValue": 0.8,
+        "unit": "µg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "葉酸",
+        "minValue": 80,
+        "maxValue": 80,
+        "unit": "µg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "パントテン酸",
+        "minValue": 1.6,
+        "maxValue": 1.6,
+        "unit": "mg"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

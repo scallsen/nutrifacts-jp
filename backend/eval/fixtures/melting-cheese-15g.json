@@ -1,0 +1,86 @@
+{
+  "photo": "melting-cheese-15g.jpg",
+  "notes": "推定値; 糖質/食物繊維",
+  "source": {
+    "title": "とろけるスライスチーズ",
+    "url": "https://images.openfoodfacts.org/images/products/490/330/801/2613/nutrition_ja.37.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4903308012613",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "1枚（標準15g）当たり",
+    "basisAmount": 15,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 50,
+        "maxValue": 50,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 3.1,
+        "maxValue": 3.1,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 4.0,
+        "maxValue": 4.0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 0.3,
+        "maxValue": 0.3,
+        "unit": "g"
+      },
+      {
+        "nutrient": "netCarbs",
+        "printedName": "糖質",
+        "minValue": 0.2,
+        "maxValue": 0.2,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fibre",
+        "printedName": "食物繊維",
+        "minValue": 0.1,
+        "maxValue": 0.1,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.21,
+        "maxValue": 0.21,
+        "unit": "g"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "カルシウム",
+        "minValue": 93,
+        "maxValue": 93,
+        "unit": "mg"
+      }
+    ],
+    "isEstimate": true
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

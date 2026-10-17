@@ -1,0 +1,72 @@
+{
+  "photo": "sea-chicken-can.jpg",
+  "notes": "1缶当り・液汁含む (no grams); ナトリウム and 食塩相当量",
+  "source": {
+    "title": "シーチキンニューマイルド",
+    "url": "https://images.openfoodfacts.org/images/products/49406559/nutrition_ja.15.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/49406559",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "1缶当り・液汁含む",
+    "basisAmount": 0,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 208,
+        "maxValue": 208,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 12.3,
+        "maxValue": 12.3,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 17.6,
+        "maxValue": 17.6,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 0.1,
+        "maxValue": 0.1,
+        "unit": "g"
+      },
+      {
+        "nutrient": "sodium",
+        "printedName": "ナトリウム",
+        "minValue": 259,
+        "maxValue": 259,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.7,
+        "maxValue": 0.7,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

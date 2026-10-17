@@ -1,0 +1,79 @@
+{
+  "photo": "okara-cookie-48g.jpg",
+  "notes": "約48g; 推定値",
+  "source": {
+    "title": "国産大豆100％使用おからクッキー いちごプレーン",
+    "url": "https://images.openfoodfacts.org/images/products/457/001/872/3070/nutrition_ja.9.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4570018723070",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "1袋（約48g）あたり",
+    "basisAmount": 48,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 209,
+        "maxValue": 209,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 6.7,
+        "maxValue": 6.7,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 8.8,
+        "maxValue": 8.8,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 30.9,
+        "maxValue": 30.9,
+        "unit": "g"
+      },
+      {
+        "nutrient": "netCarbs",
+        "printedName": "糖質",
+        "minValue": 20.6,
+        "maxValue": 20.6,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fibre",
+        "printedName": "食物繊維",
+        "minValue": 10.3,
+        "maxValue": 10.3,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.1,
+        "maxValue": 0.1,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": true
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

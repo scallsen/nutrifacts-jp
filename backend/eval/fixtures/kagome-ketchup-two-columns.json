@@ -1,0 +1,79 @@
+{
+  "photo": "kagome-ketchup-two-columns.jpg",
+  "notes": "Two columns: 100g and 大さじ1杯18g; 内容量 visible nearby?",
+  "source": {
+    "title": "トマトケチャップ",
+    "url": "https://images.openfoodfacts.org/images/products/490/130/601/0525/nutrition_ja.13.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4901306010525",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "100g当たり",
+    "basisAmount": 100,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "エネルギー",
+        "minValue": 118,
+        "maxValue": 118,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 1.6,
+        "maxValue": 1.6,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 0,
+        "maxValue": 0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 27.9,
+        "maxValue": 27.9,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 3.3,
+        "maxValue": 3.3,
+        "unit": "g"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "カリウム",
+        "minValue": 430,
+        "maxValue": 430,
+        "unit": "mg"
+      },
+      {
+        "nutrient": "other",
+        "printedName": "リコピン",
+        "minValue": 18,
+        "maxValue": 18,
+        "unit": "mg"
+      }
+    ],
+    "isEstimate": false
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}

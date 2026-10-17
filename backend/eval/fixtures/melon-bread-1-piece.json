@@ -1,0 +1,79 @@
+{
+  "photo": "melon-bread-1-piece.jpg",
+  "notes": "1個当たり; 糖質 and 食物繊維 listed; この表示値は、目安です",
+  "source": {
+    "title": "メロンパン",
+    "url": "https://images.openfoodfacts.org/images/products/454/973/701/1607/nutrition_ja.11.full.jpg",
+    "page": "https://world.openfoodfacts.org/product/4549737011607",
+    "license": "CC BY-SA 3.0",
+    "author": "Open Food Facts contributors"
+  },
+  "expected": {
+    "panelFound": true,
+    "productName": "",
+    "basisText": "1個当たり",
+    "basisAmount": 0,
+    "basisUnit": "g",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "lines": [
+      {
+        "nutrient": "energy",
+        "printedName": "熱量",
+        "minValue": 337,
+        "maxValue": 337,
+        "unit": "kcal"
+      },
+      {
+        "nutrient": "protein",
+        "printedName": "たんぱく質",
+        "minValue": 7.4,
+        "maxValue": 7.4,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fat",
+        "printedName": "脂質",
+        "minValue": 11.6,
+        "maxValue": 11.6,
+        "unit": "g"
+      },
+      {
+        "nutrient": "carbohydrate",
+        "printedName": "炭水化物",
+        "minValue": 51.3,
+        "maxValue": 51.3,
+        "unit": "g"
+      },
+      {
+        "nutrient": "netCarbs",
+        "printedName": "糖質",
+        "minValue": 50.0,
+        "maxValue": 50.0,
+        "unit": "g"
+      },
+      {
+        "nutrient": "fibre",
+        "printedName": "食物繊維",
+        "minValue": 1.3,
+        "maxValue": 1.3,
+        "unit": "g"
+      },
+      {
+        "nutrient": "salt",
+        "printedName": "食塩相当量",
+        "minValue": 0.4,
+        "maxValue": 0.4,
+        "unit": "g"
+      }
+    ],
+    "isEstimate": true
+  },
+  "reference": {
+    "by": "claude-opus-5-5, two independent readings",
+    "at": "2026-10-17",
+    "agreement": "agreed"
+  },
+  "verified": false
+}
