@@ -327,25 +327,13 @@ summary::after {
 details[open] summary::after { transform: rotate(-135deg); }
 details p { padding: 0 22px 20px; color: var(--label-secondary); }
 
-/* Developers: inset grouped list rows with a trailing link */
+/* Developers */
 
-.person {
-  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 14px;
-  padding: 14px 22px; color: var(--label); border-bottom: 0.5px solid var(--separator);
-  transition: background 0.15s;
-}
-.person:last-child { border-bottom: 0; }
-.person:hover { background: var(--fill); }
-.person:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-.avatar {
-  width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
-  background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent);
-  font-weight: 600; font-size: 0.9375rem; letter-spacing: 0;
-}
-.person-text { display: grid; min-width: 0; }
-.person-name { font-weight: 500; }
-.person-site { color: var(--accent); font-size: 0.9375rem; overflow-wrap: anywhere; }
-.chevron { color: var(--label-tertiary); font-size: 1.0625rem; }
+.credits { padding-bottom: 48px; text-align: center; }
+.credits-label { font-size: var(--text-footnote); color: var(--label-secondary); margin-bottom: 4px; }
+.credits-names { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 10px; color: var(--label-tertiary); }
+.credits-names a { color: var(--label); font-weight: 500; }
+.credits-names a:hover { color: var(--accent); }
 
 /* Footer */
 
