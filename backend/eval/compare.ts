@@ -10,6 +10,7 @@
 
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { normaliseLabel } from "../src/label.ts";
 import { EVAL_DIR, loadFixtures, pct, score, summarise } from "./lib.ts";
 import type { Result } from "./run.ts";
 
@@ -44,7 +45,8 @@ const percentile = (sorted: number[], p: number) => sorted[Math.min(sorted.lengt
 const rows = runs.map(({ dir, run }) => {
   const scores = fixtures.flatMap((f) => {
     const r = run.results.find((x) => x.id === f.id);
-    return r ? [score(f.expected!, r.label)] : [];
+    // Apply the Worker's current parsing to saved answers, so older runs score as they would today.
+    return r ? [score(f.expected!, r.label && normaliseLabel(r.label))] : [];
   });
   const s = summarise(scores);
   const ms = run.results.filter((r) => !r.error && r.ms !== undefined).map((r) => r.ms!).sort((a, b) => a - b);

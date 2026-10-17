@@ -132,3 +132,9 @@ test("only serves its own endpoints", async () => {
   assert.equal((await worker.fetch(new Request("https://api.example/v1/chat/completions", { method: "POST" }), env())).status, 404);
   assert.equal((await worker.fetch(new Request("https://api.example/v1/nutrition-label/read"), env())).status, 405);
 });
+
+test("a max below the min means a single value, not a range", () => {
+  const odd = { ...label, lines: [{ ...label.lines[0], minValue: 93, maxValue: 0 }, { ...label.lines[0], printedName: "たんぱく質", minValue: 1, maxValue: 2 }] };
+  const parsed = parseCompletion({ choices: [{ message: { content: JSON.stringify(odd) } }] });
+  assert.deepEqual(parsed.lines.map((l) => [l.minValue, l.maxValue]), [[93, 93], [1, 2]]);
+});

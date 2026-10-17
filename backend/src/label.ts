@@ -76,8 +76,8 @@ export const LABEL_SCHEMA = {
         properties: {
           nutrient: { type: "string", enum: NUTRIENTS },
           printedName: { type: "string" },
-          minValue: { type: "number" },
-          maxValue: { type: "number" },
+          minValue: { type: "number", description: "The printed value, or the low end of a range like 120〜150." },
+          maxValue: { type: "number", description: "Same as minValue for a single value. Only differs for a printed range." },
           unit: { type: "string", description: "As printed: kcal, kJ, g, mg or µg." },
         },
       },
@@ -136,7 +136,13 @@ export function nutrientFor(printedName: string): ExtractedLine["nutrient"] {
  */
 export function normaliseLabel(label: ExtractedLabel): ExtractedLabel {
   if (!label.panelFound) return { ...label, lines: [] };
-  const lines = label.lines.map((l) => ({ ...l, nutrient: nutrientFor(l.printedName) }));
+  const lines = label.lines.map((l) => ({
+    ...l,
+    nutrient: nutrientFor(l.printedName),
+    // Some models put 0 (or anything below minValue) in maxValue for a single value. A real range
+    // always has max ≥ min, so treat that as "no range", as the app does.
+    maxValue: l.maxValue >= l.minValue ? l.maxValue : l.minValue,
+  }));
   if (!lines.some((l) => l.nutrient !== "other")) return { ...label, panelFound: false, lines: [] };
   return { ...label, lines };
 }
