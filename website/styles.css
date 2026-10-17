@@ -19,7 +19,7 @@
   --label-tertiary: rgba(60, 60, 67, 0.3);
 
   /* Tints */
-  --accent: var(--blue);
+  --accent: #3f7d1f;          /* matcha, from the app icon; 5:1 with white */
   --blue: #007aff;
   --indigo: #5856d6;
   --orange: #ff9500;
@@ -60,6 +60,7 @@
     --label: #ffffff;
     --label-secondary: rgba(235, 235, 245, 0.6);
     --label-tertiary: rgba(235, 235, 245, 0.3);
+    --accent: #4e8f2a;
     --blue: #0a84ff;
     --indigo: #5e5ce6;
     --orange: #ff9f0a;
@@ -70,6 +71,7 @@
   }
 }
 :root[data-theme="dark"] {
+  --accent: #4e8f2a;
   --bg: #000000;
   --bg-elevated: #1c1c1e;
   --fill: rgba(118, 118, 128, 0.24);
