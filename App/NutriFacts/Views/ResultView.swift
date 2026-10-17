@@ -4,7 +4,7 @@ import SwiftUI
 struct ResultView: View {
     @Environment(AppModel.self) private var model
     @AppStorage("referenceSource") private var sourceID = ReferenceSource.japan.id
-    @AppStorage("showJapanese") private var showJapanese = true
+    @AppStorage("showJapanese") private var showJapanese = false
     @State private var basis: Basis = .asLabelled
 
     let scan: Scan
@@ -17,7 +17,7 @@ struct ResultView: View {
     var body: some View {
         let a = analysis
         List {
-            HealthScoreSection(analysis: a, scan: model.latest(scan))
+            if !a.knowsBasisAmount { BasisSizeSection(panel: a.panel, scan: model.latest(scan)) }
             ThingsToKnowSection(analysis: a)
             Section {
                 Picker("Amount", selection: $basis) {
@@ -26,9 +26,6 @@ struct ResultView: View {
                 .pickerStyle(.segmented)
                 .listRowBackground(Color.clear)
                 .listRowInsets(EdgeInsets())
-            } footer: {
-                Text((basis == .asLabelled ? "As labelled " : "Converted from ") + a.panel.basisDescription
-                     + (showJapanese ? " · \(a.panel.basisJapanese)" : ""))
             }
             NutritionSection(analysis: a, showJapanese: showJapanese)
             CarbBreakdownSection(analysis: a)
@@ -90,8 +87,6 @@ private struct ThingsToKnowSection: View {
             }
         } header: {
             Text("Things to know")
-        } footer: {
-            Text("Levels per 100 \(analysis.panel.unit.rawValue), using UK bands.")
         }
     }
 }
@@ -162,7 +157,7 @@ private struct NutrientRow: View {
                 Text(key.english).font(depth > 0 ? .callout : .body)
                 HStack(spacing: 6) {
                     if showJapanese { Text(key.japanese) }
-                    if shown?.isCalculated == true { Tag(text: "Calculated", tint: .indigo) }
+                    if shown?.isCalculated == true { Text("Calculated") }
                     if shown?.isUpperBound == true { Text("printed as 0") }
                     else if let note, shown != nil { Text(note) }
                 }
@@ -185,7 +180,7 @@ private struct NutrientRow: View {
                             Text(percent.text)
                                 .fontWeight(level == nil ? .regular : .semibold)
                                 .foregroundStyle(level?.color ?? .secondary)
-                            if percent.fromWHO { Tag(text: "WHO", tint: .teal) }
+                            if percent.fromWHO { Text("WHO").foregroundStyle(.secondary) }
                         } else if key != .netCarbs, !analysis.hasReference(key) {
                             Text("No reference").foregroundStyle(.secondary)
                         }
@@ -266,8 +261,6 @@ private struct CarbBreakdownSection: View {
                 Spacer()
                 Text(String(format: "%.1f g", total)).textCase(nil).fontWeight(.regular)
             }
-        } footer: {
-            Text(footer(total: total))
         }
     }
 
@@ -288,17 +281,6 @@ private struct CarbBreakdownSection: View {
             return [Segment(name: "Sugars", grams: s, color: .pink),
                     Segment(name: sweetened ? "Starch and sugar alcohols" : "Starch and other carbs", grams: net - s, color: .orange),
                     Segment(name: "Fibre", grams: f, color: .green)]
-        }
-    }
-
-    private func footer(total: Double) -> String {
-        switch analysis.carbState {
-        case .totalOnly: return "Only the total is listed."
-        case .sugarsOnly:
-            let s = analysis.panel.number(.sugars) ?? 0
-            return String(format: "Fibre isn’t listed, so net carbs are %.1f–%.1f g.", s, total)
-        case .splitNoSugars: return "Sugars aren’t split out of net carbs."
-        case .full: return "Net carbs = carbohydrate minus fibre."
         }
     }
 }

@@ -2,7 +2,7 @@ import SwiftUI
 
 @main
 struct NutriFactsApp: App {
-    @State private var model = AppModel.shared
+    @State private var model = AppModel()
 
     var body: some Scene {
         WindowGroup {

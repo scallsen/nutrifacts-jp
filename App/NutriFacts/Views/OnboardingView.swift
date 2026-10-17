@@ -23,10 +23,8 @@ struct OnboardingView: View {
                     .padding(.top, 40)
 
                     VStack(alignment: .leading, spacing: 26) {
-                        Feature(symbol: "text.viewfinder", tint: .blue, title: "Scan Japanese labels",
-                                detail: "Point at the 栄養成分表示 box on the pack.")
-                        Feature(symbol: "character.book.closed", tint: .indigo, title: "Read it in English",
-                                detail: "Every line translated, with the Japanese alongside.")
+                        Feature(symbol: "text.viewfinder", tint: .blue, title: "Scan and read in English",
+                                detail: "Point at the nutrition facts on the pack and see every line translated.")
                         Feature(symbol: "chart.bar.fill", tint: .orange, title: "See how much is a lot",
                                 detail: "Daily % and high or low levels, from guidelines you choose.")
                         Feature(symbol: "lock.fill", tint: .green, title: "Private by design",

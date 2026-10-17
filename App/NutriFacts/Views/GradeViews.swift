@@ -100,7 +100,7 @@ struct HealthScoreSection: View {
 }
 
 /// "Per 1個" with no size: offer the 内容量-based suggestion to confirm, or let the user type it.
-private struct BasisSizeSection: View {
+struct BasisSizeSection: View {
     @Environment(AppModel.self) private var model
     let panel: LabelPanel
     let scan: Scan
@@ -129,7 +129,7 @@ private struct BasisSizeSection: View {
                 }
                 .pickerStyle(.segmented)
                 .fixedSize()
-                Button("Score") {
+                Button("Done") {
                     if let value = Double(amount.replacingOccurrences(of: ",", with: ".")), value > 0 {
                         model.confirmBasis(of: scan, amount: value, unit: unit)
                     }
@@ -137,10 +137,10 @@ private struct BasisSizeSection: View {
                 .disabled((Double(amount.replacingOccurrences(of: ",", with: ".")) ?? 0) <= 0)
             }
         } header: {
-            Text("Health score")
+            Text("Size of \(name)")
         } footer: {
-            Text("The label is per \(name) but doesn't say how much that is, so it can't be scored per 100 \(panel.unit.rawValue) yet. "
-                 + (panel.basisSuggestion == nil ? "It's usually printed as 内容量 on the pack." : "Check the suggestion: a pack can hold several pieces."))
+            Text("The label is per \(name) but doesn't say how much that is, so it can't be compared per 100 \(panel.unit.rawValue) yet. "
+                 + (panel.basisSuggestion == nil ? "It's usually printed as the net contents on the pack." : "Check the suggestion: a pack can hold several pieces."))
         }
         .onAppear { unit = panel.basisSuggestion?.unit ?? panel.unit }
     }
@@ -188,31 +188,5 @@ struct ScoreBreakdownView: View {
     private func points(_ p: ClosedRange<Double>) -> String {
         let f = { (x: Double) in x.rounded() == 0 ? "0" : (x > 0 ? "+" : "−") + "\(Int(abs(x).rounded()))" }
         return Int(p.lowerBound.rounded()) == Int(p.upperBound.rounded()) ? f(p.lowerBound) : "\(f(p.upperBound)) to \(f(p.lowerBound))"
-    }
-}
-
-/// Compact result for the Shortcuts / Action Button snippet.
-struct ScoreSnippetView: View {
-    var panel: LabelPanel?
-    var message: String
-
-    var body: some View {
-        if let panel, let score = PanelAnalysis(panel: panel, basis: .per100, source: .japan).healthScore() {
-            let a = PanelAnalysis(panel: panel, basis: .per100, source: .with(id: UserDefaults.standard.string(forKey: "referenceSource") ?? "jp"))
-            HStack(spacing: 14) {
-                GradeBadge(score: score, size: 48)
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(panel.nickname).font(.headline).lineLimit(1)
-                    Text("\(score.scoreText) / 100 · per 100 \(panel.unit.rawValue)").font(.subheadline).foregroundStyle(.secondary)
-                    if let first = a.warnings.first {
-                        Text(first.title).font(.caption).foregroundStyle(first.tint)
-                    }
-                }
-                Spacer(minLength: 0)
-            }
-            .padding()
-        } else {
-            Text(message).padding()
-        }
     }
 }

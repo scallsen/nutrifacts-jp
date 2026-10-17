@@ -16,9 +16,6 @@ extension PresentationDetent {
 
 @MainActor @Observable
 final class AppModel {
-    /// Shared with the App Intent, so Action Button scans land in the same history.
-    static let shared = AppModel()
-
     enum Phase { case scanning, result }
 
     var phase: Phase = .scanning
@@ -30,7 +27,7 @@ final class AppModel {
     private(set) var current: Scan?
     /// Placeholder: kept in memory only. The real app stores scans and the cropped photo on device.
     private(set) var history: [Scan] = []
-    /// A real scan in progress (screenshot or Action Button).
+    /// A real scan in progress (a screenshot or photo).
     private(set) var isReading = false
     /// Why the last real scan failed, shown on the scanning sheet.
     var readError: String?

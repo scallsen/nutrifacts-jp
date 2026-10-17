@@ -5,9 +5,11 @@ import Foundation
 struct ReferenceSource: Identifiable, Hashable, Sendable {
     let id: String
     let name: String
-    /// Flag emoji. `nil` shows a globe.
+    /// Flag image in the asset catalog. `nil` shows a globe.
     let flag: String?
+    /// The document the values come from.
     let title: String
+    /// Who it applies to and the reference energy.
     let detail: String
     /// Used in footers: "% of Japan’s daily values (adults, 2,200 kcal)."
     let summary: String
@@ -21,8 +23,8 @@ struct ReferenceSource: Identifiable, Hashable, Sendable {
     var isWHO: Bool { id == "who" }
 
     static let japan = ReferenceSource(
-        id: "jp", name: "Japan", flag: "🇯🇵", title: "栄養素等表示基準値 (2025)",
-        detail: "Consumer Affairs Agency · adults 18+ · 2,200 kcal",
+        id: "jp", name: "Japan", flag: "Flag-jp", title: "Nutrient Reference Values for Labelling (2025)",
+        detail: "Adults 18+ · 2,200 kcal",
         summary: "Japan’s daily values (adults, 2,200 kcal)",
         note: "Matches the label exactly. No sugars value, so WHO’s is used.",
         referenceKcal: 2200,
@@ -30,7 +32,7 @@ struct ReferenceSource: Identifiable, Hashable, Sendable {
         searchTerms: ["japan", "日本", "nihon", "nippon"])
 
     static let who = ReferenceSource(
-        id: "who", name: "World Health Organization", flag: nil, title: "WHO healthy diet guidelines",
+        id: "who", name: "World Health Organization", flag: nil, title: "Healthy Diet Guidelines",
         detail: "Global · daily limits and targets · 2,000 kcal",
         summary: "WHO daily limits (2,000 kcal)",
         note: "Limits and targets, not reference amounts. No energy, protein or carbohydrate values.",
@@ -38,7 +40,7 @@ struct ReferenceSource: Identifiable, Hashable, Sendable {
         searchTerms: ["world health organization", "who", "global", "international", "other"])
 
     static let europeanUnion = ReferenceSource(
-        id: "eu", name: "European Union", flag: "🇪🇺", title: "Reference Intakes (Reg. 1169/2011)",
+        id: "eu", name: "European Union", flag: "Flag-eu", title: "Reference Intakes (Regulation 1169/2011)",
         detail: "All 27 EU countries · adults · 2,000 kcal",
         summary: "EU reference intakes (2,000 kcal)",
         note: "No fibre value, so WHO’s is used. Carbohydrate is compared as net carbs.",
@@ -50,8 +52,8 @@ struct ReferenceSource: Identifiable, Hashable, Sendable {
                       "slovakia", "slovenia", "spain", "sweden"])
 
     static let unitedStates = ReferenceSource(
-        id: "us", name: "United States", flag: "🇺🇸", title: "FDA Daily Values (21 CFR 101.9)",
-        detail: "FDA · adults and children 4+ · 2,000 kcal",
+        id: "us", name: "United States", flag: "Flag-us", title: "Daily Values (21 CFR 101.9)",
+        detail: "Adults and children 4+ · 2,000 kcal",
         summary: "US daily values (2,000 kcal)",
         note: "The sugar value is for added sugars only, so WHO’s is used. Salt is compared as sodium.",
         referenceKcal: 2000,
@@ -59,8 +61,8 @@ struct ReferenceSource: Identifiable, Hashable, Sendable {
         searchTerms: ["united states", "usa", "america", "us"])
 
     static let canada = ReferenceSource(
-        id: "ca", name: "Canada", flag: "🇨🇦", title: "Table of Daily Values (2022)",
-        detail: "Health Canada · ages 4+ · no energy value",
+        id: "ca", name: "Canada", flag: "Flag-ca", title: "Table of Daily Values (2022)",
+        detail: "Ages 4+ · no energy value",
         summary: "Canada’s daily values",
         note: "No energy, protein or carbohydrate values. Saturated fat includes trans fat.",
         referenceKcal: 2000,
