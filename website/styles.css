@@ -308,6 +308,12 @@ strong { font-weight: 600; }
 .cta .signup { width: 100%; margin-left: auto; margin-right: auto; }
 .signup-large .field input, .signup-large .button { min-height: 56px; }
 
+/* Confirmed page (confirmed.html), where Kit's confirm link lands */
+
+.confirmed { padding-top: clamp(48px, 10vw, 120px); padding-bottom: var(--section-space); }
+.confirmed-title { font-size: var(--text-title); }
+.confirmed-button { margin-top: 32px; }
+
 /* FAQ: inset grouped list */
 
 .list { background: var(--bg-elevated); border-radius: var(--radius-card); overflow: hidden; }

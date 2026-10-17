@@ -35,4 +35,6 @@ When the beta opens, create a TestFlight public link in App Store Connect and se
 
 GitHub Pages is only free on public repos (or with GitHub Pro / Team for private ones).
 
-GitHub Pages lets browsers cache files for 10 minutes. After changing `main.js` or `styles.css`, bump the `?v=` number where `index.html` loads them, so visitors get the new file straight away.
+GitHub Pages lets browsers cache files for 10 minutes. After changing `main.js` or `styles.css`, bump the `?v=` number where `index.html` and `confirmed.html` load them, so visitors get the new file straight away.
+
+`confirmed.html` is where Kit's confirmation link sends people. In Kit: the form's Settings › Incentive › redirect after confirming, set to `https://scallsen.github.io/nutrifacts-jp/confirmed.html`.

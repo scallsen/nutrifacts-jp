@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>You’re confirmed — NutriFacts</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css?v=3">
+</head>
+<body>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="./">
+        <img src="icon.svg" alt="" width="28" height="28">
+        <span>NutriFacts</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="confirmed wrap">
+    <div class="cta">
+      <img class="cta-icon" src="icon.svg" alt="" width="72" height="72">
+      <h1 class="confirmed-title">You’re confirmed.</h1>
+      <p class="body-large muted">
+        Thanks for joining the NutriFacts beta. We’ll email you the TestFlight link the day it opens.
+      </p>
+      <a class="button confirmed-button" href="./">Back to NutriFacts</a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <span>© <span data-year>2026</span> NutriFacts</span>
+      <span class="muted">Not affiliated with Apple. iPhone and TestFlight are trademarks of Apple Inc.</span>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll("[data-year]").forEach((el) => { el.textContent = new Date().getFullYear(); });
+  </script>
+</body>
+</html>
