@@ -44,7 +44,7 @@ Energy isn't scored on its own. There's no official "high" energy threshold, and
 ### Sources for the thresholds
 
 - **Low** and **source / high in** (positives): Japan's nutrient-content claim thresholds, 食品表示基準 別表第十二 ([spec §9](japanese-nutrition-label-spec.md#9-claim-words-on-the-front-of-the-pack-useful-to-cross-check)). Japan's low-salt threshold is sodium ≤ 120 mg, which is 0.30 g salt.
-- **High** (negatives): UK Department of Health / FSA front-of-pack guidance (2016), the red traffic-light thresholds per 100 g and per 100 ml. Japan defines no "high" level. The UK's per-portion rule isn't used, because Japan has no standard portion.
+- **High** (negatives): UK Department of Health / FSA front-of-pack guidance (2016), the red traffic-light thresholds per 100 g and per 100 ml. Japan defines no "high" level. The score doesn't use a per-portion rule, because Japan has no standard portion. The result screen doesn't show these bands: its rows use only the chosen health guidelines' own words (see [daily-values.md](daily-values.md#the-authoritys-own-words)).
 
 Re-check both against the official pages before shipping, the same way [`daily-values.md`](daily-values.md) was verified.
 

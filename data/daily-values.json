@@ -471,6 +471,152 @@
       "interpretation": null,
       "interpretationNote": "The regulation sets no \"low / high\" bands for %. (UK traffic-light bands are UK guidance, not EU law.)"
     },
+    "uk": {
+      "country": "UK",
+      "name": "United Kingdom",
+      "title": "Reference intakes",
+      "nativeTitle": "Reference intakes (RI)",
+      "authority": "UK Parliament; guidance from the Department of Health and Social Care and the Food Standards Agency",
+      "instrument": "Regulation (EU) No 1169/2011 as retained in UK law (assimilated law), Annex XIII, applied by the Food Information Regulations 2014",
+      "version": {
+        "label": "Retained Regulation 1169/2011",
+        "displayName": "UK Reference Intakes (retained Reg. 1169/2011)",
+        "lastChangedBy": "None. Annex XIII values are the same as the EU's. Northern Ireland follows the EU regulation under the Windsor Framework, with the same values.",
+        "published": "2011-11-22",
+        "publishedIn": "legislation.gov.uk (revised version)"
+      },
+      "population": "An average adult",
+      "referenceEnergyKcal": 2000,
+      "requiredStatement": "Reference intake of an average adult (8400 kJ/2000 kcal)",
+      "urls": {
+        "values": "https://www.legislation.gov.uk/eur/2011/1169/annex/XIII",
+        "frontOfPack": "https://www.food.gov.uk/sites/default/files/media/document/fop-guidance_0.pdf",
+        "dietaryRecommendations": "https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/618167/government_dietary_recommendations.pdf"
+      },
+      "dailyValues": {
+        "energy": {
+          "amount": 2000,
+          "unit": "kcal",
+          "sourceTerm": "Energy",
+          "match": "exact",
+          "note": "Stated as 8400 kJ / 2000 kcal."
+        },
+        "protein": {
+          "amount": 50,
+          "unit": "g",
+          "sourceTerm": "Protein",
+          "match": "exact"
+        },
+        "fat": {
+          "amount": 70,
+          "unit": "g",
+          "sourceTerm": "Total fat",
+          "match": "exact"
+        },
+        "saturatedFat": {
+          "amount": 20,
+          "unit": "g",
+          "sourceTerm": "Saturates",
+          "match": "exact"
+        },
+        "netCarbs": {
+          "amount": 260,
+          "unit": "g",
+          "sourceTerm": "Carbohydrate",
+          "match": "exact",
+          "note": "As in the EU, 'carbohydrate' excludes fibre, so it's the same thing as 糖質."
+        },
+        "carbohydrate": {
+          "amount": 260,
+          "unit": "g",
+          "sourceTerm": "Carbohydrate",
+          "match": "fallback",
+          "fallbackFor": "netCarbs",
+          "note": "Only use when the label has no 糖質 line. 炭水化物 includes fibre, so the % comes out slightly high. Footnote it."
+        },
+        "sugars": {
+          "amount": 90,
+          "unit": "g",
+          "sourceTerm": "Sugars",
+          "match": "exact",
+          "note": "Total sugars, the same as 糖類. The separate free-sugars advice (30 g) is in otherValues."
+        },
+        "fibre": {
+          "amount": null,
+          "match": "none",
+          "note": "The labelling rules set no reference intake for fibre. The dietary recommendation (30 g) is in otherValues."
+        },
+        "salt": {
+          "amount": 6,
+          "unit": "g",
+          "sourceTerm": "Salt",
+          "match": "approximate",
+          "note": "UK salt = sodium × 2.5; Japan uses × 2.54. About 1.6% apart. Compare directly."
+        },
+        "potassium": {
+          "amount": 2000,
+          "unit": "mg",
+          "sourceTerm": "Potassium",
+          "match": "exact"
+        },
+        "calcium": {
+          "amount": 800,
+          "unit": "mg",
+          "sourceTerm": "Calcium",
+          "match": "exact"
+        },
+        "iron": {
+          "amount": 14,
+          "unit": "mg",
+          "sourceTerm": "Iron",
+          "match": "exact"
+        },
+        "vitaminD": {
+          "amount": 5,
+          "unit": "µg",
+          "sourceTerm": "Vitamin D",
+          "match": "exact"
+        }
+      },
+      "otherValues": {
+        "fibre": {
+          "amount": 30,
+          "unit": "g",
+          "kind": "target",
+          "source": "Government Dietary Recommendations (Public Health England, 2016), from SACN Carbohydrates and Health (2015)",
+          "note": "Adults. Advice, not a labelling value."
+        },
+        "freeSugars": {
+          "amount": 30,
+          "unit": "g",
+          "kind": "limit",
+          "source": "Government Dietary Recommendations (2016): free sugars at most 5% of energy",
+          "note": "Free sugars only, which a Japanese label doesn't show."
+        }
+      },
+      "interpretation": null,
+      "interpretationNote": "No bands for %. Front-of-pack guidance (DHSC and FSA, 2016) sets traffic-light bands per 100 g/ml instead, which the app uses for High / Medium / Low.",
+      "frontOfPack": {
+        "source": "Department of Health and FSA, Guide to creating a front of pack (FoP) nutrition label for pre-packed products sold through retail outlets (2016)",
+        "per100g": {
+          "fat": { "lowAtOrBelow": 3, "highAbove": 17.5 },
+          "saturatedFat": { "lowAtOrBelow": 1.5, "highAbove": 5 },
+          "sugars": { "lowAtOrBelow": 5, "highAbove": 22.5 },
+          "salt": { "lowAtOrBelow": 0.3, "highAbove": 1.5 }
+        },
+        "per100ml": {
+          "fat": { "lowAtOrBelow": 1.5, "highAbove": 8.75 },
+          "saturatedFat": { "lowAtOrBelow": 0.75, "highAbove": 2.5 },
+          "sugars": { "lowAtOrBelow": 2.5, "highAbove": 11.25 },
+          "salt": { "lowAtOrBelow": 0.3, "highAbove": 0.75 }
+        },
+        "perPortion": {
+          "highAbovePercentOfRI": 30,
+          "appliesAbove": { "g": 100, "ml": 150 },
+          "note": "A portion over 100 g (150 ml) with more than 30% of the reference intake is high, whatever its level per 100 g."
+        }
+      }
+    },
     "us": {
       "country": "US",
       "name": "United States",

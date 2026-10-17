@@ -79,12 +79,86 @@ import Testing
         #expect(try label([line(.fat, 0)], basis: "1袋（60g）当たり", amount: 60).toPanel(photo: nil).basisAmount == 60)
     }
 
-    @Test func printedZeroShowsAsLow() throws {
+    @Test func printedZeroIsLowInTheUKsWords() throws {
         let panel = try label([line(.fat, 0), line(.carbohydrate, 0)]).toPanel(photo: nil)
-        let a = PanelAnalysis(panel: panel, basis: .asLabelled, source: .japan)
-        #expect(a.level(.fat) == .zero)
-        #expect(a.level(.fat)?.word == "Low")
-        #expect(a.value(.fat)?.text == "0 g")
+        #expect(PanelAnalysis(panel: panel, basis: .asLabelled, source: .unitedKingdom).verdict(.fat)?.text == "Low")
+        // Japan publishes no such words.
+        #expect(PanelAnalysis(panel: panel, basis: .asLabelled, source: .japan).verdict(.fat) == nil)
+        #expect(PanelAnalysis(panel: panel, basis: .asLabelled, source: .japan).value(.fat)?.text == "0 g")
+    }
+
+    @Test func eachAuthorityUsesItsOwnWords() throws {
+        // A 300 g bento: fat 12 g, salt 2.0 g, fibre 7 g.
+        let bento = try label([line(.fat, 12), line(.salt, 2.0), line(.carbohydrate, 40), line(.fibre, 7)],
+                              basis: "1食（300g）当たり", amount: 300).toPanel(photo: nil)
+        func analysis(_ source: ReferenceSource) -> PanelAnalysis { PanelAnalysis(panel: bento, basis: .asLabelled, source: source) }
+
+        // Japan, the EU and WHO: no words, no warnings.
+        for source in [ReferenceSource.japan, .europeanUnion, .who] {
+            #expect(analysis(source).verdict(.salt) == nil)
+            #expect(analysis(source).warnings.isEmpty)
+        }
+
+        // UK: fat 4 g per 100 g is Medium; salt 0.67 g per 100 g is Medium, but 2.0 g is over 30% of 6 g in a 300 g portion.
+        #expect(analysis(.unitedKingdom).verdict(.fat)?.text == "Medium")
+        #expect(analysis(.unitedKingdom).verdict(.salt)?.text == "High")
+        #expect(analysis(.unitedKingdom).warnings.contains { $0.title == "High in salt" })
+        // Sugars aren't listed, and the 33 g of net carbs could all be sugar: 37% of 90 g in the portion.
+        let maybeSugars = analysis(.unitedKingdom).warnings.first { $0.title == "May be high in sugars" }
+        #expect(maybeSugars?.detail.hasPrefix("Up to ") == true)
+        #expect(maybeSugars?.info == "A carbohydrate breakdown is not provided by the label, so this is an estimate.")
+
+        // FDA: salt 2.0 / 5.84 = 34% is High; fat 12 / 78 = 15% gets no word; fibre 7 / 28 = 25% is High.
+        #expect(analysis(.unitedStates).verdict(.salt)?.text == "High")
+        #expect(analysis(.unitedStates).verdict(.fat) == nil)
+        #expect(analysis(.unitedStates).verdict(.fibre)?.text == "High")
+
+        // Canada: "A lot" from 15%. Its "High in" symbol for a 300 g main dish needs 30%, and leaves out fat.
+        #expect(analysis(.canada).verdict(.salt)?.text == "A lot")
+        #expect(analysis(.canada).verdict(.fat)?.text == "A lot") // 12 / 75 = 16%
+        let canada = analysis(.canada).warnings.map(\.title)
+        #expect(canada.contains("High in salt") && !canada.contains("High in fat"))
+        #expect(AgencyRule.canadaHighInAt(serving: 25, isDrink: false) == 10)
+        // A 25 g snack with 12 g of sugars: 12% isn't "A lot", but it needs the "High in" symbol, so the row says so too.
+        let snack = try label([line(.sugars, 12), line(.carbohydrate, 15)], basis: "1袋（25g）当たり", amount: 25).toPanel(photo: nil)
+        let canadaSnack = PanelAnalysis(panel: snack, basis: .asLabelled, source: .canada)
+        #expect(canadaSnack.warnings.contains { $0.title == "High in sugars" })
+        #expect(canadaSnack.verdict(.sugars)?.text == "High in")
+
+        // A per 100 g label has no serving, so the FDA and Canada say nothing; the UK still does.
+        let per100 = try label([line(.salt, 2.0)]).toPanel(photo: nil)
+        #expect(PanelAnalysis(panel: per100, basis: .asLabelled, source: .unitedStates).verdict(.salt) == nil)
+        #expect(PanelAnalysis(panel: per100, basis: .asLabelled, source: .unitedKingdom).verdict(.salt)?.text == "High")
+        #expect(ReferenceSource.with(id: "uk").name == "United Kingdom")
+    }
+
+    @Test func aSmallBottleIsOneServing() throws {
+        // A drink labelled per 100 ml: 6.7 g of carbohydrate, no sugars line.
+        func analysis(pack: Double) throws -> PanelAnalysis {
+            let l = ExtractedLabel(panelFound: true, productName: "", basisText: "100ml当たり", basisAmount: 100, basisUnit: .ml,
+                                   netContentsAmount: pack, netContentsUnit: .ml, netContentsCount: 0,
+                                   lines: [line(.energy, 27, "kcal"), line(.carbohydrate, 6.7), line(.salt, 0.1)], isEstimate: false)
+            return PanelAnalysis(panel: try l.toPanel(photo: nil), basis: .asLabelled, source: .canada)
+        }
+        // A 450 ml bottle is one serving: up to 30 g of sugars is 30% of Canada's 100 g.
+        let bottle = try analysis(pack: 450)
+        #expect(bottle.serving == 450)
+        #expect(bottle.warnings.first?.title == "May be high in sugars")
+        #expect(bottle.warnings.first?.detail.contains("450 ml bottle") == true)
+        #expect(bottle.guidanceNotice == nil)
+        #expect(bottle.mayBeHigh(.sugars))
+        #expect(bottle.verdict(.sugars) == nil)
+        // Labels often write mL.
+        let capitalL = ExtractedLabel(panelFound: true, productName: "", basisText: "100mL当たり", basisAmount: 100, basisUnit: .ml,
+                                      netContentsAmount: 500, netContentsUnit: .ml, netContentsCount: 0,
+                                      lines: [line(.carbohydrate, 6.8)], isEstimate: false)
+        let mL = PanelAnalysis(panel: try capitalL.toPanel(photo: nil), basis: .asLabelled, source: .canada)
+        #expect(mL.serving == 500)
+        #expect(mL.warnings.first?.title == "May be high in sugars")
+        // A 1 L bottle holds several servings, so there's no serving to judge.
+        let large = try analysis(pack: 1000)
+        #expect(large.serving == nil)
+        #expect(large.guidanceNotice?.title == "No serving size")
     }
 
     @Test func sodiumOnlyBecomesSalt() throws {

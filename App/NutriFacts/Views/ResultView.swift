@@ -300,16 +300,24 @@ private struct ThingsToKnowSection: View {
     let analysis: PanelAnalysis
 
     var body: some View {
+        let warnings = analysis.warnings
+        if analysis.source.rule == nil {
+            if !warnings.isEmpty {
+                Section("Things to know") { ForEach(warnings) { NoticeRow(notice: $0) } }
+            }
+        } else {
+            levelsSection(warnings)
+        }
+    }
+
+    private func levelsSection(_ warnings: [Notice]) -> some View {
         Section {
-            let warnings = analysis.warnings
             if !analysis.knowsBasisAmount {
-                NoticeRow(notice: Notice(symbol: "questionmark", tint: .orange, title: "Levels need the size of \(analysis.panel.basisUnitName)",
-                                         detail: "High and low are per 100 \(analysis.panel.unit.rawValue). Add the size above."))
+                NoticeRow(notice: Notice(symbol: "questionmark", tint: .orange, title: "Warnings need the size of \(analysis.panel.basisUnitName)",
+                                         detail: "\(analysis.source.name)’s guidance needs the amount. Add the size above."))
                 ForEach(warnings) { NoticeRow(notice: $0) }
-            } else if warnings.isEmpty {
-                NoticeRow(notice: Notice(symbol: "checkmark", tint: .green, title: "Nothing high",
-                                         detail: "Fat, saturated fat, sugars and salt are medium or low."))
             } else {
+                if let notice = analysis.guidanceNotice { NoticeRow(notice: notice) }
                 ForEach(warnings) { NoticeRow(notice: $0) }
             }
         } header: {
@@ -320,6 +328,7 @@ private struct ThingsToKnowSection: View {
 
 struct NoticeRow: View {
     let notice: Notice
+    @State private var showsInfo = false
 
     var body: some View {
         HStack(spacing: 12) {
@@ -329,7 +338,23 @@ struct NoticeRow: View {
                 .frame(width: 30, height: 30)
                 .background(notice.tint.gradient, in: .rect(cornerRadius: 8))
             VStack(alignment: .leading, spacing: 2) {
-                Text(notice.title)
+                HStack(spacing: 6) {
+                    Text(notice.title)
+                    if let info = notice.info {
+                        Button("About this estimate", systemImage: "info.circle") { showsInfo = true }
+                            .labelStyle(.iconOnly)
+                            .font(.subheadline)
+                            .buttonStyle(.borderless)
+                            .popover(isPresented: $showsInfo) {
+                                Text(info)
+                                    .font(.footnote)
+                                    .padding()
+                                    .frame(idealWidth: 260)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .presentationCompactAdaptation(.popover)
+                            }
+                    }
+                }
                 Text(notice.detail).font(.footnote).foregroundStyle(.secondary)
             }
         }
@@ -362,12 +387,12 @@ private struct NutritionSection: View {
                 Text(analysis.basisDescription).textCase(nil).fontWeight(.regular)
             }
         } footer: {
-            Text(analysis.nutritionFooter(levelsShown: true))
+            Text(analysis.nutritionFooter)
         }
     }
 }
 
-/// One label line: English name (and Japanese), the value, then the level and % in the level's colour.
+/// One label line: English name (and Japanese), the value, then the chosen authority's words and the % in their colour.
 private struct NutrientRow: View {
     let analysis: PanelAnalysis
     let key: NutrientKey
@@ -377,45 +402,41 @@ private struct NutrientRow: View {
 
     var body: some View {
         let shown = analysis.value(key)
-        let level = shown == nil ? nil : analysis.level(key)
+        let verdict = shown == nil ? nil : analysis.verdict(key)
         let percent = analysis.percent(key)
-        let textFont: Font = depth > 0 ? .callout : .body
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(key.english).font(textFont)
+                Text(key.english)
                 HStack(spacing: 6) {
                     if showJapanese { Text(key.japanese) }
                     if shown?.isCalculated == true { Text("Calculated") }
                     else if analysis.panel.isEstimate, shown != nil { Text("Estimated") }
-                    if let note, shown != nil, level != .zero { Text(note) }
+                    if let note, shown != nil, shown?.isUpperBound != true { Text(note) }
                 }
-                .font(textFont)
                 .foregroundStyle(.secondary)
             }
             Spacer(minLength: 12)
             VStack(alignment: .trailing, spacing: 2) {
                 Text(shown?.text ?? "Not listed")
-                    .font(textFont)
                     .monospacedDigit()
                     .foregroundStyle(shown == nil ? .secondary : .primary)
-                if shown != nil {
+                if shown == nil, analysis.mayBeHigh(key) {
+                    Text("May be high").fontWeight(.semibold).foregroundStyle(.orange)
+                } else if shown != nil {
                     HStack(spacing: 4) {
-                        if let level {
-                            Text(level.word).fontWeight(.semibold).foregroundStyle(level.color)
+                        if let verdict {
+                            Text(verdict.text).fontWeight(.semibold).foregroundStyle(verdict.color)
                         }
-                        if level == .zero {
-                            // "Low" says it all; a % of a "0" line isn't meaningful.
-                        } else if let percent {
-                            if level != nil { Text("·").foregroundStyle(.secondary) }
+                        if let percent {
+                            if verdict != nil { Text("·").foregroundStyle(.secondary) }
                             Text(percent.text)
-                                .fontWeight(level == nil ? .regular : .semibold)
-                                .foregroundStyle(level?.color ?? .secondary)
+                                .fontWeight(verdict == nil ? .regular : .semibold)
+                                .foregroundStyle(verdict?.color ?? .secondary)
                             if percent.fromWHO { Text("WHO").foregroundStyle(.secondary) }
                         } else if key != .netCarbs, !analysis.hasReference(key) {
                             Text("No reference").foregroundStyle(.secondary)
                         }
                     }
-                    .font(textFont)
                     .monospacedDigit()
                 }
             }

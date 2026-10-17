@@ -4,6 +4,7 @@ import SwiftUI
 struct HistoryView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
+    @State private var confirmsClear = false
 
     var body: some View {
         NavigationStack {
@@ -12,22 +13,27 @@ struct HistoryView: View {
                     ContentUnavailableView("No Scans Yet", systemImage: "clock",
                                            description: Text("Labels you scan show up here."))
                 } else {
-                    List(model.history) { scan in
-                        NavigationLink {
-                            ResultView(scan: scan, showsScanAgain: false)
-                        } label: {
-                            HStack(spacing: 12) {
-                                LabelThumbnail(panel: scan.panel)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(summary(scan.panel))
-                                    Text(scan.date, format: .dateTime.weekday().hour().minute())
-                                        .font(.footnote).foregroundStyle(.secondary)
-                                }
-                                Spacer()
-                                if let score = PanelAnalysis(panel: scan.panel, basis: .per100, source: .japan).healthScore() {
-                                    GradeBadge(score: score, size: 26)
+                    List {
+                        ForEach(model.history) { scan in
+                            NavigationLink {
+                                ResultView(scan: scan, showsScanAgain: false)
+                            } label: {
+                                HStack(spacing: 12) {
+                                    LabelThumbnail(panel: scan.panel)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(summary(scan.panel))
+                                        Text(scan.date, format: .dateTime.weekday().hour().minute())
+                                            .font(.footnote).foregroundStyle(.secondary)
+                                    }
                                 }
                             }
+                        }
+                        Section {
+                            Button("Clear History", role: .destructive) { confirmsClear = true }
+                                .frame(maxWidth: .infinity)
+                                .confirmationDialog("Clear all scans from this iPhone?", isPresented: $confirmsClear, titleVisibility: .visible) {
+                                    Button("Clear History", role: .destructive) { model.clearHistory() }
+                                }
                         }
                     }
                 }

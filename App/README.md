@@ -13,7 +13,7 @@ The project is generated from `project.yml` with [XcodeGen](https://github.com/y
 | Simulated camera's text recognition | **Placeholder.** `MockLabelScanner` returns the sample label the camera is "pointing at", cycling through `SampleLabels`. |
 | Daily values | **Hand-copied** into `ReferenceSource.swift`. Not loaded from `data/daily-values.json` yet. |
 | History | **In memory only.** Cleared when the app quits. |
-| Analysis (%, WHO fallback, levels, warnings, carb states, "0" handling) | Implemented in `PanelAnalysis.swift`. |
+| Analysis (%, WHO fallback, each authority's own words, warnings, carb states, "0" handling) | Implemented in `PanelAnalysis.swift`. |
 
 ## Signing and Private Cloud Compute
 

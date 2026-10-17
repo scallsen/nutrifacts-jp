@@ -24,7 +24,7 @@ struct SourcePicker: View {
                     }
                 }
             } header: {
-                Text("Choose which health authority to determine daily values and percentages.")
+                Text("Choose which health authority to determine daily values, percentages and portion size warnings.")
                     .font(.subheadline)
                     .foregroundStyle(Color.secondary)
                     .textCase(nil)
@@ -54,6 +54,10 @@ private struct SourceRow: View {
                     Text(source.title).font(.footnote).foregroundStyle(Color.secondary)
                     Text(matchedCountry.map { "Includes \($0) · \(source.detail)" } ?? source.detail)
                         .font(.footnote).foregroundStyle(Color.secondary)
+                    if source.rule != nil {
+                        Text("Displays portion size warnings")
+                            .font(.footnote.weight(.semibold)).foregroundStyle(Color.blue)
+                    }
                 }
                 Spacer()
                 // Always laid out, so selecting a row doesn't reflow its text.
