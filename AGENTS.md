@@ -7,6 +7,8 @@ An app that parses the nutrition facts panel (栄養成分表示) on Japanese fo
 - **UI / design work:** read [`docs/ui-domain-context.md`](docs/ui-domain-context.md) first. It explains what each label line means, what a *missing* line means, the four carbohydrate disclosure states every carb UI must handle, and what copy to use.
 - **Parsing, data model, rules:** [`docs/japanese-nutrition-label-spec.md`](docs/japanese-nutrition-label-spec.md) has the regulations, thresholds, formulas and sources.
 - **Daily values (%):** [`data/daily-values.json`](data/daily-values.json) is the source of truth for Japan (default), EU, US and Canada, with versions and official sources. [`docs/daily-values.md`](docs/daily-values.md) explains how each one maps onto a Japanese label.
+- **Health score:** [`docs/health-score.md`](docs/health-score.md) and [`data/health-score.json`](data/health-score.json). The app computes the score; backends only read the label.
+- **iPhone app:** [`App/README.md`](App/README.md). Regenerate the Xcode project with `xcodegen generate` after adding files.
 - **Reference prototype:** [`prototypes/label-explainer.html`](prototypes/label-explainer.html), a self-contained page with the annotated label, the carb-nesting diagram and the simplified view. Open it in a browser.
 
 ## Rules that must never be broken
