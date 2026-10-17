@@ -8,3 +8,4 @@ Parse Japanese nutrition labels (栄養成分表示) and show them in a simplifi
 - [Interactive explainer prototype](prototypes/label-explainer.html) ([published](https://claude.ai/artifact/PtqGn8cchaKZ1Q6kmiKJCW))
 - [iPhone app](App/README.md): camera → grade, via Apple Private Cloud Compute or [AI&](docs/aiand.md) (through the [Cloudflare Worker](backend/README.md))
 - [Health score rubric](docs/health-score.md) ([data](data/health-score.json))
+- [Beta sign-up page](website/README.md) ([live](https://scallsen.github.io/nutrifacts-jp/)), deployed to GitHub Pages
