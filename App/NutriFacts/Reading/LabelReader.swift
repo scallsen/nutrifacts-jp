@@ -47,7 +47,7 @@ nonisolated enum Backend: String, CaseIterable, Identifiable, Codable, Sendable 
 }
 
 protocol LabelReader: Sendable {
-    func read(_ image: CGImage, ocrText: String) async throws -> ExtractedLabel
+    func read(_ image: CGImage) async throws -> ExtractedLabel
 }
 
 nonisolated enum LabelReaderError: LocalizedError {
@@ -68,8 +68,8 @@ nonisolated enum LabelReaderError: LocalizedError {
     }
 }
 
-/// Japanese OCR with Vision. Its text goes to every backend as a hint next to the image,
-/// and is the only input when a model can't take images.
+/// Japanese OCR with Vision, on device. Used only where it's needed: by the on-device model when it
+/// can't take images (iOS 26), and by ai&, whose contract includes the text. PCC gets the photo alone.
 nonisolated enum OCR {
     static func text(in image: CGImage) async throws -> String {
         var request = RecognizeTextRequest()

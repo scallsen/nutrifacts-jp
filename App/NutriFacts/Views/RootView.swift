@@ -7,7 +7,13 @@ struct RootView: View {
 
     var body: some View {
         @Bindable var model = model
-        CameraBackdrop(target: model.cameraTarget, phase: model.phase, labelFound: model.labelFound)
+        Group {
+            if let live = model.liveScanner {
+                LiveCameraBackdrop(scanner: live, frozenFrame: model.frozenFrame, phase: model.phase)
+            } else {
+                CameraBackdrop(target: model.cameraTarget, phase: model.phase, labelFound: model.labelFound)
+            }
+        }
             .ignoresSafeArea()
             .sheet(isPresented: .constant(hasOnboarded)) {
                 SheetContent()

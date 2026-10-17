@@ -7,13 +7,13 @@ nonisolated struct AppleIntelligenceReader: LabelReader {
     enum Kind: Sendable { case privateCloudCompute, onDevice }
     var kind: Kind
 
-    func read(_ image: CGImage, ocrText: String) async throws -> ExtractedLabel {
+    func read(_ image: CGImage) async throws -> ExtractedLabel {
         switch kind {
         case .privateCloudCompute:
             guard #available(iOS 27, *) else {
                 throw LabelReaderError.modelUnavailable("Private Cloud Compute needs iOS 27")
             }
-            return try await readWithPCC(image, ocrText: ocrText)
+            return try await readWithPCC(image)
         case .onDevice:
             let model = SystemLanguageModel.default
             switch model.availability {
@@ -22,20 +22,21 @@ nonisolated struct AppleIntelligenceReader: LabelReader {
             case .unavailable(.appleIntelligenceNotEnabled): throw LabelReaderError.modelUnavailable("turn on Apple Intelligence in Settings")
             case .unavailable: throw LabelReaderError.modelUnavailable("the model is still downloading")
             }
-            if #available(iOS 27, *) {
-                return try await respond(model: model, image: image, ocrText: ocrText)
+            if #available(iOS 27, *), model.capabilities.contains(.vision) {
+                return try await respond(model: model, image: image)
             }
-            // iOS 26: the on-device model takes text only, so it reads the OCR.
+            // The model can't take images (iOS 26), so it reads on-device OCR of the photo instead.
+            let ocrText = (try? await OCR.text(in: image)) ?? ""
             let session = LanguageModelSession(model: model, instructions: Self.instructions)
             return try await session.respond(generating: ExtractedLabel.self) {
-                "Transcribe the Japanese nutrition facts panel from this OCR of a screenshot (it may contain misreads):"
+                "Transcribe the Japanese nutrition facts panel from this OCR of a photo (it may contain misreads):"
                 ocrText.isEmpty ? "(no text recognised)" : ocrText
             }.content
         }
     }
 
     @available(iOS 27, *)
-    private func readWithPCC(_ image: CGImage, ocrText: String) async throws -> ExtractedLabel {
+    private func readWithPCC(_ image: CGImage) async throws -> ExtractedLabel {
         let model = PrivateCloudComputeLanguageModel()
         switch model.availability {
         case .available: break
@@ -43,32 +44,27 @@ nonisolated struct AppleIntelligenceReader: LabelReader {
         case .unavailable: throw LabelReaderError.modelUnavailable("Private Cloud Compute isn't ready yet")
         }
         do {
-            return try await respond(model: model, image: image, ocrText: ocrText)
+            return try await respond(model: model, image: image)
         } catch let error as PrivateCloudComputeLanguageModel.Error {
             switch error {
             case .quotaLimitReached(let info):
                 throw LabelReaderError.quotaReached(resetDate: info.resetDate)
             case .networkFailure:
                 // Apple's guidance: retry on device when the network is unavailable.
-                return try await AppleIntelligenceReader(kind: .onDevice).read(image, ocrText: ocrText)
+                return try await AppleIntelligenceReader(kind: .onDevice).read(image)
             default:
                 throw error
             }
         }
     }
 
-    /// iOS 27: one code path for both models, with the screenshot attached when the model can see.
+    /// iOS 27: the photo alone goes to a model that can see it.
     @available(iOS 27, *)
-    private func respond(model: some LanguageModel, image: CGImage, ocrText: String) async throws -> ExtractedLabel {
+    private func respond(model: some LanguageModel, image: CGImage) async throws -> ExtractedLabel {
         let session = LanguageModelSession(model: model, instructions: Self.instructions)
-        let canSee = model.capabilities.contains(.vision)
         let response = try await session.respond(generating: ExtractedLabel.self) {
-            "Transcribe the Japanese nutrition facts panel in this screenshot."
-            if canSee {
-                Attachment(image).label("screenshot")
-            }
-            "On-device OCR of the same screenshot (may contain misreads; trust the image when they disagree):"
-            ocrText.isEmpty ? "(no text recognised)" : ocrText
+            "Transcribe the Japanese nutrition facts panel in this photo."
+            Attachment(image).label("photo")
         }
         return response.content
     }

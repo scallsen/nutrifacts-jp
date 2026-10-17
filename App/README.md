@@ -7,8 +7,8 @@ The project is generated from `project.yml` with [XcodeGen](https://github.com/y
 
 | Part | State |
 |---|---|
-| Camera | **Placeholder.** `CameraBackdrop` draws a pack. Swap in `DataScannerViewController`. Until then, real scans come from the Action Button or **Score a Screenshot**. |
-| Reading a real label | **Real.** Vision OCR on device, then Apple Private Cloud Compute (iOS 27), the on-device Apple model, or the [ai& backend](../docs/backend-api.md), chosen in Settings. See `Reading/`. |
+| Camera | **Real on iPhone.** `Camera/LiveScanner.swift` runs VisionKit's live text scanner on device to spot the 栄養成分表示 panel, draws brackets around it, and captures a full-resolution photo once it's been steady for 1.5 s (or on the shutter). The photo freezes behind the sheet while it's read. After a failed read it waits for the panel to leave the frame before capturing again. **Simulator:** no camera, so `CameraBackdrop` draws a pack and cycles through the samples. |
+| Reading a real label | **Real.** Chosen in Settings. See `Reading/`. **Apple Private Cloud Compute** (iOS 27, default) gets the photo alone. The **on-device Apple model** gets the photo on iOS 27, or on-device OCR text on iOS 26, where it can't take images. **[ai&](../docs/backend-api.md)** gets the photo plus OCR text. |
 | Action Button | **Real.** `ScoreLabelIntent`, run by a Shortcut: Take Screenshot → Score Nutrition Label. With the Camera app open, the screenshot is the viewfinder. Setup is in Settings. |
 | Health score | **Real.** `Scoring/HealthScore.swift`, using the rubric in [`data/health-score.json`](../data/health-score.json) ([doc](../docs/health-score.md)) and `PanelAnalysis.bounds`, so missing lines make a range. |
 | Simulated camera's text recognition | **Placeholder.** `MockLabelScanner` returns the sample label the camera is "pointing at", cycling through `SampleLabels`. |

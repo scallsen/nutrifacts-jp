@@ -92,7 +92,7 @@ private struct ScanHighlight: View {
     }
 }
 
-private struct CornerBrackets: Shape {
+struct CornerBrackets: Shape {
     func path(in rect: CGRect) -> Path {
         let l: CGFloat = 22
         var p = Path()

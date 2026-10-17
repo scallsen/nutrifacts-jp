@@ -30,7 +30,7 @@ nonisolated struct AIAndReader: LabelReader {
         var schemaVersion = 1
     }
 
-    func read(_ image: CGImage, ocrText: String) async throws -> ExtractedLabel {
+    func read(_ image: CGImage) async throws -> ExtractedLabel {
         guard let base = config.baseURL, let key = config.apiKey, !key.isEmpty else {
             throw LabelReaderError.backendNotConfigured
         }
@@ -39,6 +39,7 @@ nonisolated struct AIAndReader: LabelReader {
         request.timeoutInterval = 30
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(key)", forHTTPHeaderField: "Authorization")
+        let ocrText = (try? await OCR.text(in: image)) ?? ""
         request.httpBody = try JSONEncoder().encode(RequestBody(image: Self.jpeg(image).base64EncodedString(), ocrText: ocrText))
 
         let (data, response) = try await session.data(for: request)
