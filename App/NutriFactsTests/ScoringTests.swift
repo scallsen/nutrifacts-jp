@@ -141,6 +141,11 @@ import Testing
 }
 
 @Suite struct AIAndConfigTests {
+    @Test func newUsersDefaultToAIAnd() {
+        #expect(Backend.aiAnd.isSupported)
+        #expect(Backend.defaultBackend == .aiAnd)
+    }
+
     @Test func appPointsAtTheDeployedWorker() {
         // From Config/NutriFacts.xcconfig via Info.plist.
         #expect(AIAndConfig.current.apiURL?.absoluteString == "https://nutrifacts-api.justin-garcia.workers.dev")

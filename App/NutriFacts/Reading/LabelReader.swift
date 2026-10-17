@@ -31,11 +31,16 @@ nonisolated enum Backend: String, CaseIterable, Identifiable, Codable, Sendable 
         (UserDefaults.standard.string(forKey: storageKey).flatMap(Backend.init(rawValue:)) ?? .defaultBackend).resolved
     }
 
-    /// PCC needs iOS 27 and the PCC entitlement. Everything else runs on iOS 26.
+    /// PCC needs iOS 27 and the PCC entitlement. ai& needs a NutriFacts API URL in this build.
+    /// The on-device model runs on iOS 26.
     var isSupported: Bool {
-        guard self == .privateCloudCompute else { return true }
-        if #available(iOS 27, *) { return Self.hasPCCEntitlement }
-        return false
+        switch self {
+        case .onDevice: return true
+        case .aiAnd: return AIAndConfig.current.apiURL != nil
+        case .privateCloudCompute:
+            if #available(iOS 27, *) { return Self.hasPCCEntitlement }
+            return false
+        }
     }
 
     /// FoundationModels traps when an app without the entitlement uses PCC, e.g. a build signed with a
@@ -49,7 +54,11 @@ nonisolated enum Backend: String, CaseIterable, Identifiable, Codable, Sendable 
 
     static var supported: [Backend] { allCases.filter(\.isSupported) }
 
-    static var defaultBackend: Backend { Backend.privateCloudCompute.isSupported ? .privateCloudCompute : .onDevice }
+    /// For new users: ai& when this build is set up for it, then Private Cloud Compute, then on device.
+    /// Someone who has already picked a backend in Settings keeps it.
+    static var defaultBackend: Backend {
+        [.aiAnd, .privateCloudCompute, .onDevice].first(where: \.isSupported) ?? .onDevice
+    }
 
     /// A stored choice that this OS can't run (e.g. PCC restored onto iOS 26) falls back to the default.
     var resolved: Backend { isSupported ? self : Self.defaultBackend }

@@ -27,10 +27,15 @@ struct OnboardingView: View {
                                 detail: "Point at the nutrition facts on the pack and see every line translated.")
                         Feature(symbol: "chart.bar.fill", tint: .orange, title: "See how much is a lot",
                                 detail: "Daily % and high or low levels, from guidelines you choose.")
-                        Feature(symbol: "lock.fill", tint: .green, title: "Private by design",
-                                detail: Backend.privateCloudCompute.isSupported
-                                    ? "Labels are read with Apple Intelligence, on your iPhone or Apple’s Private Cloud Compute. Nothing is sent to us."
-                                    : "Labels are read with Apple Intelligence on your iPhone. Nothing is sent to us.")
+                        if Backend.defaultBackend == .aiAnd {
+                            Feature(symbol: "lock.fill", tint: .green, title: "Where photos go",
+                                    detail: "Label photos are read by AI& in Japan, through the NutriFacts server, which doesn’t keep them. You can switch to Apple Intelligence in Settings.")
+                        } else {
+                            Feature(symbol: "lock.fill", tint: .green, title: "Private by design",
+                                    detail: Backend.privateCloudCompute.isSupported
+                                        ? "Labels are read with Apple Intelligence, on your iPhone or Apple’s Private Cloud Compute. Nothing is sent to us."
+                                        : "Labels are read with Apple Intelligence on your iPhone. Nothing is sent to us.")
+                        }
                     }
                     .padding(.horizontal, 12)
                 }
