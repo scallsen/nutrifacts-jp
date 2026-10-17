@@ -34,3 +34,5 @@ When the beta opens, create a TestFlight public link in App Store Connect and se
 3. Custom domain: add it in Settings › Pages and add a `CNAME` file containing the domain to this folder.
 
 GitHub Pages is only free on public repos (or with GitHub Pro / Team for private ones).
+
+GitHub Pages lets browsers cache files for 10 minutes. After changing `main.js` or `styles.css`, bump the `?v=` number where `index.html` loads them, so visitors get the new file straight away.
