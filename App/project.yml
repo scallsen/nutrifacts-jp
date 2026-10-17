@@ -1,6 +1,6 @@
 name: NutriFacts
 options:
-  bundleIdPrefix: com.scallsen
+  bundleIdPrefix: com.justingarcia
   deploymentTarget:
     iOS: "26.0"
   createIntermediateGroups: true
@@ -10,9 +10,15 @@ targets:
     platform: iOS
     sources:
       - NutriFacts
+      # The repo's data files are the source of truth; bundle them directly.
+      - path: ../data/health-score.json
+        buildPhase: resources
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.scallsen.nutrifacts
+        # Registered under team XDWKSAH7W3 with the Private Cloud Compute capability.
+        PRODUCT_BUNDLE_IDENTIFIER: com.justingarcia.NutrifactsJP
+        DEVELOPMENT_TEAM: XDWKSAH7W3
+        CODE_SIGN_ENTITLEMENTS: NutriFacts/NutriFacts.entitlements
         PRODUCT_NAME: NutriFacts
         MARKETING_VERSION: "0.1"
         CURRENT_PROJECT_VERSION: "1"
@@ -25,3 +31,25 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
         INFOPLIST_KEY_NSCameraUsageDescription: NutriFacts uses the camera to read nutrition labels. Text is recognised on your iPhone.
         CODE_SIGN_STYLE: Automatic
+  NutriFactsTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - NutriFactsTests
+    dependencies:
+      - target: NutriFacts
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.justingarcia.NutrifactsJPTests
+        DEVELOPMENT_TEAM: XDWKSAH7W3
+        SWIFT_VERSION: "6.0"
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  NutriFacts:
+    build:
+      targets:
+        NutriFacts: all
+        NutriFactsTests: [test]
+    test:
+      targets:
+        - NutriFactsTests

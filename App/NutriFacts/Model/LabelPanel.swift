@@ -31,6 +31,8 @@ struct LabelPanel: Identifiable, Hashable, Sendable {
     var frontClaim: String?
     var ingredients: String
     var packColors: [UInt32]
+    /// The screenshot or photo a real scan was read from. Nil for the mock samples.
+    var photo: Data? = nil
 
     func number(_ key: NutrientKey) -> Double? { printed[key].flatMap(Double.init) }
 }

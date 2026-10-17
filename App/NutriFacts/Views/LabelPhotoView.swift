@@ -7,43 +7,58 @@ struct LabelPhotoView: View {
 
     var body: some View {
         List {
-            Section {
-                PrintedLabelView(panel: panel, highlighted: selected.map { [$0] } ?? [])
-                    .frame(maxWidth: 300)
-                    .rotationEffect(.degrees(-1.2))
-                    .padding(.vertical, 22)
-                    .frame(maxWidth: .infinity)
-                    .background(LinearGradient(colors: panel.packColors.map(Color.init(hex:)), startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .listRowInsets(EdgeInsets())
-                    .animation(.default, value: selected)
-            }
-            Section {
-                ForEach(lines, id: \.id) { line in
-                    Button {
-                        selected = selected == line.id ? nil : line.id
-                    } label: {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(line.english).foregroundStyle(.primary)
-                                Text(line.japanese).font(.footnote).foregroundStyle(.secondary)
-                            }
-                            Spacer()
-                            Text(line.value).foregroundStyle(.primary).monospacedDigit()
-                        }
-                    }
-                    .listRowBackground(selected == line.id ? Color.yellow.opacity(0.18) : nil)
+            if let data = panel.photo, let image = UIImage(data: data) {
+                Section {
+                    Image(uiImage: image).resizable().scaledToFit()
+                        .listRowInsets(EdgeInsets())
                 }
-            } header: {
-                Text("What we read")
-            } footer: {
-                Text("Tap a line to find it in the photo.")
+            } else {
+                drawnLabel
             }
+            linesSection
         }
         .navigationTitle("Label Photo")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             Button("Edit") {}
                 .disabled(true)
+        }
+    }
+
+    private var drawnLabel: some View {
+        Section {
+            PrintedLabelView(panel: panel, highlighted: selected.map { [$0] } ?? [])
+                .frame(maxWidth: 300)
+                .rotationEffect(.degrees(-1.2))
+                .padding(.vertical, 22)
+                .frame(maxWidth: .infinity)
+                .background(LinearGradient(colors: panel.packColors.map(Color.init(hex:)), startPoint: .topLeading, endPoint: .bottomTrailing))
+                .listRowInsets(EdgeInsets())
+                .animation(.default, value: selected)
+        }
+    }
+
+    private var linesSection: some View {
+        Section {
+            ForEach(lines, id: \.id) { line in
+                Button {
+                    selected = selected == line.id ? nil : line.id
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(line.english).foregroundStyle(.primary)
+                            Text(line.japanese).font(.footnote).foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Text(line.value).foregroundStyle(.primary).monospacedDigit()
+                    }
+                }
+                .listRowBackground(selected == line.id ? Color.yellow.opacity(0.18) : nil)
+            }
+        } header: {
+            Text("What we read")
+        } footer: {
+            Text(panel.photo == nil ? "Tap a line to find it in the photo." : "Compare these with the photo.")
         }
     }
 

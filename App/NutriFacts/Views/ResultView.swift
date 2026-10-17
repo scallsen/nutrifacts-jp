@@ -17,6 +17,7 @@ struct ResultView: View {
     var body: some View {
         let a = analysis
         List {
+            HealthScoreSection(analysis: a)
             ThingsToKnowSection(analysis: a)
             Section {
                 Picker("Amount", selection: $basis) {
@@ -319,6 +320,16 @@ struct LabelThumbnail: View {
     let panel: LabelPanel
 
     var body: some View {
+        if let data = panel.photo, let image = UIImage(data: data) {
+            Image(uiImage: image).resizable().scaledToFill()
+                .frame(width: 56, height: 56)
+                .clipShape(.rect(cornerRadius: 9))
+        } else {
+            drawn
+        }
+    }
+
+    private var drawn: some View {
         PrintedLabelView(panel: panel)
             .frame(width: 220)
             .scaleEffect(0.26, anchor: .topLeading)

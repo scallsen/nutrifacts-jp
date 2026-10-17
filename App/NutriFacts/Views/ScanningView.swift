@@ -1,3 +1,4 @@
+import PhotosUI
 import SwiftUI
 
 /// The small sheet shown over the live camera.
@@ -5,6 +6,7 @@ struct ScanningView: View {
     @Environment(AppModel.self) private var model
     var onHistory: () -> Void
     var onSettings: () -> Void
+    @State private var pickedItem: PhotosPickerItem?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -16,7 +18,13 @@ struct ScanningView: View {
                 Spacer()
             }
             HStack(spacing: 8) {
-                if model.labelFound {
+                if model.isReading {
+                    ProgressView()
+                    Text("Reading the label…")
+                } else if let error = model.readError {
+                    Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                    Text(error).lineLimit(3)
+                } else if model.labelFound {
                     Circle().fill(.yellow).frame(width: 12, height: 12)
                     Text("Found it. Hold still…")
                 } else {
@@ -26,6 +34,20 @@ struct ScanningView: View {
             }
             .font(.subheadline.weight(.medium))
             .animation(.default, value: model.labelFound)
+
+            PhotosPicker(selection: $pickedItem, matching: .images) {
+                Label("Score a Screenshot", systemImage: "photo.on.rectangle")
+            }
+            .font(.subheadline)
+            .disabled(model.isReading)
+            .onChange(of: pickedItem) { _, item in
+                guard let item else { return }
+                pickedItem = nil
+                Task {
+                    guard let data = try? await item.loadTransferable(type: Data.self) else { return }
+                    await model.readAndShow(imageData: data)
+                }
+            }
 
             HStack {
                 Button("History", systemImage: "clock.arrow.circlepath", action: onHistory)

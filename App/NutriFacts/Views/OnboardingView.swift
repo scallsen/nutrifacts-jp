@@ -29,8 +29,10 @@ struct OnboardingView: View {
                                 detail: "Every line translated, with the Japanese alongside.")
                         Feature(symbol: "chart.bar.fill", tint: .orange, title: "See how much is a lot",
                                 detail: "Daily % and high or low levels, from guidelines you choose.")
-                        Feature(symbol: "lock.fill", tint: .green, title: "Stays on your iPhone",
-                                detail: "Text is read on your device. Nothing is sent to us.")
+                        Feature(symbol: "lock.fill", tint: .green, title: "Private by design",
+                                detail: Backend.privateCloudCompute.isSupported
+                                    ? "Labels are read with Apple Intelligence, on your iPhone or Apple’s Private Cloud Compute. Nothing is sent to us."
+                                    : "Labels are read with Apple Intelligence on your iPhone. Nothing is sent to us.")
                     }
                     .padding(.horizontal, 12)
                 }

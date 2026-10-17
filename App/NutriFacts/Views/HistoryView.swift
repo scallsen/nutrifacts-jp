@@ -23,6 +23,8 @@ struct HistoryView: View {
                                     Text(scan.date, format: .dateTime.weekday().hour().minute())
                                         .font(.footnote).foregroundStyle(.secondary)
                                 }
+                                Spacer()
+                                GradeBadge(score: PanelAnalysis(panel: scan.panel, basis: .per100, source: .japan).healthScore(), size: 26)
                             }
                         }
                     }
