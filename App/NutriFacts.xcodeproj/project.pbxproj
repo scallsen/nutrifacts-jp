@@ -11,8 +11,10 @@
 		00437343D1B9ACE02601AA7E /* health-score.json in Resources */ = {isa = PBXBuildFile; fileRef = 180F2B841D9C75FAFC96E137 /* health-score.json */; };
 		12E95195FB6F68F2BCB21A59 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC19A1908A22596B40E6AED /* RootView.swift */; };
 		135E08B97F7EA06D0C79B5A4 /* PanelAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C6AD1B97520E18EA4EB22D0 /* PanelAnalysis.swift */; };
+		1E2607C69AE3F3F7BA5DC6FA /* DiagnosticsLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = F60574F52E6F929A44D3EA10 /* DiagnosticsLog.swift */; };
 		24D120A27A1CA1F796E21498 /* NutriFactsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5ED68B15990AB78C2BDB33 /* NutriFactsApp.swift */; };
 		2E75F3DB27FCE67E277E3AC3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6F9D806A5DA72159A4DFE6C5 /* Assets.xcassets */; };
+		3CBD51E0A050F6EE4010EA3B /* ScanTiming.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8172E062EEC23814EE2B7BB /* ScanTiming.swift */; };
 		45CC26E14572A8B3D6F73137 /* ScanningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B583F4600DA7284C096F9563 /* ScanningView.swift */; };
 		4DBC31F93958645D5179805C /* SampleLabels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D491D91F8FB62D1CCFA2A461 /* SampleLabels.swift */; };
 		4FD17991CE9418598107CA0B /* AIAndReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4321AF83D0E0EB7902B4FD24 /* AIAndReader.swift */; };
@@ -83,6 +85,8 @@
 		D7FF059AE58D818B012EE273 /* ExtractedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtractedLabel.swift; sourceTree = "<group>"; };
 		D84D86BCC5F4E43C6CD80121 /* LiveScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveScanner.swift; sourceTree = "<group>"; };
 		ED791F1E7B4CF2E54960CD13 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		F60574F52E6F929A44D3EA10 /* DiagnosticsLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticsLog.swift; sourceTree = "<group>"; };
+		F8172E062EEC23814EE2B7BB /* ScanTiming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanTiming.swift; sourceTree = "<group>"; };
 		F938EE7EA1ACE693D78C7BB9 /* CameraEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraEngine.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -170,7 +174,9 @@
 			isa = PBXGroup;
 			children = (
 				ED791F1E7B4CF2E54960CD13 /* AppModel.swift */,
+				F60574F52E6F929A44D3EA10 /* DiagnosticsLog.swift */,
 				2EB93095E8586C0E9190FE4B /* LabelScanner.swift */,
+				F8172E062EEC23814EE2B7BB /* ScanTiming.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -332,6 +338,7 @@
 				58FAA11AD86D177560D7D020 /* AppleIntelligenceReader.swift in Sources */,
 				CA30FA82160624BA829DB76E /* CameraBackdrop.swift in Sources */,
 				A0706F4013966F119C131FF3 /* CameraEngine.swift in Sources */,
+				1E2607C69AE3F3F7BA5DC6FA /* DiagnosticsLog.swift in Sources */,
 				5932D12764CEFE42B5E62648 /* ExtractedLabel.swift in Sources */,
 				5960567C5B70FD48E1A51CFE /* GradeViews.swift in Sources */,
 				CD8C43CD19D7BD40E887226E /* HealthScore.swift in Sources */,
@@ -350,6 +357,7 @@
 				86E9BCC681EB805FD8FA7CFA /* ResultView.swift in Sources */,
 				12E95195FB6F68F2BCB21A59 /* RootView.swift in Sources */,
 				4DBC31F93958645D5179805C /* SampleLabels.swift in Sources */,
+				3CBD51E0A050F6EE4010EA3B /* ScanTiming.swift in Sources */,
 				45CC26E14572A8B3D6F73137 /* ScanningView.swift in Sources */,
 				D91854658DBEC5152A4FA1B4 /* SettingsView.swift in Sources */,
 				A0749D7AA8229CE58EC76E03 /* SourcePicker.swift in Sources */,

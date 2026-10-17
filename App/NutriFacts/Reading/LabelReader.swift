@@ -66,6 +66,8 @@ nonisolated enum ReadBy: Hashable, Sendable {
 nonisolated struct LabelReading: Sendable {
     var label: ExtractedLabel
     var readBy: ReadBy
+    /// Backend specifics for ScanTiming, e.g. upload size or why PCC fell back.
+    var details: [ScanTiming.Detail] = []
 }
 
 protocol LabelReader: Sendable {

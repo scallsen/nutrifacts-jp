@@ -9,6 +9,8 @@ struct Scan: Identifiable, Hashable {
     var panel: LabelPanel
     /// Which model read the label. Nil for the simulated camera.
     var readBy: ReadBy? = nil
+    /// Where the time went. Nil for the simulated camera.
+    var timing: ScanTiming? = nil
 }
 
 extension PresentationDetent {
@@ -138,6 +140,8 @@ final class AppModel {
     private func captureLive() async {
         guard let liveScanner, phase == .scanning, !isReading, frozenFrame == nil else { return }
         captureCount += 1
+        let clock = ContinuousClock()
+        let captureStarted = clock.now
         let data: Data
         do { data = try await liveScanner.capturePhoto() } catch CameraEngine.CaptureError.busy {
             return // the shutter and auto-capture fired together; the first one wins
@@ -149,7 +153,7 @@ final class AppModel {
         frozenFrame = UIImage(data: data)
         liveScanner.isActive = false
         labelFound = false
-        switch await read(imageData: data) {
+        switch await read(imageData: data, capture: clock.now - captureStarted) {
         case .success(let scan):
             current = scan
             withAnimation(.snappy) {
@@ -164,22 +168,38 @@ final class AppModel {
         }
     }
 
+    /// Longest side of the image the model reads. The whole frame is sent, uncropped, so nothing on the
+    /// pack is missed; this only caps the resolution. Lower is faster (fewer image tokens, smaller upload),
+    /// but small print needs enough pixels. Check ScanTiming before changing it.
+    static let readMaxSide = 1600
+
     /// Reads a screenshot or photo with the backend chosen in Settings and adds it to history.
-    func read(imageData: Data, backend: Backend = Backend.selected) async -> Result<Scan, any Error> {
+    /// `capture` is how long the live camera took to take the photo, for ScanTiming.
+    func read(imageData: Data, backend: Backend = Backend.selected, capture: Duration? = nil) async -> Result<Scan, any Error> {
         isReading = true
         readError = nil
         defer { isReading = false }
+        let clock = ContinuousClock()
+        let started = clock.now
         do {
             guard let source = CGImageSourceCreateWithData(imageData as CFData, nil),
                   let image = Self.uprightImage(from: source) else { throw ImageError.unreadable }
+            let prepared = clock.now
             // Find the panel while the model reads, so the saved photo is just the label.
             async let crop = Self.panelCrop(of: image)
             let reading = try await LabelReaders.make(backend).read(image)
+            let readDone = clock.now
             let photo = await crop.flatMap { AIAndReader.jpeg($0, quality: 0.8) } ?? Self.photo(from: source)
-            let scan = Scan(date: .now, panel: try reading.label.toPanel(photo: photo), readBy: reading.readBy)
+            let finished = clock.now
+            let timing = ScanTiming(capture: capture, prepare: prepared - started, read: readDone - prepared,
+                                    cropWait: finished - readDone, total: (finished - started) + (capture ?? .zero),
+                                    imageSize: "\(image.width)×\(image.height)", details: reading.details)
+            ScanTiming.logger.info("\(timing.summary, privacy: .public)")
+            let scan = Scan(date: .now, panel: try reading.label.toPanel(photo: photo), readBy: reading.readBy, timing: timing)
             history.insert(scan, at: 0)
             return .success(scan)
         } catch {
+            ScanTiming.logger.error("read failed with \(backend.title, privacy: .public) after \(ScanTiming.seconds(clock.now - started), privacy: .public): \(error.localizedDescription, privacy: .public)")
             readError = error.localizedDescription
             return .failure(error)
         }
@@ -210,7 +230,7 @@ final class AppModel {
     /// and OCR and the models read the pixels as they are.
     private static func uprightImage(from source: CGImageSource) -> CGImage? {
         let options: [CFString: Any] = [kCGImageSourceCreateThumbnailFromImageAlways: true,
-                                        kCGImageSourceThumbnailMaxPixelSize: 3000,
+                                        kCGImageSourceThumbnailMaxPixelSize: readMaxSide,
                                         kCGImageSourceCreateThumbnailWithTransform: true]
         return CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary)
     }

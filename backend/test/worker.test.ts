@@ -8,7 +8,10 @@ const label = {
   netContentsAmount: 350, netContentsUnit: "ml", netContentsCount: 0, isEstimate: false,
   lines: [{ nutrient: "energy", printedName: "熱量", minValue: 140, maxValue: 140, unit: "kcal" }],
 };
-const completion = { choices: [{ message: { content: JSON.stringify(label) } }] };
+const completion = {
+  choices: [{ message: { content: JSON.stringify(label) } }],
+  usage: { prompt_tokens: 2400, completion_tokens: 300, completion_tokens_details: { reasoning_tokens: 120 } },
+};
 const models = { data: [{ id: "vision-model", reasoning_efforts: ["none", "low", "medium", "xhigh"] }] };
 
 function env(overrides: Partial<Env> = {}): Env {
@@ -79,6 +82,8 @@ test("reads a label through AI& with the key on the server and the default reaso
   assert.equal(res.status, 200);
   assert.deepEqual(await res.json(), label);
   assert.equal(res.headers.get("X-Reasoning-Effort"), "low");
+  assert.match(res.headers.get("Server-Timing") ?? "", /^aiand;dur=\d+, total;dur=\d+$/);
+  assert.equal(res.headers.get("X-AIAnd-Usage"), "promptTokens=2400; completionTokens=300; reasoningTokens=120");
   assert.equal(sent[0].url, "https://aiand.test/v1/chat/completions");
   assert.equal(sent[0].headers.get("Authorization"), "Bearer sk-test");
   assert.equal((await sentBody()).reasoning_effort, "low");

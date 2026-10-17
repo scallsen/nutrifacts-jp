@@ -57,16 +57,51 @@ nonisolated struct AIAndReader: LabelReader {
         request.timeoutInterval = 60
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         if let token = config.appToken { request.setValue(token, forHTTPHeaderField: "X-App-Token") }
+        let clock = ContinuousClock()
+        let encodeStarted = clock.now
+        // The app already scaled the image (AppModel.readMaxSide); this only guards other callers.
         let jpeg = Self.jpeg(Self.downscaled(image, maxSide: 2048))
         request.httpBody = try JSONEncoder().encode(Body(image: jpeg.base64EncodedString(), reasoningEffort: config.reasoningEffort))
+        let encode = clock.now - encodeStarted
 
+        let sendStarted = clock.now
         let (data, response) = try await session.data(for: request)
+        let roundTrip = clock.now - sendStarted
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
         guard (200..<300).contains(status) else {
             let message = (try? JSONDecoder().decode(ErrorBody.self, from: data))?.error?.message
             throw LabelReaderError.aiAnd(message ?? "The ai& server returned HTTP \(status).")
         }
-        return LabelReading(label: try JSONDecoder().decode(ExtractedLabel.self, from: data), readBy: .aiAnd)
+        let details = Self.details(response: response as? HTTPURLResponse, encode: encode, jpegBytes: jpeg.count,
+                                   bodyBytes: request.httpBody?.count ?? 0, roundTrip: roundTrip)
+        return LabelReading(label: try JSONDecoder().decode(ExtractedLabel.self, from: data), readBy: .aiAnd, details: details)
+    }
+
+    /// Splits the round trip into the Worker's time (and AI&'s within it) and the rest: network, TLS and queueing.
+    static func details(response: HTTPURLResponse?, encode: Duration, jpegBytes: Int, bodyBytes: Int, roundTrip: Duration) -> [ScanTiming.Detail] {
+        var details = [ScanTiming.Detail(name: "Upload", value: "\(bodyBytes / 1024) KB (JPEG \(jpegBytes / 1024) KB)"),
+                       ScanTiming.Detail(name: "Encode", value: ScanTiming.seconds(encode)),
+                       ScanTiming.Detail(name: "Round trip", value: ScanTiming.seconds(roundTrip))]
+        // Server-Timing: aiand;dur=5012, total;dur=5100 (milliseconds)
+        var ms: [String: Int] = [:]
+        for part in (response?.value(forHTTPHeaderField: "Server-Timing") ?? "").split(separator: ",") {
+            let fields = part.split(separator: ";").map { $0.trimmingCharacters(in: .whitespaces) }
+            if let name = fields.first, let dur = fields.first(where: { $0.hasPrefix("dur=") }).flatMap({ Int($0.dropFirst(4)) }) {
+                ms[name] = dur
+            }
+        }
+        if let total = ms["total"] {
+            details.append(.init(name: "Server", value: ScanTiming.seconds(.milliseconds(total))
+                                 + (ms["aiand"].map { " (AI& \(ScanTiming.seconds(.milliseconds($0))))" } ?? "")))
+            details.append(.init(name: "Network", value: ScanTiming.seconds(roundTrip - .milliseconds(total))))
+        }
+        if let usage = response?.value(forHTTPHeaderField: "X-AIAnd-Usage"), !usage.isEmpty {
+            details.append(.init(name: "Tokens", value: usage))
+        }
+        if let effort = response?.value(forHTTPHeaderField: "X-Reasoning-Effort") {
+            details.append(.init(name: "Reasoning", value: effort))
+        }
+        return details
     }
 
     static func serverConfig(_ config: AIAndConfig = .current, session: URLSession = .shared) async throws -> ServerConfig {

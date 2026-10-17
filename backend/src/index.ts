@@ -21,6 +21,7 @@ const MIME_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
+    const started = Date.now();
     const url = new URL(request.url);
     if (url.pathname === "/health") return json({ ok: true });
     if (url.pathname !== "/v1/nutrition-label/read" && url.pathname !== "/v1/config") return error(404, "Not found.");
@@ -54,6 +55,7 @@ export default {
     if ((image.length * 3) / 4 > MAX_IMAGE_BYTES) return error(413, "The image is too large.");
 
     const effort = pickEffort(env, await reasoningEfforts(env), body.reasoningEffort);
+    const aiandStarted = Date.now();
     const upstream = await fetch(`${base(env)}/chat/completions`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${env.AIAND_API_KEY}` },
@@ -61,10 +63,27 @@ export default {
     });
     if (!upstream.ok) return upstreamError(upstream);
 
+    let raw: unknown;
     try {
-      const res = json(parseCompletion(await upstream.json()));
+      raw = await upstream.json();
+    } catch {
+      return error(502, "The model's answer couldn't be read. Try again.");
+    }
+    const aiandMs = Date.now() - aiandStarted;
+    const applied = upstream.headers.get("X-Reasoning-Effort") ?? effort;
+    const usage = usageOf(raw);
+    // One line per read for `wrangler tail` and Workers Logs.
+    console.log(JSON.stringify({
+      read: "ok", model: env.AIAND_MODEL, effort: applied ?? "model default", aiandMs, totalMs: Date.now() - started,
+      imageKB: Math.round((image.length * 3) / 4 / 1024), ...usage,
+    }));
+
+    try {
+      const res = json(parseCompletion(raw));
+      // Timing and usage for the app's diagnostics: how long AI& took, and what the request cost in tokens.
+      res.headers.set("Server-Timing", `aiand;dur=${aiandMs}, total;dur=${Date.now() - started}`);
+      res.headers.set("X-AIAnd-Usage", Object.entries(usage).map(([k, v]) => `${k}=${v}`).join("; "));
       // The level AI& actually applied, for checking it took effect.
-      const applied = upstream.headers.get("X-Reasoning-Effort") ?? effort;
       if (applied) res.headers.set("X-Reasoning-Effort", applied);
       return res;
     } catch {
@@ -91,6 +110,18 @@ async function upstreamError(upstream: Response): Promise<Response> {
     default:
       return error(502, `AI& returned HTTP ${upstream.status}. Try again.`);
   }
+}
+
+/** Token counts from an OpenAI-style completion: prompt (including the image), output and reasoning. */
+export function usageOf(completion: unknown): Record<string, number> {
+  const u = (completion as {
+    usage?: { prompt_tokens?: number; completion_tokens?: number; completion_tokens_details?: { reasoning_tokens?: number } };
+  })?.usage;
+  const out: Record<string, number> = {};
+  if (u?.prompt_tokens !== undefined) out.promptTokens = u.prompt_tokens;
+  if (u?.completion_tokens !== undefined) out.completionTokens = u.completion_tokens;
+  if (u?.completion_tokens_details?.reasoning_tokens !== undefined) out.reasoningTokens = u.completion_tokens_details.reasoning_tokens;
+  return out;
 }
 
 function base(env: Env): string {

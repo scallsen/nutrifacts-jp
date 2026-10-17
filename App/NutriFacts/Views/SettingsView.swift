@@ -58,6 +58,14 @@ struct SettingsView: View {
                     }
                 }
                 Section {
+                    ShareLink(item: DiagnosticsLog(history: model.history),
+                              preview: SharePreview("NutriFacts logs", image: Image(systemName: "doc.text"))) {
+                        Label("Share Logs", systemImage: "square.and.arrow.up")
+                    }
+                } footer: {
+                    Text("Timing for each scan and any errors this session, as a text file. No photos or label contents.")
+                }
+                Section {
                     Button("Clear Scan History", role: .destructive) { confirmsClearHistory = true }
                         .disabled(model.history.isEmpty)
                         .confirmationDialog("Clear all scans from this iPhone?", isPresented: $confirmsClearHistory, titleVisibility: .visible) {

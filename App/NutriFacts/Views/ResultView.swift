@@ -40,6 +40,11 @@ struct ResultView: View {
                     ForEach(a.labelNotes) { NoticeRow(notice: $0) }
                 }
             }
+            #if DEBUG
+            if let timing = model.latest(scan).timing {
+                TimingSection(timing: timing)
+            }
+            #endif
             Section {
                 NavigationLink {
                     LabelPhotoView(panel: scan.panel)
@@ -332,3 +337,27 @@ struct LabelThumbnail: View {
             .clipShape(.rect(cornerRadius: 9))
     }
 }
+
+#if DEBUG
+/// Where the time went for this scan. Debug builds only; Settings › Share Logs has it in every build.
+private struct TimingSection: View {
+    let timing: ScanTiming
+
+    var body: some View {
+        Section("Timing (debug)") {
+            if let capture = timing.capture { row("Capture", ScanTiming.seconds(capture)) }
+            row("Prepare", ScanTiming.seconds(timing.prepare))
+            row("Read", ScanTiming.seconds(timing.read))
+            ForEach(timing.details, id: \.self) { row("  \($0.name)", $0.value) }
+            row("Crop wait", ScanTiming.seconds(timing.cropWait))
+            row("Total", ScanTiming.seconds(timing.total))
+            row("Image", timing.imageSize)
+        }
+        .font(.footnote)
+    }
+
+    private func row(_ name: String, _ value: String) -> some View {
+        LabeledContent(name) { Text(value).monospacedDigit() }
+    }
+}
+#endif

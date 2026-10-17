@@ -168,3 +168,33 @@ import Testing
         #expect(AIAndConfig.current.apiURL?.absoluteString == "https://nutrifacts-api.justin-garcia.workers.dev")
     }
 }
+
+@Suite struct DiagnosticsTests {
+    @Test func secondsReadNaturally() {
+        #expect(ScanTiming.seconds(.milliseconds(42)) == "42 ms")
+        #expect(ScanTiming.seconds(.milliseconds(5_120)) == "5.1 s")
+    }
+
+    @Test func roundTripSplitsIntoServerAndNetwork() throws {
+        let response = try #require(HTTPURLResponse(url: URL(string: "https://x.test")!, statusCode: 200, httpVersion: nil, headerFields: [
+            "Server-Timing": "aiand;dur=5000, total;dur=5100",
+            "X-AIAnd-Usage": "promptTokens=2400; completionTokens=300",
+            "X-Reasoning-Effort": "low",
+        ]))
+        let details = AIAndReader.details(response: response, encode: .milliseconds(30), jpegBytes: 300 * 1024,
+                                          bodyBytes: 400 * 1024, roundTrip: .milliseconds(6_000))
+        let byName = Dictionary(uniqueKeysWithValues: details.map { ($0.name, $0.value) })
+        #expect(byName["Upload"] == "400 KB (JPEG 300 KB)")
+        #expect(byName["Server"] == "5.1 s (AI& 5.0 s)")
+        #expect(byName["Network"] == "0.9 s")
+        #expect(byName["Tokens"] == "promptTokens=2400; completionTokens=300")
+        #expect(byName["Reasoning"] == "low")
+    }
+
+    @Test @MainActor func logExportHasSettingsAndScans() async {
+        let text = await DiagnosticsLog(history: []).text()
+        #expect(text.contains("Read labels with:"))
+        #expect(text.contains("Scans this session"))
+        #expect(text.contains("Log (this session)"))
+    }
+}

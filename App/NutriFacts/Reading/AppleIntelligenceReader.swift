@@ -22,16 +22,27 @@ nonisolated struct AppleIntelligenceReader: LabelReader {
     }()
 
     func read(_ image: CGImage) async throws -> LabelReading {
+        let clock = ContinuousClock()
         var pccProblem: LabelReaderError?
+        var details: [ScanTiming.Detail] = []
         if #available(iOS 27, *), Self.canUsePCC {
+            let started = clock.now
             do {
-                return LabelReading(label: try await readWithPCC(image), readBy: .privateCloudCompute)
+                let label = try await readWithPCC(image)
+                return LabelReading(label: label, readBy: .privateCloudCompute,
+                                    details: [.init(name: "Model", value: "Private Cloud Compute")])
             } catch let problem as PCCUnavailable {
                 pccProblem = problem.error
+                details.append(.init(name: "PCC", value: "\(problem.reason) after \(ScanTiming.seconds(clock.now - started)), fell back"))
             }
+        } else {
+            details.append(.init(name: "PCC", value: Self.canUsePCC ? "needs iOS 27" : "no entitlement in this build"))
         }
         do {
-            return LabelReading(label: try await readOnDevice(image), readBy: .onDevice)
+            let started = clock.now
+            let label = try await readOnDevice(image)
+            details.insert(.init(name: "Model", value: "On device (\(ScanTiming.seconds(clock.now - started)))"), at: 0)
+            return LabelReading(label: label, readBy: .onDevice, details: details)
         } catch let error as LabelReaderError {
             // Neither works. If PCC stopped on its daily limit, that's the more useful thing to say.
             if case .quotaReached = pccProblem { throw pccProblem! }
@@ -40,21 +51,30 @@ nonisolated struct AppleIntelligenceReader: LabelReader {
     }
 
     /// PCC can't take this read, but the on-device model might.
-    private struct PCCUnavailable: Error { var error: LabelReaderError? }
+    private struct PCCUnavailable: Error {
+        var reason: String
+        var error: LabelReaderError?
+    }
 
     @available(iOS 27, *)
     private func readWithPCC(_ image: CGImage) async throws -> ExtractedLabel {
         let model = PrivateCloudComputeLanguageModel()
-        guard model.availability == .available else { throw PCCUnavailable() }
+        switch model.availability {
+        case .available: break
+        case .unavailable(.deviceNotEligible): throw PCCUnavailable(reason: "device not eligible")
+        case .unavailable: throw PCCUnavailable(reason: "not ready")
+        }
         do {
             return try await respond(model: model, image: image)
         } catch let error as PrivateCloudComputeLanguageModel.Error {
             switch error {
             case .quotaLimitReached(let info):
-                throw PCCUnavailable(error: .quotaReached(resetDate: info.resetDate))
-            case .networkFailure, .serviceUnavailable:
+                throw PCCUnavailable(reason: "daily limit reached", error: .quotaReached(resetDate: info.resetDate))
+            case .networkFailure:
                 // Apple's guidance: retry on device when the network is unavailable.
-                throw PCCUnavailable()
+                throw PCCUnavailable(reason: "no network")
+            case .serviceUnavailable:
+                throw PCCUnavailable(reason: "service unavailable")
             default:
                 throw error
             }
