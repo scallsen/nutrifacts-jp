@@ -1,0 +1,27 @@
+name: NutriFacts
+options:
+  bundleIdPrefix: com.scallsen
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+targets:
+  NutriFacts:
+    type: application
+    platform: iOS
+    sources:
+      - NutriFacts
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.scallsen.nutrifacts
+        PRODUCT_NAME: NutriFacts
+        MARKETING_VERSION: "0.1"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "6.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: NutriFacts
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_NSCameraUsageDescription: NutriFacts uses the camera to read nutrition labels. Text is recognised on your iPhone.
+        CODE_SIGN_STYLE: Automatic
