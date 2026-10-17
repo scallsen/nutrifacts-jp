@@ -121,44 +121,81 @@ private struct IngredientsSection: View {
     let showJapanese: Bool
     let canScan: Bool
 
+    @State private var showsOther = false
+
     var body: some View {
         if let box = scan.box {
             Section("Ingredients") {
-                ForEach(Array(box.ingredients.enumerated()), id: \.offset) { _, item in
-                    VStack(alignment: .leading, spacing: 2) {
-                        HStack(alignment: .firstTextBaseline) {
-                            Text(item.english.isEmpty ? item.japanese : item.english)
-                            Spacer()
-                            if item.isAdditive { Text("Additive").font(.footnote).foregroundStyle(.secondary) }
-                        }
-                        if showJapanese { Text(item.japanese).font(.footnote).foregroundStyle(.secondary) }
-                    }
+                AllergenRow(allergens: box.allergens, showJapanese: showJapanese)
+            }
+            let (ingredients, additives) = (box.ingredients.filter { !$0.isAdditive }, box.ingredients.filter(\.isAdditive))
+            if !ingredients.isEmpty {
+                Section {
+                    ForEach(Array(ingredients.enumerated()), id: \.offset) { ingredientRow($1) }
+                } footer: {
+                    Text("Listed in order of quantity")
+                }
+            }
+            if !additives.isEmpty {
+                Section("Additives") {
+                    ForEach(Array(additives.enumerated()), id: \.offset) { ingredientRow($1) }
                 }
             }
             Section {
-                if !box.allergens.isEmpty {
-                    LabeledContent("Allergens Listed") {
-                        Text(box.allergens.map(Self.allergenName).joined(separator: ", ")).multilineTextAlignment(.trailing)
+                Button {
+                    withAnimation { showsOther.toggle() }
+                } label: {
+                    HStack {
+                        Text(showsOther ? "Hide Other Contents" : "Show Other Contents")
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(.tertiary)
+                            .rotationEffect(.degrees(showsOther ? 90 : 0))
                     }
                 }
-                row("Food Type", box.category)
-                if !box.netContentsText.isEmpty {
-                    LabeledContent("Net Contents", value: box.netContentsPrintedElsewhere ? "Printed elsewhere" : box.netContentsText)
+                if showsOther {
+                    if !box.netContentsText.isEmpty {
+                        LabeledContent("Net Contents", value: box.netContentsPrintedElsewhere ? "Printed elsewhere" : box.netContentsText)
+                    }
+                    row("Food Type", box.category)
+                    row(box.isUseBy ? "Use By" : "Best Before", box.date)
+                    row("Storage", box.storage)
+                    row("Country of Origin", box.countryOfOrigin)
+                    if !box.maker.isEmpty {
+                        LabeledContent("Made By") { Text(box.maker).multilineTextAlignment(.trailing) }
+                    }
                 }
-                row(box.isUseBy ? "Use By" : "Best Before", box.date)
-                row("Storage", box.storage)
-                row("Country of Origin", box.countryOfOrigin)
-                if !box.maker.isEmpty {
-                    LabeledContent("Made By") { Text(box.maker).multilineTextAlignment(.trailing) }
-                }
-            } footer: {
-                Text("Translated by Apple Intelligence. Check the pack if you have an allergy: a pack that names no allergen hasn't promised it's free of one.")
             }
         } else if canScan {
             Section {
                 Button("Scan Ingredients", systemImage: "list.bullet.rectangle") { model.scanIngredients(for: scan) }
             }
         }
+    }
+
+    /// The English name, with anything in brackets on its own line: "Chocolate chips" over "sugar, cocoa mass".
+    private func ingredientRow(_ item: ExtractedIngredient) -> some View {
+        let (name, detail) = Self.split(item.english.isEmpty ? item.japanese : item.english)
+        return VStack(alignment: .leading, spacing: 2) {
+            Text(name)
+            if let detail { Text(detail).font(.footnote).foregroundStyle(.secondary) }
+            if showJapanese && !item.english.isEmpty { Text(item.japanese).font(.footnote).foregroundStyle(.secondary) }
+        }
+    }
+
+    /// "chocolate chips (sugar, cocoa mass)" → ("Chocolate chips", "sugar, cocoa mass").
+    static func split(_ text: String) -> (String, String?) {
+        let trimmed = text.trimmingCharacters(in: .whitespaces)
+        guard let open = trimmed.firstIndex(where: { $0 == "(" || $0 == "（" }), open != trimmed.startIndex,
+              let last = trimmed.last, last == ")" || last == "）" else { return (capitalised(trimmed), nil) }
+        let name = trimmed[..<open].trimmingCharacters(in: .whitespaces)
+        let detail = trimmed[trimmed.index(after: open)..<trimmed.index(before: trimmed.endIndex)].trimmingCharacters(in: .whitespaces)
+        return (capitalised(name), detail.isEmpty ? nil : detail)
+    }
+
+    private static func capitalised(_ text: String) -> String {
+        text.prefix(1).uppercased() + text.dropFirst()
     }
 
     @ViewBuilder
@@ -184,7 +221,31 @@ private struct IngredientsSection: View {
                      "バナナ": "Banana", "豚肉": "Pork", "まつたけ": "Matsutake", "もも": "Peach",
                      "やまいも": "Yam", "りんご": "Apple", "ゼラチン": "Gelatin"]
         let key = japanese.trimmingCharacters(in: .whitespaces)
-        return names[key].map { "\($0) (\(key))" } ?? key
+        return names[key] ?? key
+    }
+}
+
+/// "Contains wheat, egg, milk" as a warning, in the Things to know style. Only what the pack names.
+private struct AllergenRow: View {
+    let allergens: [String]
+    let showJapanese: Bool
+
+    var body: some View {
+        let names = allergens.map { IngredientsSection.allergenName($0) }
+        HStack(spacing: 12) {
+            Image(systemName: allergens.isEmpty ? "minus" : "exclamationmark")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(.white)
+                .frame(width: 30, height: 30)
+                .background((allergens.isEmpty ? Color.gray : .orange).gradient, in: .rect(cornerRadius: 8))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(allergens.isEmpty ? "No allergens listed" : "Contains " + ListFormatter.localizedString(byJoining: names.map { $0.lowercased() }))
+                if showJapanese && !allergens.isEmpty {
+                    Text(allergens.joined(separator: "・")).font(.footnote).foregroundStyle(.secondary)
+                }
+                Text("A missing allergen is not a guarantee it's free of them").font(.footnote).foregroundStyle(.secondary)
+            }
+        }
     }
 }
 
