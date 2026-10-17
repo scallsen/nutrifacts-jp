@@ -141,8 +141,8 @@ import Testing
 }
 
 @Suite struct AIAndConfigTests {
-    @Test func placeholderURLMeansNotSetUp() {
-        // The committed xcconfig has the YOUR-SUBDOMAIN placeholder until the Worker is deployed.
-        #expect(AIAndConfig.current.apiURL == nil)
+    @Test func appPointsAtTheDeployedWorker() {
+        // From Config/NutriFacts.xcconfig via Info.plist.
+        #expect(AIAndConfig.current.apiURL?.absoluteString == "https://nutrifacts-api.justin-garcia.workers.dev")
     }
 }
