@@ -8,6 +8,7 @@ A one-page site that collects emails for the TestFlight beta. Plain HTML, CSS an
 | `styles.css` | All colours, type sizes, radii and spacing as tokens at the top (iOS system colours, light and dark) |
 | `main.js` | Email provider config (`CONFIG` at the top) |
 | `icon.svg` | App icon, used for the favicon, nav and CTA |
+| `screens/` | App screenshots from the iPhone Simulator (600 px wide WebP). Replace a file with the same name to update it. |
 
 Preview locally: `python3 -m http.server -d website 8000`, then open http://localhost:8000.
 

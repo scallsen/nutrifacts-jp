@@ -12,7 +12,7 @@
   <meta property="og:type" content="website">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 
@@ -49,55 +49,11 @@
         </form>
       </div>
 
-      <!-- Phone mock: a result screen built in HTML so it's easy to tweak -->
-      <div class="hero-visual" aria-hidden="true">
+      <!-- Screenshot from the app (iPhone Simulator). Swap files in screens/ to update. -->
+      <div class="hero-visual">
         <div class="phone">
-          <div class="phone-screen">
-            <div class="mock-photo">
-              <div class="mock-label">
-                <div>栄養成分表示</div>
-                <div>1食分（50g）当たり</div>
-                <div>熱量 220kcal</div>
-                <div>たんぱく質 4.3g</div>
-                <div>脂質 7.6g</div>
-                <div>炭水化物 36.0g</div>
-                <div>食塩相当量 0.2g</div>
-              </div>
-            </div>
-            <div class="mock-sheet">
-              <div class="grabber"></div>
-              <div class="mock-head">
-                <div class="grade grade-c">C</div>
-                <div>
-                  <div class="mock-title">Chocolate Biscuits</div>
-                  <div class="mock-sub">Score 50 · per 50 g serving</div>
-                </div>
-              </div>
-
-              <div class="mock-group">
-                <div class="row"><span>Energy</span><span class="val">220 kcal <em>10%</em></span></div>
-                <div class="row"><span>Protein</span><span class="val">4.3 g <em>5%</em></span></div>
-                <div class="row"><span>Fat</span><span class="val">7.6 g <em>11%</em></span></div>
-                <div class="row sub"><span>Saturated fat</span><span class="val">2.9 g <em class="high">High</em></span></div>
-                <div class="row"><span>Salt</span><span class="val">0.2 g <em class="low">Low</em></span></div>
-                <div class="row sub"><span>Sodium</span><span class="val">≈ 79 mg</span></div>
-              </div>
-
-              <div class="mock-group">
-                <div class="row"><span>Carbohydrate</span><span class="val">36.0 g</span></div>
-                <div class="carb-bar">
-                  <span class="seg seg-sugar" style="flex: 11.2"></span>
-                  <span class="seg seg-net" style="flex: 20.9"></span>
-                  <span class="seg seg-fibre" style="flex: 3.9"></span>
-                </div>
-                <div class="legend">
-                  <span><i class="dot seg-sugar"></i>Sugars 11.2 g</span>
-                  <span><i class="dot seg-net"></i>Other 20.9 g</span>
-                  <span><i class="dot seg-fibre"></i>Fibre 3.9 g</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <img src="screens/result.webp" width="600" height="1305"
+               alt="NutriFacts showing a scanned granola label: high in saturated fat, with serving, 100 g and bag sizes.">
         </div>
       </div>
     </section>
@@ -150,12 +106,41 @@
 
           <article class="card">
             <div class="symbol" style="--tint: var(--gray)">
-              <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+              <svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>
             </div>
-            <h3>Private by design</h3>
-            <p>Your scan history is saved only on your iPhone. Choose how labels are read, including Apple Intelligence.</p>
+            <h3>Ingredients and allergens</h3>
+            <p>Scan the ingredients box too. See what’s in it in English, with allergens and additives called out.</p>
           </article>
         </div>
+      </div>
+    </section>
+
+    <!-- Screens -->
+    <section class="section">
+      <div class="wrap">
+        <h2 class="section-title">From pack to plain English<br><span class="muted">in a few seconds.</span></h2>
+      </div>
+      <div class="screens">
+        <figure>
+          <div class="phone"><img src="screens/scan.webp" width="600" height="1305" loading="lazy"
+               alt="The camera finding the nutrition panel on a pack of granola."></div>
+          <figcaption><strong>Point at the label.</strong> It finds the panel and captures it on its own.</figcaption>
+        </figure>
+        <figure>
+          <div class="phone"><img src="screens/warnings.webp" width="600" height="1305" loading="lazy"
+               alt="Things to know for a low-carb chocolate bar: high in fat, high in saturated fat, and 糖質オフ isn't regulated."></div>
+          <figcaption><strong>Things to know first.</strong> What’s high, and what the pack’s claims really mean.</figcaption>
+        </figure>
+        <figure>
+          <div class="phone"><img src="screens/nutrition.webp" width="600" height="1305" loading="lazy"
+               alt="Every nutrition line in English with daily value percentages and high, medium or low levels."></div>
+          <figcaption><strong>Every line, explained.</strong> Daily values and levels, with salt as sodium too.</figcaption>
+        </figure>
+        <figure>
+          <div class="phone"><img src="screens/carbs.webp" width="600" height="1305" loading="lazy"
+               alt="The carbohydrate breakdown into sugars, starch and fibre, and a check that the numbers add up."></div>
+          <figcaption><strong>Carbs, broken down.</strong> Sugars, starch and fibre, and a check that the numbers add up.</figcaption>
+        </figure>
       </div>
     </section>
 
@@ -242,7 +227,7 @@
           </details>
           <details>
             <summary>Which iPhones are supported?</summary>
-            <p>NutriFacts needs iOS 26 or later. Reading labels with Apple Intelligence needs an iPhone that supports it.</p>
+            <p>NutriFacts needs iOS 26 or later.</p>
           </details>
           <details>
             <summary>Does it cost anything?</summary>
@@ -279,6 +264,6 @@
     </div>
   </footer>
 
-  <script src="main.js?v=3"></script>
+  <script src="main.js?v=4"></script>
 </body>
 </html>
