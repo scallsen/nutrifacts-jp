@@ -7,7 +7,8 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "typecheck": "tsc --noEmit",
-    "test": "node --test test/*.test.ts"
+    "test": "node --test test/*.test.ts",
+    "compare": "node scripts/compare-models.ts"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261016.1",

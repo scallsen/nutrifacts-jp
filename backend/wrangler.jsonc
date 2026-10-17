@@ -5,8 +5,9 @@
   "compatibility_date": "2026-10-01",
   "observability": { "enabled": true },
   "vars": {
-    // A vision-capable model from your AI& account. List them with the command in README.md.
-    "AIAND_MODEL": ""
+    // A vision-capable model from your AI& account. List them with the command in README.md,
+    // or compare them on real photos with `npm run compare -- photo.jpg`.
+    "AIAND_MODEL": "qwen/qwen3.8-27b"
   },
   // Secrets (not in this file): AIAND_API_KEY, and optionally APP_TOKEN.
   // Set them with `npx wrangler secret put <NAME>`.
