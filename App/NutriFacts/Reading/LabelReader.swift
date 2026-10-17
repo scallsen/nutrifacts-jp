@@ -31,12 +31,21 @@ nonisolated enum Backend: String, CaseIterable, Identifiable, Codable, Sendable 
         (UserDefaults.standard.string(forKey: storageKey).flatMap(Backend.init(rawValue:)) ?? .defaultBackend).resolved
     }
 
-    /// PCC needs iOS 27. Everything else runs on iOS 26.
+    /// PCC needs iOS 27 and the PCC entitlement. Everything else runs on iOS 26.
     var isSupported: Bool {
         guard self == .privateCloudCompute else { return true }
-        if #available(iOS 27, *) { return true }
+        if #available(iOS 27, *) { return Self.hasPCCEntitlement }
         return false
     }
+
+    /// FoundationModels traps when an app without the entitlement uses PCC, e.g. a build signed with a
+    /// personal team. Development builds embed their profile, so check it. App Store builds have none.
+    private static let hasPCCEntitlement: Bool = {
+        guard let url = Bundle.main.url(forResource: "embedded", withExtension: "mobileprovision"),
+              let data = try? Data(contentsOf: url),
+              let profile = String(data: data, encoding: .isoLatin1) else { return true }
+        return profile.contains("com.apple.developer.private-cloud-compute")
+    }()
 
     static var supported: [Backend] { allCases.filter(\.isSupported) }
 

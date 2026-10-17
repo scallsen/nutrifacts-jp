@@ -122,6 +122,9 @@ final class AppModel {
         autoCapture = Task { [weak self] in
             try? await Task.sleep(for: .seconds(1.5))
             guard !Task.isCancelled else { return }
+            // Hand over before capturing: captureLive cancels any pending auto-capture,
+            // and the read runs inside this task.
+            self?.autoCapture = nil
             await self?.captureLive()
         }
     }
