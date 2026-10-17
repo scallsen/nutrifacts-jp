@@ -96,13 +96,13 @@ document.querySelectorAll("[data-signup]").forEach((form) => {
     try {
       await subscribe(email);
       form.classList.add("is-done");
-      show("You’re on the list. We’ll email you when the beta opens.", "success");
+      show("Almost there. Check your inbox and tap the link to confirm.", "success");
       // Mirror the success state on the other form on the page.
       document.querySelectorAll("[data-signup]").forEach((other) => {
         if (other === form) return;
         other.classList.add("is-done");
         const note = other.querySelector("[data-status]");
-        note.textContent = "You’re on the list.";
+        note.textContent = "Check your inbox to confirm.";
         note.classList.add("is-success");
       });
     } catch (error) {
