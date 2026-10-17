@@ -14,7 +14,7 @@ You need an AI& account with credit and a Cloudflare account.
    curl -s https://api.aiand.com/v1/models -H "Authorization: Bearer $AIAND_API_KEY" | jq -r '.data[] | select((.capabilities // []) | index("vision")) | "\(.id)  in \(.input_per_1m) / out \(.output_per_1m) \(.currency) per 1M"'
    ```
 
-   `wrangler.jsonc` → `vars.AIAND_MODEL` is set to `qwen/qwen3.8-27b`, and `vars.AIAND_REASONING_EFFORT` to `low`, used unless the app's Settings picks another level. To compare models on real labels first, run this with a few photos. iPhone HEIC files are fine, and the key stays in your shell:
+   `wrangler.jsonc` → `vars.AIAND_MODEL` is set to `deepseek-ai/deepseek-v4.1-flash`, and `vars.AIAND_REASONING_EFFORT` to `none`, used unless the app's Settings picks another level. To compare models on real labels first, run this with a few photos. iPhone HEIC files are fine, and the key stays in your shell:
 
    ```bash
    cd backend && AIAND_API_KEY=sk-… npm run compare -- ~/Desktop/label1.heic ~/Desktop/label2.heic

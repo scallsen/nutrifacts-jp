@@ -27,14 +27,14 @@ X-App-Token: {token}          (only if the Worker has APP_TOKEN)
 
 The app downscales photos to 2048 px on the long side. The Worker rejects images over 8 MB.
 
-`reasoningEffort` is optional, and it's the level picked in the app's Settings. The Worker uses it only if the model offers it, and otherwise falls back to `AIAND_REASONING_EFFORT` (`low`). If the model doesn't offer that either, it sends nothing and AI& uses the model's own default. (`qwen/qwen3.8-27b` defaults to `xhigh`, which is slow, and reasoning is billed as output.) The response's `X-Reasoning-Effort` header says which level AI& applied.
+`reasoningEffort` is optional, and it's the level picked in the app's Settings. The Worker uses it only if the model offers it, and otherwise falls back to `AIAND_REASONING_EFFORT` (`none`). If the model doesn't offer that either, it sends nothing and AI& uses the model's own default. (`deepseek-ai/deepseek-v4.1-flash` defaults to `high`, which is slower, and reasoning is billed as output.) The response's `X-Reasoning-Effort` header says which level AI& applied.
 
 ### `GET /v1/config`
 
 What Settings offers in the Reasoning picker:
 
 ```json
-{ "model": "qwen/qwen3.8-27b", "reasoningEfforts": ["none", "low", "medium", "xhigh"], "defaultReasoningEffort": "low" }
+{ "model": "deepseek-ai/deepseek-v4.1-flash", "reasoningEfforts": ["none", "high", "max"], "defaultReasoningEffort": "none" }
 ```
 
 The levels come from AI&'s model list and are cached for an hour, so the picker follows the Worker's model when you change it.

@@ -17,6 +17,7 @@
 //
 //   AIAND_API_KEY=sk-… npm run eval -- --direct          (or put AIAND_API_KEY=sk-… in .dev.vars)
 //   AIAND_API_KEY=sk-… npm run eval -- --direct --model google/gemma-4-31b-it --reasoning high
+//   --concurrency 2                    photos in flight at once in --direct runs (default 4)
 
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
@@ -128,7 +129,8 @@ if (rescore) {
   const target = direct ? `AI& ${model}${reasoning ? ` (reasoning ${reasoning})` : ""}, this checkout's prompt` : `${apiURL()}${reasoning ? ` (reasoning ${reasoning})` : ""}`;
   const reader = direct ? (f: Fixture) => readDirect(model, reasoning, f) : (f: Fixture) => read(apiURL(), reasoning, f);
   // The Worker's rate limit means one read at a time; AI& itself takes a few at once.
-  const parallel = direct ? 4 : 1;
+  // --concurrency lowers that when several models run side by side (eval:models --parallel).
+  const parallel = direct ? Number(option("concurrency") ?? 4) : 1;
   const tag = (direct ? `-${model.replace(/\W+/g, "_")}` : "") + (reasoning ? `-${reasoning}` : "");
   runDir = join(EVAL_DIR, "runs", new Date().toISOString().slice(0, 19).replaceAll(":", "-") + tag);
   mkdirSync(runDir, { recursive: true });
