@@ -1,0 +1,60 @@
+name: Worker
+
+# Tests the NutriFacts API (backend/) on pull requests, and tests then deploys it to Cloudflare on
+# pushes to main. Needs one repository secret, CLOUDFLARE_API_TOKEN (see backend/README.md).
+# The AI& key is a Worker secret in Cloudflare and survives deploys; it's never in GitHub.
+
+on:
+  push:
+    branches: [main]
+    paths: ["backend/**", ".github/workflows/worker.yml"]
+  pull_request:
+    paths: ["backend/**", ".github/workflows/worker.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+
+  deploy:
+    needs: test
+    # Pushes to main and manual runs only. Pull requests, including ones from forks, never deploy.
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: worker-deploy
+      cancel-in-progress: false
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+      - name: Deploy
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          WRANGLER_SEND_METRICS: "false"
+      - name: Check it's up
+        run: curl --fail --silent --show-error --retry 3 --retry-delay 5 https://nutrifacts-api.justin-garcia.workers.dev/health
