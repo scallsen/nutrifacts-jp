@@ -1,7 +1,7 @@
 import Foundation
 
 /// Turns a camera frame into a parsed panel.
-/// The real version will use VisionKit's DataScannerViewController and Vision's RecognizeDocumentsRequest.
+/// Used by the simulated camera only. Real scans go through `AppModel.read(imageData:)`.
 protocol LabelScanning: Sendable {
     func scan(_ target: LabelPanel) async throws -> LabelPanel
 }

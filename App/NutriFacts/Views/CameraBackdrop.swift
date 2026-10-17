@@ -7,7 +7,7 @@ extension Color {
 }
 
 /// Placeholder for the camera: a drawn pack with its nutrition panel.
-/// The real app shows the DataScannerViewController feed here, then the captured still.
+/// Used in the Simulator only. On a device, `LiveCameraBackdrop` shows the real camera.
 struct CameraBackdrop: View {
     let target: LabelPanel
     let phase: AppModel.Phase

@@ -121,15 +121,17 @@ final class AppModel {
     /// Takes a full-resolution photo, freezes it behind the sheet and reads it.
     private func captureLive() async {
         guard let liveScanner, phase == .scanning, !isReading, frozenFrame == nil else { return }
-        let image: UIImage
-        do { image = try await liveScanner.capturePhoto() } catch {
+        let data: Data
+        do { data = try await liveScanner.capturePhoto() } catch CameraEngine.CaptureError.busy {
+            return // the shutter and auto-capture fired together; the first one wins
+        } catch {
             readError = error.localizedDescription
             return
         }
-        frozenFrame = image
+        autoCapture?.cancel()
+        frozenFrame = UIImage(data: data)
         liveScanner.isActive = false
         labelFound = false
-        guard let data = image.jpegData(compressionQuality: 0.9) else { return }
         switch await read(imageData: data) {
         case .success(let scan):
             current = scan

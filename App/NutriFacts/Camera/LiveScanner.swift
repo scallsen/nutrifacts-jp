@@ -1,25 +1,38 @@
-import AVFoundation
+@preconcurrency import AVFoundation
 import SwiftUI
-import VisionKit
 
-/// The real camera: VisionKit's live text scanner, watching for a 栄養成分表示 panel.
+/// The real camera, watching for a 栄養成分表示 panel. Everything it sees stays on the device;
+/// only the captured photo is sent to the backend chosen in Settings.
 /// Not available in the Simulator, where the app falls back to `CameraBackdrop`.
 @MainActor @Observable
 final class LiveScanner {
     enum Access { case unknown, granted, denied }
 
-    /// True on devices that can run the live scanner (not the Simulator).
-    static var isSupported: Bool { DataScannerViewController.isSupported }
+    /// False in the Simulator, which has no camera.
+    static var isSupported: Bool { CameraEngine.hasCamera }
 
     private(set) var access: Access = .unknown
-    /// Where the panel is on screen, in the scanner view's coordinates. Nil while no panel is in view.
+    /// Where the panel is on screen, in the preview's coordinates. Nil while no panel is in view.
     private(set) var panelRect: CGRect?
     /// Called when a panel comes into or goes out of view.
     var onPanelChange: ((Bool) -> Void)?
-    /// Whether the camera should be recognising text right now.
-    var isActive = false
+    /// Size of the preview on screen, for placing the brackets.
+    var viewSize: CGSize = .zero
 
-    weak var controller: DataScannerViewController?
+    /// Whether the camera should be running.
+    var isActive = false {
+        didSet {
+            guard isActive != oldValue else { return }
+            if isActive { engine.start() } else { engine.stop(); clearPanel() }
+        }
+    }
+
+    @ObservationIgnored let engine = CameraEngine()
+    @ObservationIgnored private var isCapturing = false
+
+    init() {
+        engine.onDetection = { [weak self] detection in self?.update(detection) }
+    }
 
     func requestAccess() async {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
@@ -29,39 +42,17 @@ final class LiveScanner {
         }
     }
 
-    /// A full-resolution photo of what the camera sees now.
-    func capturePhoto() async throws -> UIImage {
-        guard let controller else { throw CaptureError.notReady }
-        return try await controller.capturePhoto()
+    /// A full-resolution photo of what the camera sees now. Only one capture runs at a time.
+    func capturePhoto() async throws -> Data {
+        guard !isCapturing else { throw CameraEngine.CaptureError.busy }
+        isCapturing = true
+        defer { isCapturing = false }
+        return try await engine.capturePhoto()
     }
 
-    enum CaptureError: LocalizedError {
-        case notReady
-        var errorDescription: String? { "The camera isn't ready yet." }
-    }
-
-    // MARK: Panel detection
-
-    /// Lines that only appear on a nutrition panel. Alternate spellings from the spec are included.
-    private static let panelWords = ["栄養成分表示", "栄養成分", "熱量", "エネルギー", "たんぱく質", "蛋白質", "タンパク質",
-                                     "脂質", "炭水化物", "食塩相当量", "糖質", "糖類", "食物繊維"]
-
-    func update(with items: [RecognizedItem]) {
-        var rect: CGRect?
-        var hits = Set<String>()
-        for case .text(let text) in items {
-            let found = Self.panelWords.filter { text.transcript.contains($0) }
-            guard !found.isEmpty else { continue }
-            hits.formUnion(found)
-            let b = text.bounds
-            let box = CGRect(x: min(b.topLeft.x, b.bottomLeft.x), y: min(b.topLeft.y, b.topRight.y),
-                             width: max(b.topRight.x, b.bottomRight.x) - min(b.topLeft.x, b.bottomLeft.x),
-                             height: max(b.bottomLeft.y, b.bottomRight.y) - min(b.topLeft.y, b.topRight.y))
-            rect = rect.map { $0.union(box) } ?? box
-        }
-        // The heading alone, or three of the mandatory/optional lines, counts as a panel.
-        let isPanel = hits.contains("栄養成分表示") || hits.count >= 3
-        let newRect = isPanel ? rect : nil
+    private func update(_ detection: CameraEngine.Detection) {
+        guard isActive else { return }
+        let newRect = detection.rect.map { toView($0, imageSize: detection.imageSize) }
         let changed = (newRect == nil) != (panelRect == nil)
         withAnimation(.snappy) { panelRect = newRect }
         if changed { onPanelChange?(newRect != nil) }
@@ -72,56 +63,42 @@ final class LiveScanner {
         panelRect = nil
         if had { onPanelChange?(false) }
     }
+
+    /// Maps a normalised rect in the frame to the preview, which fills the screen (aspect fill).
+    private func toView(_ r: CGRect, imageSize: CGSize) -> CGRect {
+        guard viewSize != .zero, imageSize.width > 0, imageSize.height > 0 else { return .zero }
+        let scale = max(viewSize.width / imageSize.width, viewSize.height / imageSize.height)
+        let shown = CGSize(width: imageSize.width * scale, height: imageSize.height * scale)
+        let dx = (shown.width - viewSize.width) / 2, dy = (shown.height - viewSize.height) / 2
+        return CGRect(x: r.minX * shown.width - dx, y: r.minY * shown.height - dy,
+                      width: r.width * shown.width, height: r.height * shown.height)
+    }
 }
 
-/// Hosts the DataScannerViewController and starts or stops it with `scanner.isActive`.
-struct LiveCameraView: UIViewControllerRepresentable {
+/// The camera preview layer.
+struct LiveCameraView: UIViewRepresentable {
     let scanner: LiveScanner
 
-    func makeUIViewController(context: Context) -> DataScannerViewController {
-        let controller = DataScannerViewController(
-            recognizedDataTypes: [.text(languages: ["ja", "en"])],
-            qualityLevel: .accurate,
-            recognizesMultipleItems: true,
-            isHighFrameRateTrackingEnabled: false,
-            isPinchToZoomEnabled: true,
-            isGuidanceEnabled: false,
-            isHighlightingEnabled: false)
-        controller.delegate = context.coordinator
-        scanner.controller = controller
-        return controller
+    func makeUIView(context: Context) -> PreviewView {
+        let view = PreviewView()
+        view.previewLayer.session = scanner.engine.session
+        view.previewLayer.videoGravity = .resizeAspectFill
+        if let connection = view.previewLayer.connection, connection.isVideoRotationAngleSupported(90) {
+            connection.videoRotationAngle = 90
+        }
+        return view
     }
 
-    func updateUIViewController(_ controller: DataScannerViewController, context: Context) {
-        if scanner.isActive, !controller.isScanning {
-            try? controller.startScanning()
-        } else if !scanner.isActive, controller.isScanning {
-            controller.stopScanning()
-            scanner.clearPanel()
+    func updateUIView(_ view: PreviewView, context: Context) {
+        if let connection = view.previewLayer.connection, connection.isVideoRotationAngleSupported(90),
+           connection.videoRotationAngle != 90 {
+            connection.videoRotationAngle = 90
         }
     }
 
-    func makeCoordinator() -> Coordinator { Coordinator(scanner: scanner) }
-
-    final class Coordinator: NSObject, DataScannerViewControllerDelegate {
-        let scanner: LiveScanner
-        init(scanner: LiveScanner) { self.scanner = scanner }
-
-        func dataScanner(_ dataScanner: DataScannerViewController, didAdd addedItems: [RecognizedItem], allItems: [RecognizedItem]) {
-            scanner.update(with: allItems)
-        }
-
-        func dataScanner(_ dataScanner: DataScannerViewController, didUpdate updatedItems: [RecognizedItem], allItems: [RecognizedItem]) {
-            scanner.update(with: allItems)
-        }
-
-        func dataScanner(_ dataScanner: DataScannerViewController, didRemove removedItems: [RecognizedItem], allItems: [RecognizedItem]) {
-            scanner.update(with: allItems)
-        }
-
-        func dataScanner(_ dataScanner: DataScannerViewController, becameUnavailableWithError error: DataScannerViewController.ScanningUnavailable) {
-            scanner.clearPanel()
-        }
+    final class PreviewView: UIView {
+        override class var layerClass: AnyClass { AVCaptureVideoPreviewLayer.self }
+        var previewLayer: AVCaptureVideoPreviewLayer { layer as! AVCaptureVideoPreviewLayer }
     }
 }
 
@@ -136,7 +113,11 @@ struct LiveCameraBackdrop: View {
             Color.black
             switch scanner.access {
             case .granted:
-                LiveCameraView(scanner: scanner)
+                GeometryReader { geo in
+                    LiveCameraView(scanner: scanner)
+                        .onAppear { scanner.viewSize = geo.size }
+                        .onChange(of: geo.size) { _, size in scanner.viewSize = size }
+                }
                 if let frozenFrame {
                     // Fill the screen like the preview does, without letting the photo resize the stack.
                     Color.clear

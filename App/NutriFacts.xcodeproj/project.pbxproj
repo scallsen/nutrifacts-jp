@@ -29,6 +29,7 @@
 		8E7C5F24EBAB4507E791F98F /* PrintedLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23C36A2FEC9F988A7FF477EA /* PrintedLabelView.swift */; };
 		961396172D497319554406BC /* LabelPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5070BEBE1FF125E959CE67 /* LabelPhotoView.swift */; };
 		9E11F7913BDE0F6F5CDF4861 /* LiveScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84D86BCC5F4E43C6CD80121 /* LiveScanner.swift */; };
+		A0706F4013966F119C131FF3 /* CameraEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F938EE7EA1ACE693D78C7BB9 /* CameraEngine.swift */; };
 		A0749D7AA8229CE58EC76E03 /* SourcePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAA0AF58B78BFE52D4134BFA /* SourcePicker.swift */; };
 		BBFC7B833FDBFA1DC2964DE4 /* Nutrient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF859BC200AD76F63768679E /* Nutrient.swift */; };
 		CA30FA82160624BA829DB76E /* CameraBackdrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C25C7A00520B17D6CDC6505 /* CameraBackdrop.swift */; };
@@ -85,6 +86,7 @@
 		D7FF059AE58D818B012EE273 /* ExtractedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtractedLabel.swift; sourceTree = "<group>"; };
 		D84D86BCC5F4E43C6CD80121 /* LiveScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveScanner.swift; sourceTree = "<group>"; };
 		ED791F1E7B4CF2E54960CD13 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		F938EE7EA1ACE693D78C7BB9 /* CameraEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraEngine.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -220,6 +222,7 @@
 		EB10E02712A943F017DDD77F /* Camera */ = {
 			isa = PBXGroup;
 			children = (
+				F938EE7EA1ACE693D78C7BB9 /* CameraEngine.swift */,
 				D84D86BCC5F4E43C6CD80121 /* LiveScanner.swift */,
 			);
 			path = Camera;
@@ -332,6 +335,7 @@
 				F3F72B4B70900F3B1A09314F /* AppModel.swift in Sources */,
 				58FAA11AD86D177560D7D020 /* AppleIntelligenceReader.swift in Sources */,
 				CA30FA82160624BA829DB76E /* CameraBackdrop.swift in Sources */,
+				A0706F4013966F119C131FF3 /* CameraEngine.swift in Sources */,
 				5932D12764CEFE42B5E62648 /* ExtractedLabel.swift in Sources */,
 				5960567C5B70FD48E1A51CFE /* GradeViews.swift in Sources */,
 				CD8C43CD19D7BD40E887226E /* HealthScore.swift in Sources */,
