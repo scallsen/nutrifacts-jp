@@ -11,7 +11,9 @@
     "compare": "node scripts/compare-models.ts",
     "eval": "node eval/run.ts",
     "eval:reference": "node eval/reference.ts",
-    "eval:review": "node eval/review.ts"
+    "eval:review": "node eval/review.ts",
+    "eval:compare": "node eval/compare.ts",
+    "eval:models": "sh eval/models.sh"
   },
   "devDependencies": {
     "@anthropic-ai/sdk": "^0.135.0",
