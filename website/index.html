@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>NutriFacts — Japanese nutrition labels, in English</title>
-  <meta name="description" content="Point your iPhone at the nutrition facts on any Japanese food pack and read every line in English, with daily values, sodium in mg and an honest health score. Join the TestFlight beta.">
+  <meta name="description" content="Point your iPhone at the nutrition facts on any Japanese food pack and read every line in English, with daily values from the guidelines you choose and sodium in mg. Join the TestFlight beta.">
   <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
   <meta property="og:title" content="NutriFacts — Japanese nutrition labels, in English">
-  <meta property="og:description" content="Scan the 栄養成分表示 on any Japanese food pack and see it translated, with daily values and an honest health score.">
+  <meta property="og:description" content="Scan the 栄養成分表示 on any Japanese food pack and see it translated, with daily values from the guidelines you choose.">
   <meta property="og:type" content="website">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -35,7 +35,7 @@
         <h1>Read any Japanese nutrition label.</h1>
         <p class="lede">
           Point your iPhone at the 栄養成分表示 on a food pack. NutriFacts reads every line, translates it
-          into plain English, and tells you how much is a lot.
+          into plain English, and shows each one as a % of daily values.
         </p>
 
         <form class="signup" data-signup novalidate>
@@ -77,7 +77,7 @@
               <svg viewBox="0 0 24 24"><path d="M5 20V12M12 20V5M19 20v-5"/></svg>
             </div>
             <h3>See how much is a lot</h3>
-            <p>Japanese labels have no daily values. We add them, with high and low levels, from the guidelines you choose: Japan, EU, US or Canada.</p>
+            <p>Japanese labels don’t show daily values. We add them from the guidelines you choose: Japan, the EU, the UK, the US, Canada or the WHO. The UK, US and Canada also say what’s high, in their own words.</p>
           </article>
 
           <article class="card">
@@ -85,15 +85,15 @@
               <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4M12 16h.01"/></svg>
             </div>
             <h3>Honest about what’s missing</h3>
-            <p>Most labels only list five lines. When sugar or fibre isn’t printed, we say “not disclosed”, never zero.</p>
+            <p>Most labels only list five lines. When sugars or fibre aren’t printed, we say “Not listed”, never zero.</p>
           </article>
 
           <article class="card">
             <div class="symbol" style="--tint: var(--green)">
               <svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
             </div>
-            <h3>A grade you can trust</h3>
-            <p>A simple A–E score from official thresholds. If the label leaves things out, you see a range, not a guess.</p>
+            <h3>Claims, checked</h3>
+            <p>“糖質オフ” has no legal definition. “カロリーゼロ” means under 5 kcal per 100 g or ml. We say which is which, and check the energy adds up.</p>
           </article>
 
           <article class="card">
@@ -129,17 +129,17 @@
         <figure>
           <div class="phone"><img src="screens/warnings.webp" width="600" height="1305" loading="lazy"
                alt="Things to know for a low-carb chocolate bar: high in fat, high in saturated fat, and 糖質オフ isn't regulated."></div>
-          <figcaption><strong>Things to know first.</strong> What’s high, and what the pack’s claims really mean.</figcaption>
+          <figcaption><strong>Things to know first.</strong> What the pack’s claims really mean, and what’s high by UK, US or Canadian guidelines.</figcaption>
         </figure>
         <figure>
           <div class="phone"><img src="screens/nutrition.webp" width="600" height="1305" loading="lazy"
                alt="Every nutrition line in English with daily value percentages and high, medium or low levels."></div>
-          <figcaption><strong>Every line, explained.</strong> Daily values and levels, with salt as sodium too.</figcaption>
+          <figcaption><strong>Every line, explained.</strong> Daily values for each line, with salt as sodium too.</figcaption>
         </figure>
         <figure>
           <div class="phone"><img src="screens/carbs.webp" width="600" height="1305" loading="lazy"
                alt="The carbohydrate breakdown into sugars, starch and fibre, and a check that the numbers add up."></div>
-          <figcaption><strong>Carbs, broken down.</strong> Sugars, starch and fibre, and a check that the numbers add up.</figcaption>
+          <figcaption><strong>Carbs, broken down.</strong> Sugars, starch and fibre, and a check that the energy adds up.</figcaption>
         </figure>
       </div>
     </section>
@@ -172,7 +172,7 @@
             </div>
             <div class="legend">
               <span><i class="dot seg-sugar"></i>Sugars</span>
-              <span><i class="dot seg-net"></i>Other net carbs</span>
+              <span><i class="dot seg-net"></i>Starch and other carbs</span>
               <span><i class="dot seg-fibre"></i>Fibre</span>
             </div>
           </div>
@@ -185,7 +185,7 @@
               <span class="seg seg-hidden" style="flex: 1"></span>
             </div>
             <div class="legend">
-              <span><i class="dot seg-hidden"></i>Sugars, starch and fibre not disclosed</span>
+              <span><i class="dot seg-hidden"></i>Unknown carbohydrates: sugars, starch and fibre not listed</span>
             </div>
           </div>
         </div>
@@ -228,6 +228,10 @@
           <details>
             <summary>Which iPhones are supported?</summary>
             <p>NutriFacts needs iOS 26 or later.</p>
+          </details>
+          <details>
+            <summary>Does it need an internet connection?</summary>
+            <p>Yes. By default, the photo of the label is sent to our server, where an AI model reads it.</p>
           </details>
           <details>
             <summary>Does it cost anything?</summary>
