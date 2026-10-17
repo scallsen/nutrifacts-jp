@@ -63,7 +63,8 @@ nonisolated enum LabelReaderError: LocalizedError {
     case modelUnavailable(String)
     case quotaReached(resetDate: Date?)
     case backendNotConfigured
-    case badResponse(Int)
+    /// A message from the NutriFacts API, written for the user.
+    case aiAnd(String)
 
     var errorDescription: String? {
         switch self {
@@ -71,8 +72,8 @@ nonisolated enum LabelReaderError: LocalizedError {
         case .quotaReached(let date):
             if let date { "You've reached today's Private Cloud Compute limit. It resets \(date.formatted(.relative(presentation: .named)))." }
             else { "You've reached today's Private Cloud Compute limit." }
-        case .backendNotConfigured: "Add the ai& server URL and API key in Settings."
-        case .badResponse(let code): "The ai& backend returned HTTP \(code)."
+        case .backendNotConfigured: "The ai& server isn't set up in this build. Pick another option in Settings."
+        case .aiAnd(let message): message
         }
     }
 }

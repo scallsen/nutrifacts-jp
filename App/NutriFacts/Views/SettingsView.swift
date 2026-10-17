@@ -7,9 +7,7 @@ struct SettingsView: View {
     @AppStorage("referenceSource") private var sourceID = ReferenceSource.japan.id
     @AppStorage("showJapanese") private var showJapanese = false
     @AppStorage(Backend.storageKey) private var backend = Backend.defaultBackend
-    @AppStorage(AIAndConfig.urlKey) private var aiAndURL = ""
     @AppStorage("hasOnboarded") private var hasOnboarded = true
-    @State private var apiKey = Keychain.read(AIAndConfig.keychainAccount) ?? ""
     @State private var confirmsClearHistory = false
 
     var body: some View {
@@ -43,14 +41,15 @@ struct SettingsView: View {
                 }
                 if backend == .aiAnd {
                     Section {
-                        TextField("Server URL", text: $aiAndURL)
-                            .textContentType(.URL).keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
-                        SecureField("API Key", text: $apiKey)
-                            .onSubmit { Keychain.write(apiKey, for: AIAndConfig.keychainAccount) }
+                        if AIAndConfig.current.apiURL == nil {
+                            Label("Not set up in this build", systemImage: "exclamationmark.triangle").foregroundStyle(.orange)
+                        } else {
+                            Label("Ready", systemImage: "checkmark.circle").foregroundStyle(.green)
+                        }
                     } header: {
                         Text("ai&")
                     } footer: {
-                        Text("Screenshots are sent to this server to be read.")
+                        Text("Photos are sent to the NutriFacts server, which reads them with an AI& model in Japan.")
                     }
                 }
                 Section {
@@ -91,7 +90,6 @@ struct SettingsView: View {
     }
 
     private func close() {
-        Keychain.write(apiKey, for: AIAndConfig.keychainAccount)
         dismiss()
     }
 }

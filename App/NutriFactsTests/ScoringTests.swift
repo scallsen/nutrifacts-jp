@@ -139,3 +139,10 @@ import Testing
         #expect(try l.toPanel(photo: nil).unit == .millilitres)
     }
 }
+
+@Suite struct AIAndConfigTests {
+    @Test func placeholderURLMeansNotSetUp() {
+        // The committed xcconfig has the YOUR-SUBDOMAIN placeholder until the Worker is deployed.
+        #expect(AIAndConfig.current.apiURL == nil)
+    }
+}

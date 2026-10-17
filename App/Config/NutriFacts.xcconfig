@@ -1,0 +1,10 @@
+// Build settings for NutriFacts. Values here end up in Info.plist (NutriFacts/Info.plist).
+
+// The NutriFacts API (backend/, a Cloudflare Worker). Replace after `npm run deploy` prints the URL.
+// "$()" keeps xcconfig from reading "//" as a comment.
+NUTRIFACTS_API_URL = https:/$()/nutrifacts-api.YOUR-SUBDOMAIN.workers.dev
+
+// Optional app token the Worker checks (its APP_TOKEN secret). Set it in Secrets.xcconfig, not here.
+NUTRIFACTS_APP_TOKEN =
+
+#include? "Secrets.xcconfig"

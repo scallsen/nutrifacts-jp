@@ -8,8 +8,12 @@ targets:
   NutriFacts:
     type: application
     platform: iOS
+    configFiles:
+      Debug: Config/NutriFacts.xcconfig
+      Release: Config/NutriFacts.xcconfig
     sources:
-      - NutriFacts
+      - path: NutriFacts
+        excludes: [Info.plist]
       # The repo's data files are the source of truth; bundle them directly.
       - path: ../data/health-score.json
         buildPhase: resources
@@ -25,6 +29,7 @@ targets:
         SWIFT_VERSION: "6.0"
         TARGETED_DEVICE_FAMILY: "1"
         GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_FILE: NutriFacts/Info.plist
         INFOPLIST_KEY_CFBundleDisplayName: NutriFacts
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES

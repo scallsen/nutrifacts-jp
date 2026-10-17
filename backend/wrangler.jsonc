@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nutrifacts-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "observability": { "enabled": true },
+  "vars": {
+    // A vision-capable model from your AI& account. List them with the command in README.md.
+    "AIAND_MODEL": ""
+  },
+  // Secrets (not in this file): AIAND_API_KEY, and optionally APP_TOKEN.
+  // Set them with `npx wrangler secret put <NAME>`.
+  "ratelimits": [
+    {
+      // Per client IP: 10 label reads a minute.
+      "name": "READ_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 10, "period": 60 }
+    }
+  ]
+}

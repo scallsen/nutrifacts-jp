@@ -2,7 +2,7 @@ import Foundation
 import FoundationModels
 
 /// What a backend reads off the screenshot: a transcription of the panel, nothing inferred.
-/// The same shape is the ai& backend's JSON response (see docs/backend-api.md).
+/// The same shape is the NutriFacts API's response for the ai& option (see docs/aiand.md).
 @Generable
 nonisolated struct ExtractedLabel: Codable, Sendable, Hashable {
     @Guide(description: "True only if a Japanese nutrition facts panel (栄養成分表示) is visible.")
