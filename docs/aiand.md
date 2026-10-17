@@ -8,7 +8,7 @@ App ──photo──▶ NutriFacts API (Cloudflare Worker) ──photo + prompt
 ```
 
 - **The AI& key** is a Worker secret, never in the app or in git.
-- **The Worker only reads labels.** It sets the model, the prompt and a strict JSON schema itself, so its URL can't be used to run arbitrary prompts on your AI& credit.
+- **The Worker only reads labels and ingredients boxes.** It sets the model, the prompt and a strict JSON schema itself, so its URL can't be used to run arbitrary prompts on your AI& credit.
 - **Rate limit:** 10 reads a minute per client IP (`READ_LIMITER` in `wrangler.jsonc`).
 - **Optional app token:** if the Worker has an `APP_TOKEN` secret, requests need a matching `X-App-Token` header. The app sends it from `App/Config/Secrets.xcconfig`. It ships inside the app, so it only keeps out casual traffic. Apple App Attest is the stronger option if abuse becomes a problem.
 - **Scoring stays in the app.** The Worker returns a transcription, and the app scores it with [`data/health-score.json`](../data/health-score.json), exactly as for Apple's models.
@@ -75,6 +75,10 @@ The levels come from AI&'s model list and are cached for an hour, so the picker 
 | `unit` | As printed: `kcal`, `kJ`, `g`, `mg`, `µg`. |
 
 The schema lives in two places that must match: `backend/src/label.ts` (sent to AI&) and `ExtractedLabel` in `App/NutriFacts/Reading/ExtractedLabel.swift` (filled by Apple's models, and decoded from this response).
+
+### `POST /v1/ingredients-box/read`
+
+The same request body, for a photo of the ingredients box (一括表示). It answers `ExtractedIngredientsBox`: `boxFound`, `category`, `ingredients` (`japanese`, `english`, `isAdditive`), `allergens`, `netContentsText`, `netContentsAmount`, `netContentsUnit`, `netContentsCount`, `netContentsPrintedElsewhere`, `date`, `isUseBy`, `storage`, `maker` and `countryOfOrigin`. Text fields are `{ "japanese", "english" }`. The rules and schema are in `backend/src/ingredients.ts`, which mirrors `App/NutriFacts/Reading/ExtractedIngredientsBox.swift`. See [`ingredients-box.md`](ingredients-box.md).
 
 ### Errors
 

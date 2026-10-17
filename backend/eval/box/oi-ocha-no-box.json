@@ -1,0 +1,37 @@
+{
+  "photo": "oi-ocha-bottle-no-panel.jpg",
+  "notes": "Bottle side with a haiku, a barcode and 600ml on the front. No ingredients box.",
+  "expected": {
+    "boxFound": false,
+    "category": {
+      "japanese": "",
+      "english": ""
+    },
+    "ingredients": [],
+    "allergens": [],
+    "netContentsText": "",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 0,
+    "netContentsPrintedElsewhere": false,
+    "date": {
+      "japanese": "",
+      "english": ""
+    },
+    "isUseBy": false,
+    "storage": {
+      "japanese": "",
+      "english": ""
+    },
+    "maker": "",
+    "countryOfOrigin": {
+      "japanese": "",
+      "english": ""
+    }
+  },
+  "reference": {
+    "by": "claude-opus-5-5, read from the photo",
+    "at": "2026-10-17"
+  },
+  "verified": false
+}

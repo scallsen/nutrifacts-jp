@@ -86,27 +86,41 @@ export const LABEL_SCHEMA = {
   },
 } as const;
 
-/** The chat completion request for AI&'s OpenAI-compatible API. */
-export function completionRequest(model: string, imageBase64: string, mimeType: string, reasoningEffort?: string) {
+/** A chat completion request for AI&'s OpenAI-compatible API: fixed instructions, one photo and a strict schema. */
+export function visionRequest(model: string, instructions: string, task: string, schemaName: string, schema: object,
+  imageBase64: string, mimeType: string, reasoningEffort?: string) {
   return {
     model,
     temperature: 0,
     ...(reasoningEffort ? { reasoning_effort: reasoningEffort } : {}),
     messages: [
-      { role: "system", content: INSTRUCTIONS },
+      { role: "system", content: instructions },
       {
         role: "user",
         content: [
-          { type: "text", text: "Transcribe the Japanese nutrition facts panel in this photo." },
+          { type: "text", text: task },
           { type: "image_url", image_url: { url: `data:${mimeType};base64,${imageBase64}` } },
         ],
       },
     ],
     response_format: {
       type: "json_schema",
-      json_schema: { name: "nutrition_label", strict: true, schema: LABEL_SCHEMA },
+      json_schema: { name: schemaName, strict: true, schema },
     },
   };
+}
+
+/** The chat completion request for reading a nutrition panel. */
+export function completionRequest(model: string, imageBase64: string, mimeType: string, reasoningEffort?: string) {
+  return visionRequest(model, INSTRUCTIONS, "Transcribe the Japanese nutrition facts panel in this photo.",
+    "nutrition_label", LABEL_SCHEMA, imageBase64, mimeType, reasoningEffort);
+}
+
+/** The answer text of a chat completion. */
+export function completionContent(completion: unknown): string {
+  const content = (completion as { choices?: { message?: { content?: string } }[] })?.choices?.[0]?.message?.content;
+  if (typeof content !== "string" || content.length === 0) throw new Error("empty answer");
+  return content;
 }
 
 // The names 食品表示基準 allows for each nutrient. Japanese panels use only these, so the Worker
@@ -149,9 +163,7 @@ export function normaliseLabel(label: ExtractedLabel): ExtractedLabel {
 
 /** Pulls the label out of a chat completion and checks it has the right shape. */
 export function parseCompletion(completion: unknown): ExtractedLabel {
-  const content = (completion as { choices?: { message?: { content?: string } }[] })?.choices?.[0]?.message?.content;
-  if (typeof content !== "string" || content.length === 0) throw new Error("empty answer");
-  const label = JSON.parse(content) as ExtractedLabel;
+  const label = JSON.parse(completionContent(completion)) as ExtractedLabel;
   if (typeof label.panelFound !== "boolean" || !Array.isArray(label.lines)) throw new Error("answer doesn't match the schema");
   return normaliseLabel(label);
 }

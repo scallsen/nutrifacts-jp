@@ -1,0 +1,128 @@
+{
+  "photo": "choco-cornet-no-panel.jpg",
+  "notes": "Small low-resolution price sticker. No 名称 (チョココルネ is the product name), ingredients separated by spaces, 消費期限 (use by).",
+  "expected": {
+    "boxFound": true,
+    "category": {
+      "japanese": "",
+      "english": ""
+    },
+    "ingredients": [
+      {
+        "japanese": "小麦粉",
+        "english": "wheat flour",
+        "isAdditive": false
+      },
+      {
+        "japanese": "マーガリン",
+        "english": "margarine",
+        "isAdditive": false
+      },
+      {
+        "japanese": "玉子",
+        "english": "egg",
+        "isAdditive": false
+      },
+      {
+        "japanese": "イースト",
+        "english": "yeast",
+        "isAdditive": false
+      },
+      {
+        "japanese": "食塩",
+        "english": "salt",
+        "isAdditive": false
+      },
+      {
+        "japanese": "砂糖",
+        "english": "sugar",
+        "isAdditive": false
+      },
+      {
+        "japanese": "乳製品",
+        "english": "dairy products",
+        "isAdditive": false
+      },
+      {
+        "japanese": "イーストフード",
+        "english": "yeast food",
+        "isAdditive": false
+      },
+      {
+        "japanese": "コーンシロップ",
+        "english": "corn syrup",
+        "isAdditive": false
+      },
+      {
+        "japanese": "香料",
+        "english": "flavouring",
+        "isAdditive": false
+      },
+      {
+        "japanese": "でん粉",
+        "english": "starch",
+        "isAdditive": false
+      },
+      {
+        "japanese": "バター",
+        "english": "butter",
+        "isAdditive": false
+      },
+      {
+        "japanese": "ココアパウダー",
+        "english": "cocoa powder",
+        "isAdditive": false
+      },
+      {
+        "japanese": "カカオマス",
+        "english": "cocoa mass",
+        "isAdditive": false
+      },
+      {
+        "japanese": "レモンパウダー",
+        "english": "lemon powder",
+        "isAdditive": false
+      },
+      {
+        "japanese": "保存料（ソルビン酸）",
+        "english": "preservative (sorbic acid)",
+        "isAdditive": false
+      },
+      {
+        "japanese": "乳化剤",
+        "english": "emulsifier",
+        "isAdditive": false
+      },
+      {
+        "japanese": "ピーナッツ",
+        "english": "peanuts",
+        "isAdditive": false
+      }
+    ],
+    "allergens": [],
+    "netContentsText": "1個",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 1,
+    "netContentsPrintedElsewhere": false,
+    "date": {
+      "japanese": "袋（テープ）に記載",
+      "english": "printed on the bag (tape)"
+    },
+    "isUseBy": true,
+    "storage": {
+      "japanese": "",
+      "english": ""
+    },
+    "maker": "株式会社ヤマテパン",
+    "countryOfOrigin": {
+      "japanese": "",
+      "english": ""
+    }
+  },
+  "reference": {
+    "by": "claude-opus-5-5, read from the photo",
+    "at": "2026-10-17"
+  },
+  "verified": false
+}

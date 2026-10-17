@@ -151,6 +151,24 @@ import Testing
         #expect(panel.packAmount == 500)
     }
 
+    @Test func decodesTheWorkersIngredientsBox() throws {
+        // The shape backend/src/ingredients.ts returns from /v1/ingredients-box/read.
+        let json = """
+        {"boxFound":true,"category":{"japanese":"調味酢","english":"seasoned vinegar"},
+         "ingredients":[{"japanese":"果糖ぶどう糖液糖","english":"high-fructose corn syrup","isAdditive":false},
+                        {"japanese":"酸味料","english":"acidulant","isAdditive":true}],
+         "allergens":["りんご"],"netContentsText":"500ml","netContentsAmount":500,"netContentsUnit":"ml",
+         "netContentsCount":0,"netContentsPrintedElsewhere":false,"date":{"japanese":"下部に記載","english":"printed below"},
+         "isUseBy":false,"storage":{"japanese":"","english":""},"maker":"株式会社 ミツカン",
+         "countryOfOrigin":{"japanese":"","english":""}}
+        """
+        let box = try JSONDecoder().decode(ExtractedIngredientsBox.self, from: Data(json.utf8))
+        #expect(box.ingredients.map(\.isAdditive) == [false, true])
+        #expect(box.allergens == ["りんご"])
+        #expect(box.netContents?.amount == 500)
+        #expect(box.netContents?.unit == .millilitres)
+    }
+
     @Test func boxNetContentsInAnotherUnitIsIgnored() throws {
         var panel = try label([line(.fat, 3)]).toPanel(photo: nil) // per 100 g
         panel.apply(netContents: 500, unit: .millilitres, count: 0, printed: "500ml")

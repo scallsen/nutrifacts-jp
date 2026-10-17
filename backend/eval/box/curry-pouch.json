@@ -1,0 +1,164 @@
+{
+  "photo": "curry-pouch-ingredients-no-panel.jpg",
+  "notes": "Classic table box, tilted. Pre-2020: no ／ between ingredients and additives. Allergen summary at the end, which omits allergens already named as ingredients (小麦粉, バター).",
+  "expected": {
+    "boxFound": true,
+    "category": {
+      "japanese": "ビーフカレーソース",
+      "english": "beef curry sauce"
+    },
+    "ingredients": [
+      {
+        "japanese": "牛肉",
+        "english": "beef",
+        "isAdditive": false
+      },
+      {
+        "japanese": "マッシュルーム",
+        "english": "mushroom",
+        "isAdditive": false
+      },
+      {
+        "japanese": "小麦粉",
+        "english": "wheat flour",
+        "isAdditive": false
+      },
+      {
+        "japanese": "牛脂",
+        "english": "beef fat",
+        "isAdditive": false
+      },
+      {
+        "japanese": "カレー粉",
+        "english": "curry powder",
+        "isAdditive": false
+      },
+      {
+        "japanese": "野菜・果実（玉葱、パイン、リンゴ）",
+        "english": "vegetables and fruit (onion, pineapple, apple)",
+        "isAdditive": false
+      },
+      {
+        "japanese": "ヨーグルト",
+        "english": "yogurt",
+        "isAdditive": false
+      },
+      {
+        "japanese": "マンゴチャツネ",
+        "english": "mango chutney",
+        "isAdditive": false
+      },
+      {
+        "japanese": "みりん",
+        "english": "mirin",
+        "isAdditive": false
+      },
+      {
+        "japanese": "ウスターソース",
+        "english": "Worcestershire sauce",
+        "isAdditive": false
+      },
+      {
+        "japanese": "赤ワイン",
+        "english": "red wine",
+        "isAdditive": false
+      },
+      {
+        "japanese": "トマトケチャップ",
+        "english": "tomato ketchup",
+        "isAdditive": false
+      },
+      {
+        "japanese": "フルーツチャツネ",
+        "english": "fruit chutney",
+        "isAdditive": false
+      },
+      {
+        "japanese": "カレーペースト",
+        "english": "curry paste",
+        "isAdditive": false
+      },
+      {
+        "japanese": "砂糖",
+        "english": "sugar",
+        "isAdditive": false
+      },
+      {
+        "japanese": "ココナッツ",
+        "english": "coconut",
+        "isAdditive": false
+      },
+      {
+        "japanese": "バター",
+        "english": "butter",
+        "isAdditive": false
+      },
+      {
+        "japanese": "ビーフコンソメ",
+        "english": "beef consommé",
+        "isAdditive": false
+      },
+      {
+        "japanese": "香辛料",
+        "english": "spices",
+        "isAdditive": false
+      },
+      {
+        "japanese": "調味料（アミノ酸等）",
+        "english": "seasoning (amino acids)",
+        "isAdditive": false
+      },
+      {
+        "japanese": "カラメル色素",
+        "english": "caramel colour",
+        "isAdditive": false
+      },
+      {
+        "japanese": "香料",
+        "english": "flavouring",
+        "isAdditive": false
+      },
+      {
+        "japanese": "酸味料",
+        "english": "acidulant",
+        "isAdditive": false
+      },
+      {
+        "japanese": "甘味料（甘草）",
+        "english": "sweetener (liquorice)",
+        "isAdditive": false
+      }
+    ],
+    "allergens": [
+      "豚肉",
+      "大豆",
+      "鶏肉",
+      "ゼラチン",
+      "バナナ"
+    ],
+    "netContentsText": "450g",
+    "netContentsAmount": 450,
+    "netContentsUnit": "g",
+    "netContentsCount": 0,
+    "netContentsPrintedElsewhere": false,
+    "date": {
+      "japanese": "2007.11.30",
+      "english": "30 Nov 2007"
+    },
+    "isUseBy": false,
+    "storage": {
+      "japanese": "",
+      "english": ""
+    },
+    "maker": "松崎食産株式会社",
+    "countryOfOrigin": {
+      "japanese": "",
+      "english": ""
+    }
+  },
+  "reference": {
+    "by": "claude-opus-5-5, read from the photo",
+    "at": "2026-10-17"
+  },
+  "verified": false
+}

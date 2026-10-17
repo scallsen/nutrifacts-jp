@@ -1,0 +1,63 @@
+{
+  "photo": "madeleine-back-no-panel.jpg",
+  "notes": "Table box behind creased film. 内容量 is a bare count. A factory note below the box lists 小麦・卵・乳製品・落花生, which isn't an allergen statement for this product.",
+  "expected": {
+    "boxFound": true,
+    "category": {
+      "japanese": "焼菓子",
+      "english": "baked confectionery"
+    },
+    "ingredients": [
+      {
+        "japanese": "小麦粉",
+        "english": "wheat flour",
+        "isAdditive": false
+      },
+      {
+        "japanese": "砂糖",
+        "english": "sugar",
+        "isAdditive": false
+      },
+      {
+        "japanese": "バター",
+        "english": "butter",
+        "isAdditive": false
+      },
+      {
+        "japanese": "鶏卵",
+        "english": "egg",
+        "isAdditive": false
+      },
+      {
+        "japanese": "食塩",
+        "english": "salt",
+        "isAdditive": false
+      }
+    ],
+    "allergens": [],
+    "netContentsText": "1個",
+    "netContentsAmount": 0,
+    "netContentsUnit": "none",
+    "netContentsCount": 1,
+    "netContentsPrintedElsewhere": false,
+    "date": {
+      "japanese": "別記に記載",
+      "english": "printed separately"
+    },
+    "isUseBy": false,
+    "storage": {
+      "japanese": "直射日光、高温多湿をおさけください。",
+      "english": "keep away from direct sunlight, heat and humidity"
+    },
+    "maker": "株式会社 神田精養軒",
+    "countryOfOrigin": {
+      "japanese": "",
+      "english": ""
+    }
+  },
+  "reference": {
+    "by": "claude-opus-5-5, read from the photo",
+    "at": "2026-10-17"
+  },
+  "verified": false
+}
