@@ -32,7 +32,7 @@ struct OnboardingView: View {
                                     detail: "Label photos are read by AI& in Japan, through the NutriFacts server, which doesn’t keep them. You can switch to Apple Intelligence in Settings.")
                         } else {
                             Feature(symbol: "lock.fill", tint: .green, title: "Private by design",
-                                    detail: Backend.privateCloudCompute.isSupported
+                                    detail: AppleIntelligenceReader.canUsePCC
                                         ? "Labels are read with Apple Intelligence, on your iPhone or Apple’s Private Cloud Compute. Nothing is sent to us."
                                         : "Labels are read with Apple Intelligence on your iPhone. Nothing is sent to us.")
                         }

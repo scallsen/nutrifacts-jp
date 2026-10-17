@@ -2,60 +2,83 @@ import CoreGraphics
 import Foundation
 import FoundationModels
 
-/// Reads the label with Apple's Foundation Models, either on Private Cloud Compute or on device.
+/// Reads the label with Apple Intelligence: Private Cloud Compute when it can run, otherwise the
+/// on-device model. The fallback covers iOS 26, builds without the PCC entitlement, no network,
+/// PCC not being ready, and the daily PCC limit.
 nonisolated struct AppleIntelligenceReader: LabelReader {
-    enum Kind: Sendable { case privateCloudCompute, onDevice }
-    var kind: Kind
+    /// PCC needs iOS 27 and the managed entitlement.
+    static var canUsePCC: Bool {
+        if #available(iOS 27, *) { return hasPCCEntitlement }
+        return false
+    }
 
-    func read(_ image: CGImage) async throws -> ExtractedLabel {
-        switch kind {
-        case .privateCloudCompute:
-            guard #available(iOS 27, *) else {
-                throw LabelReaderError.modelUnavailable("Private Cloud Compute needs iOS 27")
+    /// FoundationModels traps when an app without the entitlement uses PCC, e.g. a build signed with a
+    /// personal team. Development builds embed their profile, so check it. App Store builds have none.
+    private static let hasPCCEntitlement: Bool = {
+        guard let url = Bundle.main.url(forResource: "embedded", withExtension: "mobileprovision"),
+              let data = try? Data(contentsOf: url),
+              let profile = String(data: data, encoding: .isoLatin1) else { return true }
+        return profile.contains("com.apple.developer.private-cloud-compute")
+    }()
+
+    func read(_ image: CGImage) async throws -> LabelReading {
+        var pccProblem: LabelReaderError?
+        if #available(iOS 27, *), Self.canUsePCC {
+            do {
+                return LabelReading(label: try await readWithPCC(image), readBy: .privateCloudCompute)
+            } catch let problem as PCCUnavailable {
+                pccProblem = problem.error
             }
-            return try await readWithPCC(image)
-        case .onDevice:
-            let model = SystemLanguageModel.default
-            switch model.availability {
-            case .available: break
-            case .unavailable(.deviceNotEligible): throw LabelReaderError.modelUnavailable("this device doesn't support Apple Intelligence")
-            case .unavailable(.appleIntelligenceNotEnabled): throw LabelReaderError.modelUnavailable("turn on Apple Intelligence in Settings")
-            case .unavailable: throw LabelReaderError.modelUnavailable("the model is still downloading")
-            }
-            if #available(iOS 27, *), model.capabilities.contains(.vision) {
-                return try await respond(model: model, image: image)
-            }
-            // The model can't take images (iOS 26), so it reads on-device OCR of the photo instead.
-            let ocrText = (try? await OCR.text(in: image)) ?? ""
-            let session = LanguageModelSession(model: model, instructions: Self.instructions)
-            return try await session.respond(generating: ExtractedLabel.self) {
-                "Transcribe the Japanese nutrition facts panel from this OCR of a photo (it may contain misreads):"
-                ocrText.isEmpty ? "(no text recognised)" : ocrText
-            }.content
+        }
+        do {
+            return LabelReading(label: try await readOnDevice(image), readBy: .onDevice)
+        } catch let error as LabelReaderError {
+            // Neither works. If PCC stopped on its daily limit, that's the more useful thing to say.
+            if case .quotaReached = pccProblem { throw pccProblem! }
+            throw error
         }
     }
+
+    /// PCC can't take this read, but the on-device model might.
+    private struct PCCUnavailable: Error { var error: LabelReaderError? }
 
     @available(iOS 27, *)
     private func readWithPCC(_ image: CGImage) async throws -> ExtractedLabel {
         let model = PrivateCloudComputeLanguageModel()
-        switch model.availability {
-        case .available: break
-        case .unavailable(.deviceNotEligible): throw LabelReaderError.modelUnavailable("this device doesn't support Apple Intelligence")
-        case .unavailable: throw LabelReaderError.modelUnavailable("Private Cloud Compute isn't ready yet")
-        }
+        guard model.availability == .available else { throw PCCUnavailable() }
         do {
             return try await respond(model: model, image: image)
         } catch let error as PrivateCloudComputeLanguageModel.Error {
             switch error {
             case .quotaLimitReached(let info):
-                throw LabelReaderError.quotaReached(resetDate: info.resetDate)
-            case .networkFailure:
+                throw PCCUnavailable(error: .quotaReached(resetDate: info.resetDate))
+            case .networkFailure, .serviceUnavailable:
                 // Apple's guidance: retry on device when the network is unavailable.
-                return try await AppleIntelligenceReader(kind: .onDevice).read(image)
+                throw PCCUnavailable()
             default:
                 throw error
             }
         }
+    }
+
+    private func readOnDevice(_ image: CGImage) async throws -> ExtractedLabel {
+        let model = SystemLanguageModel.default
+        switch model.availability {
+        case .available: break
+        case .unavailable(.deviceNotEligible): throw LabelReaderError.modelUnavailable("this iPhone doesn't support it, and Private Cloud Compute couldn't be reached")
+        case .unavailable(.appleIntelligenceNotEnabled): throw LabelReaderError.modelUnavailable("turn on Apple Intelligence in Settings")
+        case .unavailable: throw LabelReaderError.modelUnavailable("the model is still downloading")
+        }
+        if #available(iOS 27, *), model.capabilities.contains(.vision) {
+            return try await respond(model: model, image: image)
+        }
+        // The model can't take images (iOS 26), so it reads on-device OCR of the photo instead.
+        let ocrText = (try? await OCR.text(in: image)) ?? ""
+        let session = LanguageModelSession(model: model, instructions: Self.instructions)
+        return try await session.respond(generating: ExtractedLabel.self) {
+            "Transcribe the Japanese nutrition facts panel from this OCR of a photo (it may contain misreads):"
+            ocrText.isEmpty ? "(no text recognised)" : ocrText
+        }.content
     }
 
     /// iOS 27: the photo alone goes to a model that can see it.

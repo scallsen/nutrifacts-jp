@@ -29,14 +29,22 @@ struct SettingsView: View {
                         Label("Show Japanese Terms", systemImage: "character.book.closed")
                     }
                 }
-                Section("Read Labels With") {
+                Section {
                     Picker("Read Labels With", selection: $backend) {
                         ForEach(Backend.supported) { Text($0.title).tag($0) }
                     }
                     .pickerStyle(.inline)
                     .labelsHidden()
+                } header: {
+                    Text("Read Labels With")
+                } footer: {
+                    if backend == .appleIntelligence {
+                        Text(AppleIntelligenceReader.canUsePCC
+                             ? "Uses Apple's Private Cloud Compute, and the on-device model when you're offline or past today's limit."
+                             : "Uses the on-device model. Private Cloud Compute needs iOS 27.")
+                    }
                 }
-                if backend == .privateCloudCompute, #available(iOS 27, *) {
+                if backend == .appleIntelligence, AppleIntelligenceReader.canUsePCC, #available(iOS 27, *) {
                     PCCStatusSection()
                 }
                 if backend == .aiAnd {

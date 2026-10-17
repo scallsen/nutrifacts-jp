@@ -2,70 +2,74 @@ import CoreGraphics
 import Foundation
 import Vision
 
-/// Where the screenshot is read. The score itself is always computed in the app (docs/health-score.md).
-nonisolated enum Backend: String, CaseIterable, Identifiable, Codable, Sendable {
-    case privateCloudCompute, onDevice, aiAnd
+/// Where labels are read, as chosen in Settings. The score is always computed in the app (docs/health-score.md).
+nonisolated enum Backend: RawRepresentable, CaseIterable, Identifiable, Hashable, Sendable {
+    /// Apple's models: Private Cloud Compute when it can run, the on-device model otherwise.
+    case appleIntelligence
+    /// AI&, through the NutriFacts API (backend/).
+    case aiAnd
+
+    init?(rawValue: String) {
+        switch rawValue {
+        // Before they were merged, PCC and on-device were separate choices.
+        case "appleIntelligence", "privateCloudCompute", "onDevice": self = .appleIntelligence
+        case "aiAnd": self = .aiAnd
+        default: return nil
+        }
+    }
+
+    var rawValue: String {
+        switch self {
+        case .appleIntelligence: "appleIntelligence"
+        case .aiAnd: "aiAnd"
+        }
+    }
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
-        case .privateCloudCompute: "Apple Private Cloud Compute"
-        case .onDevice: "On-device Apple Intelligence"
-        case .aiAnd: "ai&"
-        }
-    }
-
-    var shortTitle: String {
-        switch self {
-        case .privateCloudCompute: "Apple PCC"
-        case .onDevice: "On-device"
+        case .appleIntelligence: "Apple Intelligence"
         case .aiAnd: "ai&"
         }
     }
 
     static let storageKey = "backend"
 
-    /// The backend chosen in Settings, falling back when this OS can't run it.
+    /// The backend chosen in Settings, falling back when this build can't run it.
     static var selected: Backend {
         (UserDefaults.standard.string(forKey: storageKey).flatMap(Backend.init(rawValue:)) ?? .defaultBackend).resolved
     }
 
-    /// PCC needs iOS 27 and the PCC entitlement. ai& needs a NutriFacts API URL in this build.
-    /// The on-device model runs on iOS 26.
+    /// ai& needs a NutriFacts API URL in this build. Apple Intelligence always has the on-device model to fall back on.
     var isSupported: Bool {
         switch self {
-        case .onDevice: return true
-        case .aiAnd: return AIAndConfig.current.apiURL != nil
-        case .privateCloudCompute:
-            if #available(iOS 27, *) { return Self.hasPCCEntitlement }
-            return false
+        case .appleIntelligence: true
+        case .aiAnd: AIAndConfig.current.apiURL != nil
         }
     }
 
-    /// FoundationModels traps when an app without the entitlement uses PCC, e.g. a build signed with a
-    /// personal team. Development builds embed their profile, so check it. App Store builds have none.
-    private static let hasPCCEntitlement: Bool = {
-        guard let url = Bundle.main.url(forResource: "embedded", withExtension: "mobileprovision"),
-              let data = try? Data(contentsOf: url),
-              let profile = String(data: data, encoding: .isoLatin1) else { return true }
-        return profile.contains("com.apple.developer.private-cloud-compute")
-    }()
-
     static var supported: [Backend] { allCases.filter(\.isSupported) }
 
-    /// For new users: ai& when this build is set up for it, then Private Cloud Compute, then on device.
+    /// For new users: ai& when this build is set up for it, otherwise Apple Intelligence.
     /// Someone who has already picked a backend in Settings keeps it.
-    static var defaultBackend: Backend {
-        [.aiAnd, .privateCloudCompute, .onDevice].first(where: \.isSupported) ?? .onDevice
-    }
+    static var defaultBackend: Backend { Backend.aiAnd.isSupported ? .aiAnd : .appleIntelligence }
 
-    /// A stored choice that this OS can't run (e.g. PCC restored onto iOS 26) falls back to the default.
     var resolved: Backend { isSupported ? self : Self.defaultBackend }
 }
 
+/// Which model actually read a label. Apple Intelligence can end up on either of its two.
+nonisolated enum ReadBy: Hashable, Sendable {
+    case privateCloudCompute, onDevice, aiAnd
+}
+
+nonisolated struct LabelReading: Sendable {
+    var label: ExtractedLabel
+    var readBy: ReadBy
+}
+
 protocol LabelReader: Sendable {
-    func read(_ image: CGImage) async throws -> ExtractedLabel
+    func read(_ image: CGImage) async throws -> LabelReading
 }
 
 nonisolated enum LabelReaderError: LocalizedError {
@@ -81,7 +85,7 @@ nonisolated enum LabelReaderError: LocalizedError {
         case .quotaReached(let date):
             if let date { "You've reached today's Private Cloud Compute limit. It resets \(date.formatted(.relative(presentation: .named)))." }
             else { "You've reached today's Private Cloud Compute limit." }
-        case .backendNotConfigured: "The ai& server isn't set up in this build. Pick another option in Settings."
+        case .backendNotConfigured: "The ai& server isn't set up in this build. Pick Apple Intelligence in Settings."
         case .aiAnd(let message): message
         }
     }
@@ -103,8 +107,7 @@ nonisolated enum OCR {
 nonisolated enum LabelReaders {
     static func make(_ backend: Backend) -> any LabelReader {
         switch backend {
-        case .privateCloudCompute: AppleIntelligenceReader(kind: .privateCloudCompute)
-        case .onDevice: AppleIntelligenceReader(kind: .onDevice)
+        case .appleIntelligence: AppleIntelligenceReader()
         case .aiAnd: AIAndReader(config: .current)
         }
     }

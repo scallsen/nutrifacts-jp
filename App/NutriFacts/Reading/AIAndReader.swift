@@ -50,7 +50,7 @@ nonisolated struct AIAndReader: LabelReader {
         var error: Detail?
     }
 
-    func read(_ image: CGImage) async throws -> ExtractedLabel {
+    func read(_ image: CGImage) async throws -> LabelReading {
         guard let apiURL = config.apiURL else { throw LabelReaderError.backendNotConfigured }
         var request = URLRequest(url: apiURL.appending(path: "v1/nutrition-label/read"))
         request.httpMethod = "POST"
@@ -66,7 +66,7 @@ nonisolated struct AIAndReader: LabelReader {
             let message = (try? JSONDecoder().decode(ErrorBody.self, from: data))?.error?.message
             throw LabelReaderError.aiAnd(message ?? "The ai& server returned HTTP \(status).")
         }
-        return try JSONDecoder().decode(ExtractedLabel.self, from: data)
+        return LabelReading(label: try JSONDecoder().decode(ExtractedLabel.self, from: data), readBy: .aiAnd)
     }
 
     static func serverConfig(_ config: AIAndConfig = .current, session: URLSession = .shared) async throws -> ServerConfig {

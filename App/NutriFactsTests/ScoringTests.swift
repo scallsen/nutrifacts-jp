@@ -141,6 +141,14 @@ import Testing
 }
 
 @Suite struct AIAndConfigTests {
+    @Test func settingsOfferAIAndAndAppleIntelligence() {
+        #expect(Backend.supported == [.appleIntelligence, .aiAnd])
+        // Choices saved before PCC and on-device were merged still load.
+        #expect(Backend(rawValue: "privateCloudCompute") == .appleIntelligence)
+        #expect(Backend(rawValue: "onDevice") == .appleIntelligence)
+        #expect(Backend(rawValue: Backend.aiAnd.rawValue) == .aiAnd)
+    }
+
     @Test func newUsersDefaultToAIAnd() {
         #expect(Backend.aiAnd.isSupported)
         #expect(Backend.defaultBackend == .aiAnd)

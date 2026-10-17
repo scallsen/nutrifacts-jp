@@ -18,6 +18,12 @@ struct ResultView: View {
         let a = analysis
         List {
             if !a.knowsBasisAmount { BasisSizeSection(panel: a.panel, scan: model.latest(scan)) }
+            if model.latest(scan).readBy == .onDevice {
+                Section {
+                    NoticeRow(notice: Notice(symbol: "iphone", tint: .orange, title: "Read on this iPhone",
+                                             detail: "Private Cloud Compute wasn't available, so the smaller on-device model read this label. Check the numbers against the photo."))
+                }
+            }
             ThingsToKnowSection(analysis: a)
             Section {
                 Picker("Amount", selection: $basis) {

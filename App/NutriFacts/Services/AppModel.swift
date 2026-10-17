@@ -7,8 +7,8 @@ struct Scan: Identifiable, Hashable {
     let id = UUID()
     let date: Date
     var panel: LabelPanel
-    /// What read the label. Nil for the simulated camera.
-    var backend: Backend? = nil
+    /// Which model read the label. Nil for the simulated camera.
+    var readBy: ReadBy? = nil
 }
 
 extension PresentationDetent {
@@ -174,9 +174,9 @@ final class AppModel {
                   let image = Self.uprightImage(from: source) else { throw ImageError.unreadable }
             // Find the panel while the model reads, so the saved photo is just the label.
             async let crop = Self.panelCrop(of: image)
-            let label = try await LabelReaders.make(backend).read(image)
+            let reading = try await LabelReaders.make(backend).read(image)
             let photo = await crop.flatMap { AIAndReader.jpeg($0, quality: 0.8) } ?? Self.photo(from: source)
-            let scan = Scan(date: .now, panel: try label.toPanel(photo: photo), backend: backend)
+            let scan = Scan(date: .now, panel: try reading.label.toPanel(photo: photo), readBy: reading.readBy)
             history.insert(scan, at: 0)
             return .success(scan)
         } catch {
