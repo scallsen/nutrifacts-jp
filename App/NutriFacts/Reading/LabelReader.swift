@@ -59,7 +59,7 @@ nonisolated enum Backend: RawRepresentable, CaseIterable, Identifiable, Hashable
 }
 
 /// Which model actually read a label. Apple Intelligence can end up on either of its two.
-nonisolated enum ReadBy: Hashable, Sendable {
+nonisolated enum ReadBy: Hashable, Codable, Sendable {
     case privateCloudCompute, onDevice, aiAnd
 }
 

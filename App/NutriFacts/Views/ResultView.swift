@@ -6,12 +6,23 @@ struct ResultView: View {
     @AppStorage("referenceSource") private var sourceID = ReferenceSource.japan.id
     @AppStorage("showJapanese") private var showJapanese = false
     @AppStorage("showsScanTiming") private var showsTiming = false
-    @State private var basis: Basis = .asLabelled
+    /// The amount picked in the size tabs. Until one is picked, `PanelAnalysis.defaultBasis`, so a result
+    /// moves to the whole pack when the ingredients box brings its size.
+    @State private var pickedBasis: Basis?
     @State private var editingPack = false
     @State private var packText = ""
+    @State private var copied = false
+    @State private var addedToHealth = false
+    @State private var healthError: String?
 
     let scan: Scan
     var showsScanAgain = true
+
+    private var basis: Basis {
+        let panel = model.latest(scan).panel
+        if let pickedBasis, PanelAnalysis.availableBases(for: panel).contains(pickedBasis) { return pickedBasis }
+        return PanelAnalysis.defaultBasis(for: panel)
+    }
 
     private var analysis: PanelAnalysis {
         PanelAnalysis(panel: model.latest(scan).panel, basis: basis, source: .with(id: sourceID))
@@ -31,12 +42,14 @@ struct ResultView: View {
                 ThingsToKnowSection(analysis: a)
                 if a.availableBases.count > 1 {
                     Section {
-                        Picker("Amount", selection: $basis) {
+                        Picker("Amount", selection: Binding(get: { basis }, set: { pickedBasis = $0 })) {
                             ForEach(a.availableBases) { Text(a.title(for: $0)).tag($0) }
                         }
                         .pickerStyle(.segmented)
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets())
+                    } footer: {
+                        if let note = a.basisNote { Text(note) }
                     }
                 }
                 if a.knowsBasisAmount {
@@ -45,10 +58,16 @@ struct ResultView: View {
                             packText = a.panel.packAmount.map { NumberFormat.amount($0, .protein) } ?? ""
                             editingPack = true
                         } label: {
-                            LabeledContent("Pack Size",
-                                           value: a.panel.packAmount.map { "\(NumberFormat.amount($0, .protein)) \(a.panel.unit.rawValue)" } ?? "Add")
+                            LabeledContent("Whole Pack",
+                                           value: a.panel.packAmount.map { "\(NumberFormat.amount($0, .protein)) \(a.panel.unit.rawValue)" } ?? "Add Size")
                         }
                         .tint(.primary)
+                    } footer: {
+                        if a.panel.packAmount == nil {
+                            Text("The pack size isn't in the photo. It's printed as 内容量 (net contents), often in the ingredients box.")
+                        } else if a.availableBases.count == 1, let note = a.basisNote {
+                            Text(note)
+                        }
                     }
                 }
                 NutritionSection(analysis: a, showJapanese: showJapanese)
@@ -58,6 +77,46 @@ struct ResultView: View {
                     Section("About this label") {
                         ForEach(a.labelNotes) { NoticeRow(notice: $0) }
                     }
+                }
+                Section {
+                    let food = NutritionExport.customFood(model.latest(scan), analysis: a)
+                    Button {
+                        UIPasteboard.general.string = food
+                        copied = true
+                    } label: {
+                        Label(copied ? "Copied" : "Copy Nutrition", systemImage: copied ? "checkmark" : "doc.on.doc")
+                    }
+                    .sensoryFeedback(.success, trigger: copied) { _, new in new }
+                    // Lets the button copy again, e.g. after picking another amount.
+                    .task(id: copied) {
+                        guard copied else { return }
+                        try? await Task.sleep(for: .seconds(2))
+                        copied = false
+                    }
+                    ShareLink(item: food) { Label("Share Nutrition", systemImage: "square.and.arrow.up") }
+                    if HealthLog.isAvailable {
+                        Button {
+                            Task {
+                                do {
+                                    try await HealthLog.add(model.latest(scan), analysis: a)
+                                    addedToHealth = true
+                                } catch {
+                                    healthError = error.localizedDescription
+                                }
+                            }
+                        } label: {
+                            Label(addedToHealth ? "Added to Health" : "Add to Apple Health", systemImage: addedToHealth ? "checkmark" : "heart")
+                        }
+                        .disabled(addedToHealth)
+                        .sensoryFeedback(.success, trigger: addedToHealth) { _, new in new }
+                        .task(id: addedToHealth) {
+                            guard addedToHealth else { return }
+                            try? await Task.sleep(for: .seconds(2))
+                            addedToHealth = false
+                        }
+                    }
+                } footer: {
+                    Text(HealthLog.isAvailable ? "Uses the amount selected above. Health logs it as eaten now." : "Uses the amount selected above.")
                 }
                 #if DEBUG
                 if showsTiming, let timing = model.latest(scan).timing {
@@ -98,7 +157,7 @@ struct ResultView: View {
             .onAppear { scrollToIngredients(proxy) }
             .onChange(of: model.scrollToIngredients) { scrollToIngredients(proxy) }
         }
-        .navigationTitle("Nutrition Facts")
+        .navigationTitle(model.latest(scan).title ?? "Nutrition Facts")
         .navigationBarTitleDisplayMode(.inline)
         .safeAreaInset(edge: .bottom) {
             if showsScanAgain {
@@ -124,7 +183,13 @@ struct ResultView: View {
                 .padding(.bottom, 8)
             }
         }
-        .onChange(of: scan) { basis = .asLabelled }
+        .onChange(of: scan.id) { pickedBasis = nil; copied = false }
+        .onChange(of: basis) { copied = false }
+        .alert("Couldn't Add to Health", isPresented: Binding(get: { healthError != nil }, set: { if !$0 { healthError = nil } })) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(healthError ?? "")
+        }
         .alert("Pack Size", isPresented: $editingPack) {
             TextField("Size in \(analysis.panel.unit.rawValue)", text: $packText).keyboardType(.decimalPad)
             Button("Cancel", role: .cancel) {}
@@ -147,7 +212,7 @@ struct ResultView: View {
     private func setPack() {
         guard let amount = Double(packText.replacingOccurrences(of: ",", with: ".")), amount > 0 else { return }
         model.setPackSize(of: scan, amount: amount)
-        if analysis.availableBases.contains(.wholePack) { basis = .wholePack }
+        pickedBasis = .wholePack
     }
 }
 
@@ -255,19 +320,6 @@ private struct IngredientsSection: View {
             }
         }
     }
-
-    /// English names for the 28 allergens Japan lists (8 required, 20 recommended). Unknown words stay as printed.
-    static func allergenName(_ japanese: String) -> String {
-        let names = ["えび": "Shrimp", "かに": "Crab", "くるみ": "Walnut", "小麦": "Wheat", "そば": "Buckwheat",
-                     "卵": "Egg", "乳": "Milk", "乳成分": "Milk", "落花生": "Peanut", "ピーナッツ": "Peanut",
-                     "アーモンド": "Almond", "あわび": "Abalone", "いか": "Squid", "いくら": "Salmon roe",
-                     "オレンジ": "Orange", "カシューナッツ": "Cashew", "キウイフルーツ": "Kiwi", "牛肉": "Beef",
-                     "ごま": "Sesame", "さけ": "Salmon", "さば": "Mackerel", "大豆": "Soy", "鶏肉": "Chicken",
-                     "バナナ": "Banana", "豚肉": "Pork", "まつたけ": "Matsutake", "もも": "Peach",
-                     "やまいも": "Yam", "りんご": "Apple", "ゼラチン": "Gelatin"]
-        let key = japanese.trimmingCharacters(in: .whitespaces)
-        return names[key] ?? key
-    }
 }
 
 /// "Contains wheat, egg, milk" as a warning, in the Things to know style. Only what the pack names.
@@ -276,7 +328,7 @@ private struct AllergenRow: View {
     let showJapanese: Bool
 
     var body: some View {
-        let names = allergens.map { IngredientsSection.allergenName($0) }
+        let names = allergens.map { ExtractedIngredientsBox.allergenName($0) }
         HStack(spacing: 12) {
             Image(systemName: allergens.isEmpty ? "minus" : "exclamationmark")
                 .font(.system(size: 15, weight: .semibold))

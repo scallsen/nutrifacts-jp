@@ -2,3 +2,5 @@ node_modules/
 .wrangler/
 .dev.vars
 eval/runs/
+# Your own photos from the app (npm run eval:import). Rename one to commit it.
+eval/fixtures/own-*

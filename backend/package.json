@@ -14,7 +14,8 @@
     "eval:review": "node eval/review.ts",
     "eval:compare": "node eval/compare.ts",
     "eval:models": "sh eval/models.sh",
-    "eval:box": "node eval/box.ts"
+    "eval:box": "node eval/box.ts",
+    "eval:import": "node eval/import.ts"
   },
   "devDependencies": {
     "@anthropic-ai/sdk": "^0.135.0",

@@ -129,6 +129,14 @@ extension CameraEngine: AVCaptureVideoDataOutputSampleBufferDelegate {
     /// Headings of the ingredients box (一括表示).
     static let boxWords = ["原材料名", "名称", "品名", "内容量", "賞味期限", "消費期限", "保存方法", "製造者", "販売者", "輸入者"]
 
+    /// Whether these lines of text are an ingredients box: its 原材料名 heading, or three of its headings.
+    /// For a captured photo; frames use `Match.isLabel`, the same test.
+    static func isIngredientsBox(_ lines: [String]) -> Bool {
+        var match = Match()
+        for line in lines { match.add(boxWords.filter { line.contains($0) }, .zero) }
+        return match.isLabel(heading: boxLabel.heading)
+    }
+
     private static let panelLabel = (words: panelWords, heading: "栄養成分表示")
     private static let boxLabel = (words: boxWords, heading: "原材料名")
 

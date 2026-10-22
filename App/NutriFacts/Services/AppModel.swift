@@ -3,8 +3,8 @@ import ImageIO
 import SwiftUI
 import Vision
 
-struct Scan: Identifiable, Hashable {
-    let id = UUID()
+struct Scan: Identifiable, Hashable, Codable {
+    var id = UUID()
     let date: Date
     var panel: LabelPanel
     /// Which model read the label. Nil for the simulated camera.
@@ -15,6 +15,26 @@ struct Scan: Identifiable, Hashable {
     var box: ExtractedIngredientsBox? = nil
     /// The photo the box was read from.
     var boxPhoto: Data? = nil
+    /// What the model returned for the panel, before the app mapped it. Nil for the simulated camera.
+    var reading: ExtractedLabel? = nil
+    /// The whole photo the model read, uncropped. Debug builds only, for Settings › Debug › Export Scans.
+    var framePhoto: Data? = nil
+}
+
+extension Scan {
+    /// What History and the result call this scan: the product name in English, else as printed, else the
+    /// food type from the ingredients box (名称). Nil when none of them were in the photos.
+    var title: String? {
+        let candidates = [panel.productName?.english, panel.productName?.japanese, box?.category.english,
+                          box?.category.japanese, panel.nickname]
+        return candidates.compactMap { $0?.trimmingCharacters(in: .whitespaces) }.first { !$0.isEmpty }
+    }
+
+    /// The name as printed, when the title is its translation.
+    var printedTitle: String? {
+        guard let name = panel.productName, !name.english.isEmpty, !name.japanese.isEmpty, name.english != name.japanese else { return nil }
+        return name.japanese
+    }
 }
 
 extension PresentationDetent {
@@ -32,7 +52,7 @@ final class AppModel {
     /// What the simulated camera is pointing at.
     private(set) var cameraTarget: LabelPanel
     private(set) var current: Scan?
-    /// Placeholder: kept in memory only. The real app stores scans and the cropped photo on device.
+    /// Every scan, newest first. Saved on this iPhone by `store`.
     private(set) var history: [Scan] = []
     /// A real scan in progress (a screenshot or photo).
     private(set) var isReading = false
@@ -56,14 +76,17 @@ final class AppModel {
     private(set) var frozenFrame: UIImage?
 
     private let scanner: any LabelScanning
+    private let store: ScanStore
     private var nextSample = 0
     private var autoCapture: Task<Void, Never>?
     /// After a failed read, wait for the panel to leave the frame before capturing again,
     /// so a label that can't be read doesn't use up Private Cloud Compute requests in a loop.
     private var autoCaptureSuppressed = false
 
-    init(scanner: any LabelScanning = MockLabelScanner()) {
+    init(scanner: any LabelScanning = MockLabelScanner(), store: ScanStore = .shared) {
         self.scanner = scanner
+        self.store = store
+        history = store.load()
         cameraTarget = SampleLabels.all[0]
         liveScanner = LiveScanner.isSupported ? LiveScanner() : nil
         liveScanner?.onSightChange = { [weak self] sight in self?.sightChanged(sight) }
@@ -142,7 +165,7 @@ final class AppModel {
         captureCount += 1
         guard let panel = try? await scanner.scan(cameraTarget) else { return }
         let scan = Scan(date: .now, panel: panel)
-        history.insert(scan, at: 0)
+        insert(scan)
         current = scan
         withAnimation(.snappy) {
             labelFound = false
@@ -151,7 +174,30 @@ final class AppModel {
         }
     }
 
-    func clearHistory() { history.removeAll() }
+    func clearHistory() {
+        history.removeAll()
+        store.deleteAll()
+    }
+
+    func delete(_ ids: some Sequence<Scan.ID>) {
+        let ids = Set(ids)
+        history.removeAll { ids.contains($0.id) }
+        ids.forEach(store.delete)
+    }
+
+    /// Adds a new scan to the top of History and saves it.
+    private func insert(_ scan: Scan) {
+        history.insert(scan, at: 0)
+        store.save(scan)
+    }
+
+    /// Replaces a scan everywhere it's shown, and saves it.
+    private func update(_ scan: Scan) {
+        guard let i = history.firstIndex(where: { $0.id == scan.id }) else { return }
+        history[i] = scan
+        if current?.id == scan.id { current = scan }
+        store.save(scan)
+    }
 
     /// The latest version of a scan, e.g. after its basis size was confirmed.
     func latest(_ scan: Scan) -> Scan { history.first { $0.id == scan.id } ?? scan }
@@ -160,16 +206,14 @@ final class AppModel {
     func confirmBasis(of scan: Scan, amount: Double, unit: PackUnit) {
         var updated = latest(scan)
         updated.panel.confirmBasis(amount: amount, unit: unit)
-        if let i = history.firstIndex(where: { $0.id == scan.id }) { history[i] = updated }
-        if current?.id == scan.id { current = updated }
+        update(updated)
     }
 
     /// Sets the whole-pack size the user typed, so the result can show the whole pack.
     func setPackSize(of scan: Scan, amount: Double) {
         var updated = latest(scan)
         updated.panel.setPack(amount: amount)
-        if let i = history.firstIndex(where: { $0.id == scan.id }) { history[i] = updated }
-        if current?.id == scan.id { current = updated }
+        update(updated)
     }
 
     // MARK: Live camera
@@ -234,11 +278,11 @@ final class AppModel {
             }
             return
         }
-        let boxReading = startSavedBoxRead()
+        let boxReading = startBoxRead(alongside: data)
         switch await read(imageData: data, capture: clock.now - captureStarted) {
         case .success(let scan):
             current = scan
-            attachSavedBox(boxReading, to: scan.id)
+            attachBox(boxReading, to: scan.id)
             withAnimation(.snappy) {
                 phase = .result
                 detent = .medium
@@ -254,7 +298,7 @@ final class AppModel {
     /// Longest side of the image the model reads. The whole frame is sent, uncropped, so nothing on the
     /// pack is missed; this only caps the resolution. Lower is faster (fewer image tokens, smaller upload),
     /// but small print needs enough pixels. Check ScanTiming before changing it.
-    static let readMaxSide = 1600
+    nonisolated static let readMaxSide = 1600
 
     /// Reads a screenshot or photo with the backend chosen in Settings and adds it to history.
     /// `capture` is how long the live camera took to take the photo, for ScanTiming.
@@ -278,8 +322,12 @@ final class AppModel {
                                     cropWait: finished - readDone, total: (finished - started) + (capture ?? .zero),
                                     imageSize: "\(image.width)×\(image.height)", details: reading.details)
             ScanTiming.logger.info("\(timing.summary, privacy: .public)")
-            let scan = Scan(date: .now, panel: try reading.label.toPanel(photo: photo), readBy: reading.readBy, timing: timing)
-            history.insert(scan, at: 0)
+            var scan = Scan(date: .now, panel: try reading.label.toPanel(photo: photo), readBy: reading.readBy, timing: timing,
+                            reading: reading.label)
+            #if DEBUG
+            scan.framePhoto = AIAndReader.jpeg(image, quality: 0.8)
+            #endif
+            insert(scan)
             return .success(scan)
         } catch {
             ScanTiming.logger.error("read failed with \(backend.title, privacy: .public) after \(ScanTiming.seconds(clock.now - started), privacy: .public): \(error.localizedDescription, privacy: .public)")
@@ -331,11 +379,32 @@ final class AppModel {
             scan.panel.apply(netContents: contents.amount, unit: contents.unit, count: box.netContentsCount,
                              printed: box.netContentsText)
         }
-        if let i = history.firstIndex(where: { $0.id == id }) { history[i] = scan }
-        if current?.id == id { current = scan }
+        update(scan)
     }
 
-    /// Starts reading the saved ingredients box, if there is one, alongside the panel's read.
+    /// A read of the ingredients box that runs alongside the panel's. `seen` finishes first, once it's known
+    /// whether there's a box to read at all, so the result only says "Reading the ingredients…" when there is.
+    private struct BoxReading {
+        var seen: Task<Bool, Never>
+        var result: Task<(box: ExtractedIngredientsBox, photo: Data)?, Never>
+    }
+
+    /// Starts reading the ingredients box alongside the panel's read: the box photo saved while looking for
+    /// the panel, or else the panel's own photo when the box is in it too, so one photo gives both.
+    private func startBoxRead(alongside panelPhoto: Data) -> BoxReading? {
+        if let saved = startSavedBoxRead() { return BoxReading(seen: Task { true }, result: saved) }
+        let seen = Task { await Self.showsIngredientsBox(panelPhoto) }
+        let result = Task { () -> (box: ExtractedIngredientsBox, photo: Data)? in
+            guard await seen.value else { return nil }
+            do { return try await Self.readBox(imageData: panelPhoto) } catch {
+                ScanTiming.logger.error("ingredients read from the panel's photo failed: \(error.localizedDescription, privacy: .public)")
+                return nil
+            }
+        }
+        return BoxReading(seen: seen, result: result)
+    }
+
+    /// Starts reading the saved ingredients box, if there is one.
     /// A read that already ran (the panel failed last time) is reused.
     private func startSavedBoxRead() -> Task<(box: ExtractedIngredientsBox, photo: Data)?, Never>? {
         guard let saved = savedBox else { return nil }
@@ -350,15 +419,27 @@ final class AppModel {
         return reading
     }
 
-    /// Adds the saved box to the panel's scan once its read finishes. The result shows it reading meanwhile.
-    private func attachSavedBox(_ reading: Task<(box: ExtractedIngredientsBox, photo: Data)?, Never>?, to id: Scan.ID) {
+    /// Adds the box to the panel's scan once its read finishes. The result shows it reading meanwhile.
+    private func attachBox(_ reading: BoxReading?, to id: Scan.ID) {
         guard let reading else { return }
         savedBox = nil
-        readingBoxFor = id
         Task {
-            if let (box, photo) = await reading.value { add(box, photo: photo, to: id) }
+            guard await reading.seen.value else { return }
+            readingBoxFor = id
+            if let (box, photo) = await reading.result.value { add(box, photo: photo, to: id) }
             if readingBoxFor == id { readingBoxFor = nil }
         }
+    }
+
+    /// Whether a photo shows the ingredients box (一括表示): its 原材料名 heading, or three of its headings,
+    /// the same test the live camera uses. On device, with Vision.
+    nonisolated static func showsIngredientsBox(_ imageData: Data) async -> Bool {
+        guard let source = CGImageSourceCreateWithData(imageData as CFData, nil), let image = uprightImage(from: source) else { return false }
+        var request = RecognizeTextRequest()
+        request.recognitionLanguages = [Locale.Language(identifier: "ja-JP")]
+        request.recognitionLevel = .accurate // the fast recogniser only reads Latin text
+        guard let observations = try? await request.perform(on: image) else { return false }
+        return CameraEngine.isIngredientsBox(observations.compactMap { $0.topCandidates(1).first?.string })
     }
 
     /// Reads an image from the app and shows the result sheet.
@@ -371,13 +452,13 @@ final class AppModel {
             }
             return
         }
-        let boxReading = startSavedBoxRead()
+        let boxReading = startBoxRead(alongside: imageData)
         guard case .success(let scan) = await read(imageData: imageData) else {
             liveScanner?.isActive = liveScanner?.access == .granted
             return
         }
         current = scan
-        attachSavedBox(boxReading, to: scan.id)
+        attachBox(boxReading, to: scan.id)
         withAnimation(.snappy) {
             labelFound = false
             phase = .result
@@ -392,7 +473,7 @@ final class AppModel {
 
     /// The image with its EXIF orientation applied. Camera photos are stored sideways with a rotation tag,
     /// and OCR and the models read the pixels as they are.
-    private static func uprightImage(from source: CGImageSource) -> CGImage? {
+    private nonisolated static func uprightImage(from source: CGImageSource) -> CGImage? {
         let options: [CFString: Any] = [kCGImageSourceCreateThumbnailFromImageAlways: true,
                                         kCGImageSourceThumbnailMaxPixelSize: readMaxSide,
                                         kCGImageSourceCreateThumbnailWithTransform: true]

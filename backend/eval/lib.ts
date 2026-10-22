@@ -20,6 +20,8 @@ export interface Fixture {
   reference?: { by: string; at: string; agreement?: "agreed" | "resolved" | "single" ; disagreements?: string[] };
   /** True once a person has checked `expected` against the photo. */
   verified: boolean;
+  /** For your own photos (eval:import): what the app read at the time, to compare with `expected`. */
+  appReading?: unknown;
 }
 
 export function loadFixtures(only?: string[]): Fixture[] {

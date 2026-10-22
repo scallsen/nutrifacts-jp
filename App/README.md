@@ -12,7 +12,7 @@ The project is generated from `project.yml` with [XcodeGen](https://github.com/y
 | Health score | **Not shown.** The result and History no longer show a grade. `Scoring/HealthScore.swift` and `Views/GradeViews.swift` are kept, using the rubric in [`data/health-score.json`](../data/health-score.json) ([doc](../docs/health-score.md)) and `PanelAnalysis.bounds`, so missing lines make a range. |
 | Simulated camera's text recognition | **Placeholder.** `MockLabelScanner` returns the sample label the camera is "pointing at", cycling through `SampleLabels`. |
 | Daily values | **Hand-copied** into `ReferenceSource.swift`. Not loaded from `data/daily-values.json` yet. |
-| History | **In memory only.** Cleared when the app quits. |
+| History | **Real.** `Services/ScanStore.swift` saves each scan on the iPhone (Application Support/Scans, one folder per scan with its JSON and photos). Grouped by day, searchable by product name, swipe to delete. |
 | Analysis (%, WHO fallback, each authority's own words, warnings, carb states, "0" handling) | Implemented in `PanelAnalysis.swift`. |
 
 ## Signing and Private Cloud Compute
@@ -25,7 +25,8 @@ The bundle ID is `com.justingarcia.NutrifactsJP` on team `XDWKSAH7W3`, where it'
 2. Camera with a small sheet. The label is found, then captured automatically after about 3 seconds. The shutter captures straight away.
 3. Result sheet at half height over the frozen frame:
    - Things to know (warnings only)
-   - Amount picker
+   - Amount picker, opening on the whole pack when 内容量 is known
+   - Ingredients, read from the same photo when the box is in it, or from a box photo taken while looking for the panel
    - Nutrition: level word and % in the level colour
    - Carbohydrate breakdown
    - About this label

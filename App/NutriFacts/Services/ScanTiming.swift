@@ -2,8 +2,8 @@ import Foundation
 import os
 
 /// Where the time went for one scan. Logged under the "timing" category, and shown on the result in debug builds.
-nonisolated struct ScanTiming: Hashable, Sendable {
-    struct Detail: Hashable, Sendable {
+nonisolated struct ScanTiming: Hashable, Codable, Sendable {
+    struct Detail: Hashable, Codable, Sendable {
         var name: String
         var value: String
     }

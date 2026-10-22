@@ -1,4 +1,5 @@
 import FoundationModels
+import UniformTypeIdentifiers
 import SwiftUI
 
 struct SettingsView: View {
@@ -58,8 +59,27 @@ struct SettingsView: View {
                             Button("Clear Scan History", role: .destructive) { model.clearHistory() }
                         }
                 }
+                Section {
+                    Link(destination: URL(string: "https://scallsen.github.io/nutrifacts-jp/privacy.html")!) {
+                        Label("Privacy Policy", systemImage: "hand.raised")
+                    }
+                } header: {
+                    Text("About")
+                } footer: {
+                    Text("NutriFacts shows what a label prints. It isn't medical or dietary advice, and a reading can be wrong, so check it against the label photo.")
+                }
                 #if DEBUG
-                Section("Debug") {
+                Section {
+                    ShareLink(item: ScanExport(), preview: SharePreview("NutriFacts Scans.zip", image: Image(systemName: "doc.zipper"))) {
+                        Label("Export Scans", systemImage: "square.and.arrow.up.on.square")
+                    }
+                    .disabled(model.history.isEmpty)
+                } header: {
+                    Text("Debug")
+                } footer: {
+                    Text("Every saved scan with its photos and readings, as a zip for npm run eval:import. Debug builds keep the whole photo the model read; earlier scans have only the cropped label.")
+                }
+                Section {
                     ShareLink(item: DiagnosticsLog(history: model.history),
                               preview: SharePreview("NutriFacts logs", image: Image(systemName: "doc.text"))) {
                         Label("Share Logs", systemImage: "square.and.arrow.up")
@@ -122,6 +142,15 @@ private struct PCCStatusSection: View {
 }
 
 /// ai& status and the reasoning level, offered from what the server's model supports.
+#if DEBUG
+/// History as a zip, for turning your own scans into eval fixtures.
+private struct ScanExport: Transferable {
+    static var transferRepresentation: some TransferRepresentation {
+        FileRepresentation(exportedContentType: .zip) { _ in SentTransferredFile(try await ScanStore.shared.export()) }
+    }
+}
+#endif
+
 private struct AIAndSection: View {
     @AppStorage(AIAndConfig.reasoningEffortKey) private var effort = ""
     @State private var server: AIAndReader.ServerConfig?

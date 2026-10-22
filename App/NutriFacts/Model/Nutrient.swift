@@ -2,7 +2,7 @@ import Foundation
 
 /// The lines of a Japanese nutrition panel (栄養成分表示) the app understands.
 /// See docs/ui-domain-context.md for what each one means.
-enum NutrientKey: String, CaseIterable, Identifiable, Sendable {
+enum NutrientKey: String, CaseIterable, Identifiable, Codable, CodingKeyRepresentable, Sendable {
     case energy, protein, fat, saturatedFat, carbohydrate, netCarbs, sugars, fibre, salt
 
     var id: String { rawValue }

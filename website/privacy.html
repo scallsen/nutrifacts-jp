@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Privacy Policy — NutriFacts</title>
+  <meta name="description" content="What NutriFacts keeps on your iPhone, what it sends to read a label, and what it never collects.">
+  <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css?v=5">
+  <style>
+    .policy { max-width: 680px; padding-top: 32px; padding-bottom: 64px; }
+    .policy h1 { margin: 0 0 4px; }
+    .policy h2 { margin: 36px 0 8px; font-size: 1.25rem; }
+    .policy p, .policy li { line-height: 1.55; }
+    .policy ul { padding-left: 1.2em; }
+    .policy li + li { margin-top: 6px; }
+  </style>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="./">
+        <img src="icon.svg" alt="" width="28" height="28">
+        <span>NutriFacts</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="policy wrap">
+    <h1>Privacy Policy</h1>
+    <p class="muted">Last updated October 22, 2026</p>
+
+    <p>NutriFacts reads the nutrition facts and ingredients on Japanese food packaging and explains them in English.
+      It has no accounts, no ads and no analytics or tracking. This page explains the one thing it does send off your
+      iPhone: the photo of a label, so it can be read.</p>
+
+    <h2>What stays on your iPhone</h2>
+    <ul>
+      <li><strong>The camera view.</strong> While you point at a pack, the app looks for the nutrition label in the
+        camera view on your iPhone. None of the live view is sent anywhere.</li>
+      <li><strong>Your scan history.</strong> Scans, their photos and what was read from them are saved only on your
+        iPhone. Delete one by swiping it in History, or all of them with Clear History. Deleting the app deletes them too.</li>
+      <li><strong>Your settings</strong>, such as the health guidelines you chose.</li>
+      <li><strong>Exports.</strong> Copying a food or exporting your history as CSV hands the data to the app you
+        choose. NutriFacts doesn't send it anywhere itself.</li>
+    </ul>
+
+    <h2>What's sent to read a label</h2>
+    <p>When you take a photo of a label (or pick one from your library), that photo is sent to be read. Nothing else
+      is sent with it: no name, account or device identifier. Which service reads it depends on Settings › Read Labels With:</p>
+    <ul>
+      <li><strong>ai& (the default).</strong> The photo goes to the NutriFacts server, which runs on Cloudflare and
+        passes it to an AI model run by AI& to read the label. The NutriFacts server doesn't store the photo or what
+        was read from it; it sends the reading back to your iPhone. Cloudflare keeps standard request logs (such as the
+        time and IP address of a request) for a short time so we can find faults and stop abuse.
+        <!-- TODO before launch: confirm and state how long AI& keeps uploaded images and whether it trains on them. -->
+        [AI&’s retention: to confirm before launch.]</li>
+      <li><strong>Apple Intelligence.</strong> The photo is read by Apple's on-device model, or by Apple's Private
+        Cloud Compute, which Apple designs so that your data isn't stored or made available to Apple. See
+        <a href="https://www.apple.com/legal/privacy/">Apple's privacy policy</a>.</li>
+    </ul>
+    <p>Photos of labels usually show only packaging. Try not to include people or personal documents in the frame.</p>
+
+    <h2>The beta sign-up</h2>
+    <p>If you join the beta on this website, your email address is stored by our email provider,
+      <a href="https://kit.com/privacy">Kit</a>, and used only to send you the TestFlight link and beta news.
+      Every email has an unsubscribe link.</p>
+
+    <h2>Children</h2>
+    <p>NutriFacts isn't directed at children under 13 and doesn't knowingly collect their information.</p>
+
+    <h2>Not medical advice</h2>
+    <p>NutriFacts shows what a label prints, with daily values and levels from the health guidelines you choose. It
+      isn't medical or dietary advice, and a reading can be wrong. Check the result against the label photo, and talk
+      to a doctor or dietitian about your diet, allergies or a medical condition.</p>
+
+    <h2>Changes and contact</h2>
+    <p>If this policy changes, the new version will be posted here with a new date. Questions: <!-- TODO before launch: contact address and the developer's legal name. -->
+      [contact email to add before launch].</p>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <span>© <span data-year>2026</span> NutriFacts</span>
+      <span class="muted">Not affiliated with Apple. iPhone and TestFlight are trademarks of Apple Inc.</span>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll("[data-year]").forEach((el) => { el.textContent = new Date().getFullYear(); });
+  </script>
+</body>
+</html>

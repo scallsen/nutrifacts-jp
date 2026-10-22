@@ -1,6 +1,6 @@
 import Foundation
 
-enum PackUnit: String, Sendable {
+enum PackUnit: String, Codable, Sendable {
     case grams = "g"
     case millilitres = "ml"
 
@@ -8,12 +8,14 @@ enum PackUnit: String, Sendable {
 }
 
 /// What a scan reads off the pack: the panel exactly as printed, plus nearby text.
-struct LabelPanel: Identifiable, Hashable, Sendable {
-    enum Layout: Sendable { case table, inline }
+struct LabelPanel: Identifiable, Hashable, Codable, Sendable {
+    enum Layout: Codable, Sendable { case table, inline }
 
-    let id = UUID()
-    /// Only the mocks know the product. A real scan doesn't.
+    var id = UUID()
+    /// The sample labels' names. A real scan's name is `productName`.
     var nickname: String
+    /// The product name on the pack, with an English translation. Nil when it wasn't in the photo.
+    var productName: TranslatedText? = nil
     var basisJapanese: String
     /// Grams or ml the printed values describe. Nil when the label doesn't say (e.g. 1個当たり),
     /// until the user confirms it. Without it nothing can be put per 100 g, so there's no score.
@@ -77,7 +79,7 @@ struct LabelPanel: Identifiable, Hashable, Sendable {
     }
 }
 
-struct BasisSuggestion: Hashable, Sendable {
+struct BasisSuggestion: Hashable, Codable, Sendable {
     var amount: Double
     var unit: PackUnit
     /// How it was worked out, e.g. "内容量 350 ml" or "内容量 120 g ÷ 6".
