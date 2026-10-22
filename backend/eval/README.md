@@ -73,6 +73,19 @@ Either way a fixture stays `verified: false` until a person has compared it with
 2. `ANTHROPIC_API_KEY=sk-ant-… npm run eval:reference` creates its `.json` and expected reading.
 3. `npm run eval:review` to check it against the photo, fix it if needed, and mark it verified.
 
+### Your own scans from the app
+
+Debug builds keep every scan's whole photo (the one the model read) and its raw reading on the phone.
+
+1. On the phone: Settings › Debug › Export Scans, and AirDrop the zip to your Mac.
+2. `npm run eval:import -- ~/Downloads/"NutriFacts Scans.zip"` makes a fixture per scan, named
+   `own-<date>-<product>`, with what the app read kept as `appReading`. Importing again skips scans
+   that are already fixtures.
+3. `npm run eval:reference`, then `npm run eval:review`, as above.
+
+`own-*` fixtures are git-ignored, so your photos stay on your Mac. The background of a real photo can
+show more than the label, so look before renaming one to commit it.
+
 ## Ingredients box eval
 
 `npm run eval:box` reads the ingredients box (一括表示) photos in `eval/box/` with

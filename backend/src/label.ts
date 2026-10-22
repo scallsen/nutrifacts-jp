@@ -15,6 +15,7 @@ export interface ExtractedLine {
 export interface ExtractedLabel {
   panelFound: boolean;
   productName: string;
+  productNameEnglish: string;
   basisText: string;
   basisAmount: number;
   basisUnit: "g" | "ml";
@@ -49,17 +50,19 @@ Rules:
 - Convert full-width digits (０-９, ．) to normal numbers. Keep the printed precision.
 - basisText is only the per-what phrase, e.g. 1食分（50g）当たり or 12個（標準59g）当たり, without 栄養成分表示 or outer brackets. basisAmount is the grams or ml in it, or 0 if none is printed. Never take basisAmount from 内容量.
 - 内容量 (net contents) is often printed away from the panel. Give its weight or volume and unit only if the word 内容量 is visible. netContentsCount comes only from 内容量 saying how many pieces the pack holds (6個入り → 6); the count in the basis (12個当たり, 4本当たり) is not 内容量. Otherwise 0.
+- productName is the product's name as printed on the pack, if it's in the photo, e.g. ポテトチップス うすしお味. It is not the food type (名称) from the ingredients box. productNameEnglish is its plain English translation, keeping brand names, e.g. Potato Chips Lightly Salted. Both empty if no name is visible.
 - isEstimate is true only if 推定値 or 目安 is printed near the panel.
 - panelFound is true only for a Japanese 栄養成分表示. An English, Chinese or other foreign nutrition table, a product front or an ingredients list is panelFound false with no lines.`;
 
 export const LABEL_SCHEMA = {
   type: "object",
   additionalProperties: false,
-  required: ["panelFound", "productName", "basisText", "basisAmount", "basisUnit",
+  required: ["panelFound", "productName", "productNameEnglish", "basisText", "basisAmount", "basisUnit",
     "netContentsAmount", "netContentsUnit", "netContentsCount", "lines", "isEstimate"],
   properties: {
     panelFound: { type: "boolean", description: "True only if a Japanese nutrition facts panel (栄養成分表示) is visible." },
-    productName: { type: "string", description: "Product name if visible, else empty." },
+    productName: { type: "string", description: "Product name as printed, if visible, else empty. Not the food type (名称)." },
+    productNameEnglish: { type: "string", description: "productName in plain English, keeping the brand. Empty if productName is empty." },
     basisText: { type: "string", description: "Only the per-what phrase, e.g. 1袋（60g）当たり or 1個当たり. Empty if not printed." },
     basisAmount: { type: "number", description: "Grams or ml in the basis text, or 0 if none is printed. Never from 内容量." },
     basisUnit: { type: "string", enum: ["g", "ml"] },

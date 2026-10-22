@@ -7,7 +7,7 @@ const line = (nutrient: ExtractedLine["nutrient"], min: number, unit = "g", max 
   ({ nutrient, printedName: nutrient, minValue: min, maxValue: max, unit });
 
 const label = (lines: ExtractedLine[], overrides: Partial<ExtractedLabel> = {}): ExtractedLabel => ({
-  panelFound: true, productName: "", basisText: "100g当たり", basisAmount: 100, basisUnit: "g",
+  panelFound: true, productName: "", productNameEnglish: "", basisText: "100g当たり", basisAmount: 100, basisUnit: "g",
   netContentsAmount: 0, netContentsUnit: "none", netContentsCount: 0, isEstimate: false, lines, ...overrides,
 });
 

@@ -79,6 +79,19 @@ extension ExtractedIngredientsBox {
         }
     }
 
+    /// English names for the 28 allergens Japan lists (8 required, 20 recommended). Unknown words stay as printed.
+    static func allergenName(_ japanese: String) -> String {
+        let names = ["えび": "Shrimp", "かに": "Crab", "くるみ": "Walnut", "小麦": "Wheat", "そば": "Buckwheat",
+                     "卵": "Egg", "乳": "Milk", "乳成分": "Milk", "落花生": "Peanut", "ピーナッツ": "Peanut",
+                     "アーモンド": "Almond", "あわび": "Abalone", "いか": "Squid", "いくら": "Salmon roe",
+                     "オレンジ": "Orange", "カシューナッツ": "Cashew", "キウイフルーツ": "Kiwi", "牛肉": "Beef",
+                     "ごま": "Sesame", "さけ": "Salmon", "さば": "Mackerel", "大豆": "Soy", "鶏肉": "Chicken",
+                     "バナナ": "Banana", "豚肉": "Pork", "まつたけ": "Matsutake", "もも": "Peach",
+                     "やまいも": "Yam", "りんご": "Apple", "ゼラチン": "Gelatin"]
+        let key = japanese.trimmingCharacters(in: .whitespaces)
+        return names[key] ?? key
+    }
+
     /// 内容量 as a weight or volume. Nil for a bare count or when it's printed elsewhere.
     var netContents: (amount: Double, unit: PackUnit)? {
         guard netContentsAmount > 0 else { return nil }

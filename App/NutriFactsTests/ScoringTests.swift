@@ -50,7 +50,7 @@ import Testing
 
 @Suite struct ExtractionMappingTests {
     private func label(_ lines: [ExtractedLine], basis: String = "100g当たり", amount: Double = 100) -> ExtractedLabel {
-        ExtractedLabel(panelFound: true, productName: "", basisText: basis, basisAmount: amount, basisUnit: .g,
+        ExtractedLabel(panelFound: true, productName: "", productNameEnglish: "", basisText: basis, basisAmount: amount, basisUnit: .g,
                        netContentsAmount: 0, netContentsUnit: .none, netContentsCount: 0, lines: lines, isEstimate: false)
     }
 
@@ -135,7 +135,7 @@ import Testing
     @Test func aSmallBottleIsOneServing() throws {
         // A drink labelled per 100 ml: 6.7 g of carbohydrate, no sugars line.
         func analysis(pack: Double) throws -> PanelAnalysis {
-            let l = ExtractedLabel(panelFound: true, productName: "", basisText: "100ml当たり", basisAmount: 100, basisUnit: .ml,
+            let l = ExtractedLabel(panelFound: true, productName: "", productNameEnglish: "", basisText: "100ml当たり", basisAmount: 100, basisUnit: .ml,
                                    netContentsAmount: pack, netContentsUnit: .ml, netContentsCount: 0,
                                    lines: [line(.energy, 27, "kcal"), line(.carbohydrate, 6.7), line(.salt, 0.1)], isEstimate: false)
             return PanelAnalysis(panel: try l.toPanel(photo: nil), basis: .asLabelled, source: .canada)
@@ -149,7 +149,7 @@ import Testing
         #expect(bottle.mayBeHigh(.sugars))
         #expect(bottle.verdict(.sugars) == nil)
         // Labels often write mL.
-        let capitalL = ExtractedLabel(panelFound: true, productName: "", basisText: "100mL当たり", basisAmount: 100, basisUnit: .ml,
+        let capitalL = ExtractedLabel(panelFound: true, productName: "", productNameEnglish: "", basisText: "100mL当たり", basisAmount: 100, basisUnit: .ml,
                                       netContentsAmount: 500, netContentsUnit: .ml, netContentsCount: 0,
                                       lines: [line(.carbohydrate, 6.8)], isEstimate: false)
         let mL = PanelAnalysis(panel: try capitalL.toPanel(photo: nil), basis: .asLabelled, source: .canada)

@@ -50,7 +50,9 @@ struct PanelAnalysis {
 
     // MARK: Basis
 
-    var availableBases: [Basis] {
+    var availableBases: [Basis] { Self.availableBases(for: panel) }
+
+    static func availableBases(for panel: LabelPanel) -> [Basis] {
         var bases: [Basis] = [.asLabelled]
         guard let amount = panel.basisAmount else { return bases }
         if amount != 100 { bases.append(.per100) }
@@ -63,6 +65,26 @@ struct PanelAnalysis {
         case .asLabelled: panel.basisShort
         case .per100: "100 \(panel.unit.rawValue)"
         case .wholePack: panel.packShort
+        }
+    }
+
+    /// The amount a result opens on: the whole pack when its size is known, as that's what's usually eaten
+    /// or drunk. Otherwise the label's own basis.
+    static func defaultBasis(for panel: LabelPanel) -> Basis {
+        availableBases(for: panel).contains(.wholePack) ? .wholePack : .asLabelled
+    }
+
+    /// Says what the chosen amount is, under the size tabs. The label's serving is the maker's choice, not a standard one.
+    var basisNote: String? {
+        switch basis {
+        case .wholePack:
+            "The whole pack, from 内容量 (net contents)."
+        case .asLabelled where panel.basisAmount != nil && panel.basisAmount == panel.packAmount:
+            "The label's amount is the whole pack."
+        case .asLabelled where panel.basisAmount != 100:
+            panel.packAmount == nil ? "The maker's serving size, which may not be the whole pack." : "The maker's serving size, not the whole pack."
+        case .asLabelled, .per100:
+            nil
         }
     }
 

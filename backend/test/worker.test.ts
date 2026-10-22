@@ -4,7 +4,7 @@ import worker, { pickEffort, resetEffortsCache, type Env } from "../src/index.ts
 import { completionRequest, parseCompletion } from "../src/label.ts";
 
 const label = {
-  panelFound: true, productName: "", basisText: "1個当たり", basisAmount: 0, basisUnit: "ml",
+  panelFound: true, productName: "", productNameEnglish: "", basisText: "1個当たり", basisAmount: 0, basisUnit: "ml",
   netContentsAmount: 350, netContentsUnit: "ml", netContentsCount: 0, isEstimate: false,
   lines: [{ nutrient: "energy", printedName: "熱量", minValue: 140, maxValue: 140, unit: "kcal" }],
 };

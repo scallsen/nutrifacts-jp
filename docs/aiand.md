@@ -44,7 +44,8 @@ The levels come from AI&'s model list and are cached for an hour, so the picker 
 ```json
 {
   "panelFound": true,
-  "productName": "ポテトチップス",
+  "productName": "ポテトチップス うすしお味",
+  "productNameEnglish": "Potato Chips Lightly Salted",
   "basisText": "1袋（60g）当たり",
   "basisAmount": 60,
   "basisUnit": "g",
@@ -65,6 +66,7 @@ The levels come from AI&'s model list and are cached for an hour, so the picker 
 | Field | Rule |
 |---|---|
 | `panelFound` | `false` when there's no 栄養成分表示 panel. That's legal for some products, so it isn't an error; `lines` is empty. |
+| `productName` / `productNameEnglish` | The product's name as printed on the pack, and its plain English translation, if the name is in the photo. Not the food type (名称). Both empty when it isn't. The app names the scan in History with it, and decodes answers from older Workers without `productNameEnglish`. |
 | `basisText` | Only the per-what phrase, e.g. `1食分（50g）当たり` or `1個当たり`, without 栄養成分表示 or outer brackets. |
 | `basisAmount` | Grams or ml in the basis text. `0` when the basis gives none (`1個当たり`). Never filled from 内容量. The app shows the label as printed and asks the user to confirm a size. |
 | `netContentsAmount` / `netContentsUnit` | 内容量 as a weight or volume (`g` or `ml`), if it's in the photo. `0` / `none` when it isn't, or when it's only a count (`2個`). The app offers it as a suggestion. |

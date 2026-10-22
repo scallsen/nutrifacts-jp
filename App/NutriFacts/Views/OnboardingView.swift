@@ -34,9 +34,12 @@ struct OnboardingView: View {
             }
             .safeAreaInset(edge: .bottom) {
                 VStack(spacing: 12) {
-                    Label("Scan history is saved only on this iPhone.", systemImage: "lock")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Label("Scan history is saved only on this iPhone.", systemImage: "lock")
+                        Label("Not medical advice. Check readings against the label.", systemImage: "info.circle")
+                    }
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
                     Button {
                         showsGuidelines = true
                     } label: {

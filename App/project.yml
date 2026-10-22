@@ -19,7 +19,7 @@ targets:
         buildPhase: resources
     settings:
       base:
-        # Registered under team XDWKSAH7W3 with the Private Cloud Compute capability.
+        # Registered under team XDWKSAH7W3 with the Private Cloud Compute and HealthKit capabilities.
         PRODUCT_BUNDLE_IDENTIFIER: com.justingarcia.NutrifactsJP
         DEVELOPMENT_TEAM: XDWKSAH7W3
         CODE_SIGN_ENTITLEMENTS: NutriFacts/NutriFacts.entitlements
@@ -37,6 +37,9 @@ targets:
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
         INFOPLIST_KEY_NSCameraUsageDescription: NutriFacts uses the camera to read nutrition labels. Text is recognised on your iPhone.
+        # Write only: "Add to Apple Health" on a result. NutriFacts never reads Health data.
+        INFOPLIST_KEY_NSHealthUpdateUsageDescription: NutriFacts adds the foods you choose to Health, with the nutrition from their label.
+        INFOPLIST_KEY_NSHealthShareUsageDescription: NutriFacts doesn't read your Health data. It only adds foods you choose.
         CODE_SIGN_STYLE: Automatic
   NutriFactsTests:
     type: bundle.unit-test

@@ -8,8 +8,11 @@ nonisolated struct ExtractedLabel: Codable, Sendable, Hashable {
     @Guide(description: "True only if a Japanese nutrition facts panel (栄養成分表示) is visible.")
     var panelFound: Bool
 
-    @Guide(description: "Product name if visible, in its original language. Empty if not visible.")
+    @Guide(description: "Product name if visible, in its original language, e.g. ポテトチップス うすしお味. Not the food type (名称). Empty if not visible.")
     var productName: String
+
+    @Guide(description: "productName in plain English a shopper would know, keeping the brand, e.g. Potato Chips Lightly Salted. Empty if productName is empty.")
+    var productNameEnglish: String
 
     @Guide(description: "Only the per-what phrase, without 栄養成分表示 or surrounding brackets, e.g. 1袋（60g）当たり, 100ml当たり or 1個当たり. Empty if not printed.")
     var basisText: String
@@ -66,6 +69,22 @@ nonisolated enum ExtractedNutrient: String, Codable, Sendable, Hashable {
 }
 
 extension ExtractedLabel {
+    /// Tolerates a Worker deployed before `productNameEnglish` was added.
+    init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        panelFound = try c.decode(Bool.self, forKey: .panelFound)
+        productName = try c.decode(String.self, forKey: .productName)
+        productNameEnglish = try c.decodeIfPresent(String.self, forKey: .productNameEnglish) ?? ""
+        basisText = try c.decode(String.self, forKey: .basisText)
+        basisAmount = try c.decode(Double.self, forKey: .basisAmount)
+        basisUnit = try c.decode(ExtractedUnit.self, forKey: .basisUnit)
+        netContentsAmount = try c.decode(Double.self, forKey: .netContentsAmount)
+        netContentsUnit = try c.decode(ExtractedContentsUnit.self, forKey: .netContentsUnit)
+        netContentsCount = try c.decode(Int.self, forKey: .netContentsCount)
+        lines = try c.decode([ExtractedLine].self, forKey: .lines)
+        isEstimate = try c.decode(Bool.self, forKey: .isEstimate)
+    }
+
     enum MappingError: LocalizedError {
         case noPanel
 
@@ -116,7 +135,7 @@ extension ExtractedLabel {
         let basis = Self.cleanBasis(basisText)
 
         var panel = LabelPanel(
-            nickname: productName.isEmpty ? "Scanned label" : productName,
+            nickname: "",
             basisJapanese: basis.isEmpty ? (basisAmount > 0 ? "\(NumberFormat.amount(basisAmount, .protein))\(unit.rawValue)当たり" : "Basis not printed") : basis,
             basisAmount: nil,
             basisDescription: "per \(basis.isEmpty ? "serving" : basis.replacingOccurrences(of: "当たり", with: ""))",
@@ -129,6 +148,8 @@ extension ExtractedLabel {
             ingredients: "",
             packColors: [0x8E8E93, 0x48484A],
             photo: photo)
+        let name = productName.trimmingCharacters(in: .whitespaces)
+        if !name.isEmpty { panel.productName = TranslatedText(japanese: name, english: productNameEnglish.trimmingCharacters(in: .whitespaces)) }
 
         if basisAmount > 0 {
             let amount = NumberFormat.amount(basisAmount, .protein)

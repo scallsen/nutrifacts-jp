@@ -8,11 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		000A9C16C54F386CEF6BD2AF /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 816ACDEDEDE9F84270063D83 /* OnboardingView.swift */; };
-		00437343D1B9ACE02601AA7E /* health-score.json in Resources */ = {isa = PBXBuildFile; fileRef = 180F2B841D9C75FAFC96E137 /* health-score.json */; };
+		0E4787DB7F73ED76F355DE0B /* ExportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015ED2F89136FA58ECA5DD7D /* ExportTests.swift */; };
 		12E95195FB6F68F2BCB21A59 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC19A1908A22596B40E6AED /* RootView.swift */; };
 		135E08B97F7EA06D0C79B5A4 /* PanelAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C6AD1B97520E18EA4EB22D0 /* PanelAnalysis.swift */; };
 		1E2607C69AE3F3F7BA5DC6FA /* DiagnosticsLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = F60574F52E6F929A44D3EA10 /* DiagnosticsLog.swift */; };
 		24D120A27A1CA1F796E21498 /* NutriFactsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5ED68B15990AB78C2BDB33 /* NutriFactsApp.swift */; };
+		26E19D20D212474D3829FA26 /* HealthLogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8090272C328D9078F6091AF0 /* HealthLogTests.swift */; };
+		2906AAB5B5239290F841F069 /* ScanStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D053586A2C073C85924797 /* ScanStore.swift */; };
 		2E75F3DB27FCE67E277E3AC3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6F9D806A5DA72159A4DFE6C5 /* Assets.xcassets */; };
 		3CBD51E0A050F6EE4010EA3B /* ScanTiming.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8172E062EEC23814EE2B7BB /* ScanTiming.swift */; };
 		45CC26E14572A8B3D6F73137 /* ScanningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B583F4600DA7284C096F9563 /* ScanningView.swift */; };
@@ -27,6 +29,7 @@
 		86E9BCC681EB805FD8FA7CFA /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD011936EFD9C632FB5E6AF9 /* ResultView.swift */; };
 		8909EB729F746560C0C9FCD6 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92C9274E29479229CB865A2 /* HistoryView.swift */; };
 		8E7C5F24EBAB4507E791F98F /* PrintedLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23C36A2FEC9F988A7FF477EA /* PrintedLabelView.swift */; };
+		8EE167A590608405FF9899E0 /* HistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AEFE3401E60DE31C23D0B14 /* HistoryTests.swift */; };
 		961396172D497319554406BC /* LabelPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5070BEBE1FF125E959CE67 /* LabelPhotoView.swift */; };
 		9E11F7913BDE0F6F5CDF4861 /* LiveScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84D86BCC5F4E43C6CD80121 /* LiveScanner.swift */; };
 		A0706F4013966F119C131FF3 /* CameraEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F938EE7EA1ACE693D78C7BB9 /* CameraEngine.swift */; };
@@ -35,10 +38,13 @@
 		BBFC7B833FDBFA1DC2964DE4 /* Nutrient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF859BC200AD76F63768679E /* Nutrient.swift */; };
 		CA30FA82160624BA829DB76E /* CameraBackdrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C25C7A00520B17D6CDC6505 /* CameraBackdrop.swift */; };
 		CD8C43CD19D7BD40E887226E /* HealthScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C79A9A8BEEB5F21D98B07245 /* HealthScore.swift */; };
+		D18DA59131A0F77A01C96375 /* HealthLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E05BB6579C027D614F3C97 /* HealthLog.swift */; };
 		D5E8F7B39067EF850F5351D5 /* ScoringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20DDADD16AFD6DD5AF807EB1 /* ScoringTests.swift */; };
 		D91854658DBEC5152A4FA1B4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5F3029BB37F56F020CF78CC /* SettingsView.swift */; };
 		D92C8E26741092DF61F92379 /* LabelPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D5B4EC09E511E53AC95ACBE /* LabelPanel.swift */; };
+		E65024C79916644EB34C80DF /* NutritionExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189D911ED4B7168475F1CE71 /* NutritionExport.swift */; };
 		F3F72B4B70900F3B1A09314F /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED791F1E7B4CF2E54960CD13 /* AppModel.swift */; };
+		F9B268CA2F7AE2FF015CDA15 /* health-score.json in Resources */ = {isa = PBXBuildFile; fileRef = 6311AE985D865AA16B35BDF7 /* health-score.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,21 +58,27 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		180F2B841D9C75FAFC96E137 /* health-score.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "health-score.json"; sourceTree = "<group>"; };
+		015ED2F89136FA58ECA5DD7D /* ExportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportTests.swift; sourceTree = "<group>"; };
+		07D053586A2C073C85924797 /* ScanStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanStore.swift; sourceTree = "<group>"; };
+		189D911ED4B7168475F1CE71 /* NutritionExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionExport.swift; sourceTree = "<group>"; };
 		1D5B4EC09E511E53AC95ACBE /* LabelPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelPanel.swift; sourceTree = "<group>"; };
 		20DDADD16AFD6DD5AF807EB1 /* ScoringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoringTests.swift; sourceTree = "<group>"; };
 		23C36A2FEC9F988A7FF477EA /* PrintedLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrintedLabelView.swift; sourceTree = "<group>"; };
 		29523192E1BE002EFD276371 /* ExtractedIngredientsBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtractedIngredientsBox.swift; sourceTree = "<group>"; };
 		2AC19A1908A22596B40E6AED /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		2EB93095E8586C0E9190FE4B /* LabelScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelScanner.swift; sourceTree = "<group>"; };
+		3AEFE3401E60DE31C23D0B14 /* HistoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTests.swift; sourceTree = "<group>"; };
 		3DCC15ED6EE39D2CE42546EA /* AppleIntelligenceReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleIntelligenceReader.swift; sourceTree = "<group>"; };
 		4321AF83D0E0EB7902B4FD24 /* AIAndReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIAndReader.swift; sourceTree = "<group>"; };
 		4F5070BEBE1FF125E959CE67 /* LabelPhotoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelPhotoView.swift; sourceTree = "<group>"; };
+		6311AE985D865AA16B35BDF7 /* health-score.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "health-score.json"; sourceTree = "<group>"; };
 		6C6AD1B97520E18EA4EB22D0 /* PanelAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelAnalysis.swift; sourceTree = "<group>"; };
 		6F9D806A5DA72159A4DFE6C5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7CAE300A6440A17D0A74D7E0 /* NutriFactsTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NutriFactsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E06E10205179DC08833BD4B /* NutriFacts.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NutriFacts.xcconfig; sourceTree = "<group>"; };
+		8090272C328D9078F6091AF0 /* HealthLogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthLogTests.swift; sourceTree = "<group>"; };
 		816ACDEDEDE9F84270063D83 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		85E05BB6579C027D614F3C97 /* HealthLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthLog.swift; sourceTree = "<group>"; };
 		8C25C7A00520B17D6CDC6505 /* CameraBackdrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraBackdrop.swift; sourceTree = "<group>"; };
 		9A7EF34E784434152AEFF68D /* GradeViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradeViews.swift; sourceTree = "<group>"; };
 		AA5ED68B15990AB78C2BDB33 /* NutriFactsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutriFactsApp.swift; sourceTree = "<group>"; };
@@ -94,6 +106,9 @@
 		37CE36E24BF69939A936C7C2 /* NutriFactsTests */ = {
 			isa = PBXGroup;
 			children = (
+				015ED2F89136FA58ECA5DD7D /* ExportTests.swift */,
+				8090272C328D9078F6091AF0 /* HealthLogTests.swift */,
+				3AEFE3401E60DE31C23D0B14 /* HistoryTests.swift */,
 				20DDADD16AFD6DD5AF807EB1 /* ScoringTests.swift */,
 			);
 			path = NutriFactsTests;
@@ -117,6 +132,23 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		458AA18819DFD6CF8987365C /* data */ = {
+			isa = PBXGroup;
+			children = (
+				6311AE985D865AA16B35BDF7 /* health-score.json */,
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
+		4686AE96497E4764870B8206 /* successful-volleyball-d9c5927b */ = {
+			isa = PBXGroup;
+			children = (
+				458AA18819DFD6CF8987365C /* data */,
+			);
+			name = "successful-volleyball-d9c5927b";
+			path = ..;
+			sourceTree = "<group>";
+		};
 		6CE128F0F7D8C201AB56B7C3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -124,14 +156,6 @@
 				7CAE300A6440A17D0A74D7E0 /* NutriFactsTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		6D7065F0A8FFE03B8331EDEC /* data */ = {
-			isa = PBXGroup;
-			children = (
-				180F2B841D9C75FAFC96E137 /* health-score.json */,
-			);
-			path = data;
 			sourceTree = "<group>";
 		};
 		837C0F2DAE0531BC343064C5 /* Config */ = {
@@ -175,7 +199,10 @@
 			children = (
 				ED791F1E7B4CF2E54960CD13 /* AppModel.swift */,
 				F60574F52E6F929A44D3EA10 /* DiagnosticsLog.swift */,
+				85E05BB6579C027D614F3C97 /* HealthLog.swift */,
 				2EB93095E8586C0E9190FE4B /* LabelScanner.swift */,
+				189D911ED4B7168475F1CE71 /* NutritionExport.swift */,
+				07D053586A2C073C85924797 /* ScanStore.swift */,
 				F8172E062EEC23814EE2B7BB /* ScanTiming.swift */,
 			);
 			path = Services;
@@ -193,22 +220,13 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		BA335CCD3B543C1485D52953 /* nutrifacts-jp */ = {
-			isa = PBXGroup;
-			children = (
-				6D7065F0A8FFE03B8331EDEC /* data */,
-			);
-			name = "nutrifacts-jp";
-			path = ..;
-			sourceTree = "<group>";
-		};
 		CDF878130E295FC848A6445E = {
 			isa = PBXGroup;
 			children = (
 				837C0F2DAE0531BC343064C5 /* Config */,
 				8C7847EBF00D2E157DE6D6CC /* NutriFacts */,
-				BA335CCD3B543C1485D52953 /* nutrifacts-jp */,
 				37CE36E24BF69939A936C7C2 /* NutriFactsTests */,
+				4686AE96497E4764870B8206 /* successful-volleyball-d9c5927b */,
 				6CE128F0F7D8C201AB56B7C3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -313,7 +331,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2E75F3DB27FCE67E277E3AC3 /* Assets.xcassets in Resources */,
-				00437343D1B9ACE02601AA7E /* health-score.json in Resources */,
+				F9B268CA2F7AE2FF015CDA15 /* health-score.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,6 +342,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E4787DB7F73ED76F355DE0B /* ExportTests.swift in Sources */,
+				26E19D20D212474D3829FA26 /* HealthLogTests.swift in Sources */,
+				8EE167A590608405FF9899E0 /* HistoryTests.swift in Sources */,
 				D5E8F7B39067EF850F5351D5 /* ScoringTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -341,6 +362,7 @@
 				B2FE47F11B25EBCC4B96627E /* ExtractedIngredientsBox.swift in Sources */,
 				5932D12764CEFE42B5E62648 /* ExtractedLabel.swift in Sources */,
 				5960567C5B70FD48E1A51CFE /* GradeViews.swift in Sources */,
+				D18DA59131A0F77A01C96375 /* HealthLog.swift in Sources */,
 				CD8C43CD19D7BD40E887226E /* HealthScore.swift in Sources */,
 				8909EB729F746560C0C9FCD6 /* HistoryView.swift in Sources */,
 				D92C8E26741092DF61F92379 /* LabelPanel.swift in Sources */,
@@ -350,6 +372,7 @@
 				9E11F7913BDE0F6F5CDF4861 /* LiveScanner.swift in Sources */,
 				24D120A27A1CA1F796E21498 /* NutriFactsApp.swift in Sources */,
 				BBFC7B833FDBFA1DC2964DE4 /* Nutrient.swift in Sources */,
+				E65024C79916644EB34C80DF /* NutritionExport.swift in Sources */,
 				000A9C16C54F386CEF6BD2AF /* OnboardingView.swift in Sources */,
 				135E08B97F7EA06D0C79B5A4 /* PanelAnalysis.swift in Sources */,
 				8E7C5F24EBAB4507E791F98F /* PrintedLabelView.swift in Sources */,
@@ -357,6 +380,7 @@
 				86E9BCC681EB805FD8FA7CFA /* ResultView.swift in Sources */,
 				12E95195FB6F68F2BCB21A59 /* RootView.swift in Sources */,
 				4DBC31F93958645D5179805C /* SampleLabels.swift in Sources */,
+				2906AAB5B5239290F841F069 /* ScanStore.swift in Sources */,
 				3CBD51E0A050F6EE4010EA3B /* ScanTiming.swift in Sources */,
 				45CC26E14572A8B3D6F73137 /* ScanningView.swift in Sources */,
 				D91854658DBEC5152A4FA1B4 /* SettingsView.swift in Sources */,
@@ -389,6 +413,8 @@
 				INFOPLIST_FILE = NutriFacts/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = NutriFacts;
 				INFOPLIST_KEY_NSCameraUsageDescription = "NutriFacts uses the camera to read nutrition labels. Text is recognised on your iPhone.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "NutriFacts doesn't read your Health data. It only adds foods you choose.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "NutriFacts adds the foods you choose to Health, with the nutrition from their label.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -438,6 +464,8 @@
 				INFOPLIST_FILE = NutriFacts/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = NutriFacts;
 				INFOPLIST_KEY_NSCameraUsageDescription = "NutriFacts uses the camera to read nutrition labels. Text is recognised on your iPhone.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "NutriFacts doesn't read your Health data. It only adds foods you choose.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "NutriFacts adds the foods you choose to Health, with the nutrition from their label.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
