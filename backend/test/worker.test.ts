@@ -1,7 +1,7 @@
 import { strict as assert } from "node:assert";
 import { afterEach, beforeEach, test } from "node:test";
 import worker, { pickEffort, resetEffortsCache, type Env } from "../src/index.ts";
-import { completionRequest, parseCompletion } from "../src/label.ts";
+import { completionRequest, parseCompletion, withoutCountAsWeight, type ExtractedLabel } from "../src/label.ts";
 
 const label = {
   panelFound: true, productName: "", productNameEnglish: "", basisText: "1個当たり", basisAmount: 0, basisUnit: "ml",
@@ -56,6 +56,16 @@ test("request sends the photo inline with a strict schema", () => {
 
 const parse = (l: unknown) => parseCompletion({ choices: [{ message: { content: JSON.stringify(l) } }] });
 const printed = (printedName: string, nutrient = "other") => ({ nutrient, printedName, minValue: 1, maxValue: 1, unit: "g" });
+
+test("a count in 内容量 is never a weight", () => {
+  const contents = (fields: Partial<ExtractedLabel>) => ({ ...label, ...fields }) as ExtractedLabel;
+  const croissant = contents({ netContentsText: "1個", netContentsAmount: 1, netContentsUnit: "g", netContentsCount: 1 });
+  assert.deepEqual(withoutCountAsWeight(croissant), { ...croissant, netContentsAmount: 0, netContentsUnit: "none" });
+  const multipack = contents({ netContentsText: "120g（6個入）", netContentsAmount: 120, netContentsUnit: "g", netContentsCount: 6 });
+  assert.deepEqual(withoutCountAsWeight(multipack), multipack);
+  const litre = contents({ netContentsText: "1L", netContentsAmount: 1000 });
+  assert.deepEqual(withoutCountAsWeight(litre), litre);
+});
 
 test("parses the label out of a completion", () => {
   assert.deepEqual(parse(label), label);

@@ -25,7 +25,7 @@ The bundle ID is `com.justingarcia.NutrifactsJP` on team `XDWKSAH7W3`, where it'
 2. Camera with a small sheet. The label is found, then captured automatically after about 3 seconds. The shutter captures straight away.
 3. Result sheet at half height over the frozen frame:
    - Things to know (warnings only)
-   - Amount picker, opening on the whole pack when 内容量 is known
+   - Amount picker, opening on the whole pack when 内容量 is known. A label per piece, serving or pack (1個当たり, 1包装当たり) gets a stepper in its own unit, and a pack counted in 内容量 (6個入) gives the whole pack without a weight. With no weight printed, an optional Weight row adds per 100 g and the UK's traffic lights; the FDA and Canada judge a piece without one
    - Ingredients, read from the same photo when the box is in it, or from a box photo taken while looking for the panel
    - Nutrition: level word and % in the level colour
    - Carbohydrate breakdown

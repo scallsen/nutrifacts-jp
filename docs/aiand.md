@@ -49,6 +49,7 @@ The levels come from AI&'s model list and are cached for an hour, so the picker 
   "basisText": "1袋（60g）当たり",
   "basisAmount": 60,
   "basisUnit": "g",
+  "netContentsText": "60g",
   "netContentsAmount": 60,
   "netContentsUnit": "g",
   "netContentsCount": 0,
@@ -69,8 +70,9 @@ The levels come from AI&'s model list and are cached for an hour, so the picker 
 | `productName` / `productNameEnglish` | The product's name as printed on the pack, and its plain English translation, if the name is in the photo. Not the food type (名称). Both empty when it isn't. The app names the scan in History with it, and decodes answers from older Workers without `productNameEnglish`. |
 | `basisText` | Only the per-what phrase, e.g. `1食分（50g）当たり` or `1個当たり`, without 栄養成分表示 or outer brackets. |
 | `basisAmount` | Grams or ml in the basis text. `0` when the basis gives none (`1個当たり`). Never filled from 内容量. The app shows the label as printed and asks the user to confirm a size. |
+| `netContentsText` | 内容量 exactly as printed (`120g（6個入り）`, `1個`), or empty. Models sometimes read `1個` as 1 g, so the Worker and the app only keep a weight the text prints. The app decodes answers from older Workers without it. |
 | `netContentsAmount` / `netContentsUnit` | 内容量 as a weight or volume (`g` or `ml`), if it's in the photo. `0` / `none` when it isn't, or when it's only a count (`2個`). The app offers it as a suggestion. |
-| `netContentsCount` | Pieces in the pack if 内容量 says (`6個入り` → 6), else `0`. The suggestion becomes 内容量 ÷ count. |
+| `netContentsCount` | Pieces in the pack if 内容量 says (`6個入り` → 6, `1個` → 1), else `0`. The app counts the amount in pieces with it. For a label per piece the suggestion becomes 内容量 ÷ count; for a label per pack it's the whole 内容量. |
 | `lines` | **Only lines that are printed.** A missing line is "not disclosed", never 0. |
 | `nutrient` | `energy`, `protein`, `fat`, `saturatedFat`, `carbohydrate`, `netCarbs` (糖質), `sugars` (糖類), `fibre`, `salt` (食塩相当量), `sodium` (ナトリウム) or `other`. |
 | `minValue` / `maxValue` | Equal for a single value; the two ends for a range (`120〜150`). A printed `0` is `0`. |

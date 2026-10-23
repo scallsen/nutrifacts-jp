@@ -9,6 +9,10 @@ struct ResultView: View {
     /// The amount picked in the size tabs. Until one is picked, `PanelAnalysis.defaultBasis`, so a result
     /// moves to the whole pack when the ingredients box brings its size.
     @State private var pickedBasis: Basis?
+    /// The pieces, servings or packs picked in the stepper. Until one is picked, `defaultCount`.
+    @State private var pickedCount: Int?
+    @State private var editingWeight = false
+    @State private var weightText = ""
     @State private var editingPack = false
     @State private var packText = ""
     @State private var copied = false
@@ -24,15 +28,24 @@ struct ResultView: View {
         return PanelAnalysis.defaultBasis(for: panel)
     }
 
+    private var count: Int { pickedCount ?? defaultCount }
+
+    /// The whole pack, when a step is smaller than the label's amount (one piece of a label per pack of 6)
+    /// and there's no Pack tab for it. Otherwise one.
+    private var defaultCount: Int {
+        let panel = model.latest(scan).panel
+        guard !PanelAnalysis.availableBases(for: panel).contains(.wholePack), let pieces = panel.portion?.perPack else { return 1 }
+        return pieces
+    }
+
     private var analysis: PanelAnalysis {
-        PanelAnalysis(panel: model.latest(scan).panel, basis: basis, source: .with(id: sourceID))
+        PanelAnalysis(panel: model.latest(scan).panel, basis: basis, source: .with(id: sourceID), count: count)
     }
 
     var body: some View {
         let a = analysis
         ScrollViewReader { proxy in
             List {
-                if !a.knowsBasisAmount { BasisSizeSection(panel: a.panel, scan: model.latest(scan)) }
                 if model.latest(scan).readBy == .onDevice {
                     Section {
                         NoticeRow(notice: Notice(symbol: "iphone", tint: .orange, title: "Read on this iPhone",
@@ -49,9 +62,10 @@ struct ResultView: View {
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets())
                     } footer: {
-                        if let note = a.basisNote { Text(note) }
+                        if !showsCount(a), let note = a.basisNote { Text(note) }
                     }
                 }
+                if showsCount(a), let portion = a.portion { countSection(a, portion) }
                 if a.knowsBasisAmount {
                     Section {
                         Button {
@@ -183,12 +197,20 @@ struct ResultView: View {
                 .padding(.bottom, 8)
             }
         }
-        .onChange(of: scan.id) { pickedBasis = nil; copied = false }
+        .onChange(of: scan.id) { pickedBasis = nil; pickedCount = nil; copied = false }
         .onChange(of: basis) { copied = false }
+        .onChange(of: count) { copied = false }
         .alert("Couldn't Add to Health", isPresented: Binding(get: { healthError != nil }, set: { if !$0 { healthError = nil } })) {
             Button("OK", role: .cancel) {}
         } message: {
             Text(healthError ?? "")
+        }
+        .alert("Weight of \(weightSubject(analysis))", isPresented: $editingWeight) {
+            TextField("Weight in \(analysis.panel.unit.rawValue)", text: $weightText).keyboardType(.decimalPad)
+            Button("Cancel", role: .cancel) {}
+            Button("Done") { setWeight() }
+        } message: {
+            Text("Sometimes printed next to the basis, as in 1個（25g）, or as 内容量 (net contents). With it, the label can be compared per 100 \(analysis.panel.unit.rawValue).")
         }
         .alert("Pack Size", isPresented: $editingPack) {
             TextField("Size in \(analysis.panel.unit.rawValue)", text: $packText).keyboardType(.decimalPad)
@@ -207,6 +229,66 @@ struct ResultView: View {
             try? await Task.sleep(for: .seconds(0.4))
             withAnimation(.snappy) { proxy.scrollTo(IngredientsSection.anchor, anchor: .top) }
         }
+    }
+
+    /// The stepper is for counting what the label's amount describes: pieces, servings or packs.
+    private func showsCount(_ a: PanelAnalysis) -> Bool { a.basis == .asLabelled && a.portion != nil }
+
+    /// "2 pieces", with whether that's the whole pack and its weight, then the label's weight when it isn't printed.
+    private func countSection(_ a: PanelAnalysis, _ portion: Portion) -> some View {
+        Section {
+            Stepper(value: Binding(get: { count }, set: { pickedCount = $0 }), in: 1...99) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(portion.text(count)).monospacedDigit()
+                    if let detail = amountDetail(a, portion) {
+                        Text(detail).font(.footnote).foregroundStyle(.secondary).monospacedDigit()
+                    }
+                }
+            }
+            if !a.knowsBasisAmount {
+                if let suggestion = a.panel.basisSuggestion {
+                    Button {
+                        model.confirmBasis(of: scan, amount: suggestion.amount, unit: suggestion.unit)
+                    } label: {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Use \(NumberFormat.amount(suggestion.amount, .protein)) \(suggestion.unit.rawValue) for \(weightSubject(a))")
+                            Text("From \(suggestion.reason). Check it: a pack can hold several pieces.").font(.footnote).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                Button {
+                    weightText = ""
+                    editingWeight = true
+                } label: {
+                    LabeledContent("Weight", value: "Add")
+                }
+                .tint(.primary)
+            }
+        } footer: {
+            let note = a.basisNote ?? ""
+            Text(a.knowsBasisAmount ? note : note + " The weight isn't printed. It's only needed to compare per 100 \(a.panel.unit.rawValue).")
+        }
+    }
+
+    /// "Whole pack · 120 g", "6 in the pack".
+    private func amountDetail(_ a: PanelAnalysis, _ portion: Portion) -> String? {
+        var parts: [String] = []
+        if let pieces = portion.perPack {
+            parts.append(a.count == pieces ? "Whole pack" : "\(pieces) in the pack")
+        }
+        if let amount = a.targetAmount { parts.append("\(NumberFormat.amount(amount, .protein)) \(a.panel.unit.rawValue)") }
+        return parts.isEmpty ? nil : parts.joined(separator: " · ")
+    }
+
+    /// What a typed weight is the weight of: one piece, the pack, or the label's amount (2枚).
+    private func weightSubject(_ a: PanelAnalysis) -> String {
+        if let portion = a.portion, portion.ofBasis == 1 { return "1 \(portion.singular)" }
+        return a.panel.basisIsWholePack ? "the pack" : a.panel.basisUnitName
+    }
+
+    private func setWeight() {
+        guard let amount = Double(weightText.replacingOccurrences(of: ",", with: ".")), amount > 0 else { return }
+        model.confirmBasis(of: scan, amount: amount, unit: analysis.panel.unit)
     }
 
     private func setPack() {
@@ -364,14 +446,9 @@ private struct ThingsToKnowSection: View {
 
     private func levelsSection(_ warnings: [Notice]) -> some View {
         Section {
-            if !analysis.knowsBasisAmount {
-                NoticeRow(notice: Notice(symbol: "questionmark", tint: .orange, title: "Warnings need the size of \(analysis.panel.basisUnitName)",
-                                         detail: "\(analysis.source.name)’s guidance needs the amount. Add the size above."))
-                ForEach(warnings) { NoticeRow(notice: $0) }
-            } else {
-                if let notice = analysis.guidanceNotice { NoticeRow(notice: notice) }
-                ForEach(warnings) { NoticeRow(notice: $0) }
-            }
+            // The FDA and Canada judge a serving, so a label per 1個 needs no weight. The UK's notice asks for one.
+            if let notice = analysis.guidanceNotice { NoticeRow(notice: notice) }
+            ForEach(warnings) { NoticeRow(notice: $0) }
         } header: {
             Text("Things to know")
         }

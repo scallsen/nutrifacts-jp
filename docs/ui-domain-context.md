@@ -123,6 +123,9 @@ Numbers may be per 100 g, per 100 ml, per serving (with the serving weight), per
 - Always show which basis is on screen.
 - Offer **As labelled / Per 100 g (ml) / Whole pack**. Per-100 g is the only fair way to compare two products.
 - The whole-pack figure needs the net contents (内容量). It's often printed elsewhere on the pack, not in the panel, so the UI may have to ask the user or read a second region of the photo.
+- **A label per piece, serving or pack is counted, not weighed.** `1個当たり`, `1包装当たり` or `1食分当たり` often has no weight anywhere: 内容量 may be just `1個`. Show a stepper in the label's own unit ("1 piece", "2 servings"), and say when it's the whole pack. A count in 内容量 (`6個入`) gives the whole pack without any weight. `1個` is a count, never 1 g.
+- **The weight is optional.** Only comparing per 100 g and the UK's traffic lights need it. The FDA and Health Canada judge a serving, so their words work per piece. Offer "Weight · Add" quietly; never block the result on it.
+- `1包装当たり` is the whole pack even when it holds several pieces: with `120g（6個入）` its size is 120 g, and one piece is a sixth of the label. `1袋当たり` is the whole bag, unless 内容量 says the pack holds several bags (`10袋`).
 - Drinks use ml. Don't relabel them as grams.
 
 ### Estimates (推定値 / この表示値は、目安です)

@@ -92,9 +92,10 @@ extension ExtractedIngredientsBox {
         return names[key] ?? key
     }
 
-    /// 内容量 as a weight or volume. Nil for a bare count or when it's printed elsewhere.
+    /// 内容量 as a weight or volume. Nil for a bare count or when it's printed elsewhere. Models sometimes
+    /// take a count (1個) as 1 g, so a weight counts only when the printed text has one.
     var netContents: (amount: Double, unit: PackUnit)? {
-        guard netContentsAmount > 0 else { return nil }
+        guard netContentsAmount > 0, netContentsText.isEmpty || LabelPanel.printsWeight(netContentsText) else { return nil }
         switch netContentsUnit {
         case .g: return (netContentsAmount, .grams)
         case .ml: return (netContentsAmount, .millilitres)

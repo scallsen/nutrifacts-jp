@@ -23,6 +23,9 @@ nonisolated struct ExtractedLabel: Codable, Sendable, Hashable {
     @Guide(description: "Unit of basisAmount: g or ml. Use ml for drinks labelled per ml.")
     var basisUnit: ExtractedUnit
 
+    @Guide(description: "内容量 (net contents) exactly as printed, e.g. 120g（6個入り） or 1個. Empty if 内容量 is not visible.")
+    var netContentsText: String
+
     @Guide(description: "Net contents (内容量) weight or volume if printed anywhere in the image, e.g. 350 for 内容量 350ml or 120 for 120g（6個入り）. 0 if 内容量 is not visible or is only a count such as 2個.")
     var netContentsAmount: Double
 
@@ -69,7 +72,7 @@ nonisolated enum ExtractedNutrient: String, Codable, Sendable, Hashable {
 }
 
 extension ExtractedLabel {
-    /// Tolerates a Worker deployed before `productNameEnglish` was added.
+    /// Tolerates a Worker deployed before `productNameEnglish` or `netContentsText` was added.
     init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         panelFound = try c.decode(Bool.self, forKey: .panelFound)
@@ -78,6 +81,7 @@ extension ExtractedLabel {
         basisText = try c.decode(String.self, forKey: .basisText)
         basisAmount = try c.decode(Double.self, forKey: .basisAmount)
         basisUnit = try c.decode(ExtractedUnit.self, forKey: .basisUnit)
+        netContentsText = try c.decodeIfPresent(String.self, forKey: .netContentsText) ?? ""
         netContentsAmount = try c.decode(Double.self, forKey: .netContentsAmount)
         netContentsUnit = try c.decode(ExtractedContentsUnit.self, forKey: .netContentsUnit)
         netContentsCount = try c.decode(Int.self, forKey: .netContentsCount)
@@ -129,7 +133,12 @@ extension ExtractedLabel {
         case .ml: .millilitres
         case .none: nil
         }
-        let contents = netContentsAmount > 0 ? contentsUnit.map { (amount: netContentsAmount, unit: $0) } : nil
+        // Models also take 内容量 1個 as 1 g. Only trust a weight the printed text has. Without the text
+        // (a Worker deployed before it was added), an amount equal to the count is that mistake.
+        let weightPrinted = netContentsText.isEmpty
+            ? !(netContentsCount > 0 && netContentsAmount == Double(netContentsCount))
+            : LabelPanel.printsWeight(netContentsText)
+        let contents = netContentsAmount > 0 && weightPrinted ? contentsUnit.map { (amount: netContentsAmount, unit: $0) } : nil
         let unit: PackUnit = basisAmount > 0 ? (basisUnit == .ml ? .millilitres : .grams) : (contents?.unit ?? (basisUnit == .ml ? .millilitres : .grams))
         let pack = contents?.unit == unit ? contents?.amount : nil
         let basis = Self.cleanBasis(basisText)
@@ -138,8 +147,8 @@ extension ExtractedLabel {
             nickname: "",
             basisJapanese: basis.isEmpty ? (basisAmount > 0 ? "\(NumberFormat.amount(basisAmount, .protein))\(unit.rawValue)当たり" : "Basis not printed") : basis,
             basisAmount: nil,
-            basisDescription: "per \(basis.isEmpty ? "serving" : basis.replacingOccurrences(of: "当たり", with: ""))",
-            basisShort: basis.isEmpty ? "As labelled" : basis.replacingOccurrences(of: "当たり", with: ""),
+            basisDescription: "per \(basis.isEmpty ? "serving" : LabelPanel.withoutPer(basis))",
+            basisShort: basis.isEmpty ? "As labelled" : LabelPanel.withoutPer(basis),
             packAmount: pack,
             packShort: pack.map { "Pack · \(NumberFormat.amount($0, .protein)) \(unit.rawValue)" } ?? "Pack",
             unit: unit,
@@ -150,6 +159,10 @@ extension ExtractedLabel {
             photo: photo)
         let name = productName.trimmingCharacters(in: .whitespaces)
         if !name.isEmpty { panel.productName = TranslatedText(japanese: name, english: productNameEnglish.trimmingCharacters(in: .whitespaces)) }
+        if netContentsCount > 0 {
+            panel.contentsCount = netContentsCount
+            panel.contentsCounter = LabelPanel.contentsCounter(in: netContentsText)
+        }
 
         if basisAmount > 0 {
             let amount = NumberFormat.amount(basisAmount, .protein)
@@ -157,8 +170,9 @@ extension ExtractedLabel {
             panel.basisDescription = "per \(amount) \(unit.rawValue)"
             panel.basisShort = basisAmount == 100 ? "100 \(unit.rawValue)" : "Label · \(amount) \(unit.rawValue)"
         } else if let contents {
-            // Never applied automatically: a pack can hold several pieces or servings.
-            let count = max(netContentsCount, 1)
+            // Never applied automatically: a pack can hold several pieces or servings. A label per pack
+            // is the whole 内容量, however many pieces it holds.
+            let count = panel.basisIsWholePack ? 1 : max(netContentsCount, 1)
             let text = "内容量 \(NumberFormat.amount(contents.amount, .protein)) \(contents.unit.rawValue)"
             panel.basisSuggestion = BasisSuggestion(amount: contents.amount / Double(count), unit: contents.unit,
                                                     reason: count > 1 ? "\(text) ÷ \(count)" : text)

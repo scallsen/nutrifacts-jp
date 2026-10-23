@@ -370,11 +370,13 @@ final class AppModel {
         return (box, await crop.flatMap { AIAndReader.jpeg($0, quality: 0.8) } ?? photo(from: source) ?? imageData)
     }
 
-    /// Adds a box to a scan, and fills its pack size from 内容量.
+    /// Adds a box to a scan, and fills its pack size and piece count from 内容量.
     private func add(_ box: ExtractedIngredientsBox, photo: Data, to id: Scan.ID) {
         guard var scan = history.first(where: { $0.id == id }) ?? (current?.id == id ? current : nil) else { return }
         scan.box = box
         scan.boxPhoto = photo
+        // The count first: a suggested size divides by it.
+        scan.panel.apply(contentsCount: box.netContentsCount, printed: box.netContentsText)
         if let contents = box.netContents {
             scan.panel.apply(netContents: contents.amount, unit: contents.unit, count: box.netContentsCount,
                              printed: box.netContentsText)

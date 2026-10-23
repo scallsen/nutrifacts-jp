@@ -143,7 +143,8 @@ nonisolated struct AppleIntelligenceReader: LabelReader {
     - basisText is only the per-what phrase, e.g. 1食分（50g）当たり or 1個当たり, without 栄養成分表示 or outer brackets. \
     basisAmount is the grams or ml in it, or 0 if none is printed. Never take basisAmount from 内容量.
     - 内容量 (net contents) is often printed away from the panel. Give its weight or volume and unit if visible, \
-    and how many pieces it holds if it says (6個入り). A bare count like 2個 is not a weight.
+    and how many pieces it holds if it says (6個入り). A bare count like 2個 is not a weight. \
+    Copy 内容量 exactly as printed into netContentsText.
     - productName is the product's name as printed on the pack, if it's in the photo, e.g. ポテトチップス うすしお味. \
     It is not the food type (名称) from the ingredients box. productNameEnglish is its plain English translation, \
     keeping brand names, e.g. Potato Chips Lightly Salted.

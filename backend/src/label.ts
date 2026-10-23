@@ -19,6 +19,8 @@ export interface ExtractedLabel {
   basisText: string;
   basisAmount: number;
   basisUnit: "g" | "ml";
+  /** 内容量 as printed. Missing from eval fixtures written before it was added. */
+  netContentsText?: string;
   netContentsAmount: number;
   netContentsUnit: "g" | "ml" | "none";
   netContentsCount: number;
@@ -49,7 +51,7 @@ Rules:
 - Ranges such as 120〜150kcal: minValue 120, maxValue 150.
 - Convert full-width digits (０-９, ．) to normal numbers. Keep the printed precision.
 - basisText is only the per-what phrase, e.g. 1食分（50g）当たり or 12個（標準59g）当たり, without 栄養成分表示 or outer brackets. basisAmount is the grams or ml in it, or 0 if none is printed. Never take basisAmount from 内容量.
-- 内容量 (net contents) is often printed away from the panel. Give its weight or volume and unit only if the word 内容量 is visible. netContentsCount comes only from 内容量 saying how many pieces the pack holds (6個入り → 6); the count in the basis (12個当たり, 4本当たり) is not 内容量. Otherwise 0.
+- 内容量 (net contents) is often printed away from the panel. Give its weight or volume and unit only if the word 内容量 is visible. netContentsCount comes only from 内容量 saying how many pieces the pack holds (6個入り → 6); the count in the basis (12個当たり, 4本当たり) is not 内容量. Otherwise 0. netContentsText is 内容量 exactly as printed (120g（6個入り）, 1個), or empty.
 - productName is the product's name as printed on the pack, if it's in the photo, e.g. ポテトチップス うすしお味. It is not the food type (名称) from the ingredients box. productNameEnglish is its plain English translation, keeping brand names, e.g. Potato Chips Lightly Salted. Both empty if no name is visible.
 - isEstimate is true only if 推定値 or 目安 is printed near the panel.
 - panelFound is true only for a Japanese 栄養成分表示. An English, Chinese or other foreign nutrition table, a product front or an ingredients list is panelFound false with no lines.`;
@@ -58,7 +60,7 @@ export const LABEL_SCHEMA = {
   type: "object",
   additionalProperties: false,
   required: ["panelFound", "productName", "productNameEnglish", "basisText", "basisAmount", "basisUnit",
-    "netContentsAmount", "netContentsUnit", "netContentsCount", "lines", "isEstimate"],
+    "netContentsText", "netContentsAmount", "netContentsUnit", "netContentsCount", "lines", "isEstimate"],
   properties: {
     panelFound: { type: "boolean", description: "True only if a Japanese nutrition facts panel (栄養成分表示) is visible." },
     productName: { type: "string", description: "Product name as printed, if visible, else empty. Not the food type (名称)." },
@@ -66,6 +68,7 @@ export const LABEL_SCHEMA = {
     basisText: { type: "string", description: "Only the per-what phrase, e.g. 1袋（60g）当たり or 1個当たり. Empty if not printed." },
     basisAmount: { type: "number", description: "Grams or ml in the basis text, or 0 if none is printed. Never from 内容量." },
     basisUnit: { type: "string", enum: ["g", "ml"] },
+    netContentsText: { type: "string", description: "内容量 exactly as printed, e.g. 120g（6個入り） or 1個. Empty if not visible." },
     netContentsAmount: { type: "number", description: "内容量 weight or volume if visible, else 0. 0 if 内容量 is only a count like 2個." },
     netContentsUnit: { type: "string", enum: ["g", "ml", "none"] },
     netContentsCount: { type: "integer", description: "Pieces in the pack if 内容量 states it (6個入り → 6), else 0." },
@@ -152,6 +155,7 @@ export function nutrientFor(printedName: string): ExtractedLine["nutrient"] {
  * Japanese names (a Canadian or EU table) as no Japanese panel.
  */
 export function normaliseLabel(label: ExtractedLabel): ExtractedLabel {
+  label = withoutCountAsWeight(label);
   if (!label.panelFound) return { ...label, lines: [] };
   const lines = label.lines.map((l) => ({
     ...l,
@@ -162,6 +166,16 @@ export function normaliseLabel(label: ExtractedLabel): ExtractedLabel {
   }));
   if (!lines.some((l) => l.nutrient !== "other")) return { ...label, panelFound: false, lines: [] };
   return { ...label, lines };
+}
+
+/**
+ * Models sometimes read 内容量 1個 as 1 g. A weight only counts when the printed 内容量 has one
+ * (120g, 1L, 500ｍｌ). The app checks the same, for Workers deployed before this.
+ */
+export function withoutCountAsWeight(label: ExtractedLabel): ExtractedLabel {
+  const text = label.netContentsText ?? "";
+  if (label.netContentsAmount <= 0 || text === "" || /[0-9０-９.．]+\s*(g|ｇ|kg|ｋｇ|ml|ｍｌ|l|ℓ|ｌ|グラム|キログラム|ミリリットル|リットル)/i.test(text)) return label;
+  return { ...label, netContentsAmount: 0, netContentsUnit: "none" };
 }
 
 /** Pulls the label out of a chat completion and checks it has the right shape. */

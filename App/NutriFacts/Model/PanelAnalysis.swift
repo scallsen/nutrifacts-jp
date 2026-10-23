@@ -47,6 +47,9 @@ struct PanelAnalysis {
     let panel: LabelPanel
     let basis: Basis
     let source: ReferenceSource
+    /// How many pieces, servings or packs (`portion`) the label's amount is shown for. Only used for
+    /// `.asLabelled` on a label that isn't per 100 g/ml.
+    var count = 1
 
     // MARK: Basis
 
@@ -54,17 +57,41 @@ struct PanelAnalysis {
 
     static func availableBases(for panel: LabelPanel) -> [Basis] {
         var bases: [Basis] = [.asLabelled]
-        guard let amount = panel.basisAmount else { return bases }
-        if amount != 100 { bases.append(.per100) }
-        if let pack = panel.packAmount, pack != amount { bases.append(.wholePack) }
+        if let amount = panel.basisAmount, amount != 100 { bases.append(.per100) }
+        if let pack = multiplier(.wholePack, count: 1, panel: panel), abs(pack - 1) > 0.001 { bases.append(.wholePack) }
         return bases
+    }
+
+    /// What the amount can be counted in: pieces, servings or packs. Nil for a label per 100 g/ml.
+    var portion: Portion? { panel.portion }
+
+    /// How many times the label's amount is shown, e.g. 3 for three pieces of a label per 1個. Nil when it
+    /// can't be worked out: per 100 g for a basis whose weight isn't known.
+    var multiplier: Double? { Self.multiplier(basis, count: count, panel: panel) }
+
+    static func multiplier(_ basis: Basis, count: Int, panel: LabelPanel) -> Double? {
+        switch basis {
+        case .asLabelled:
+            return panel.portion.map { Double(count) * $0.ofBasis } ?? 1
+        case .per100:
+            return panel.basisAmount.map { 100 / $0 }
+        case .wholePack:
+            // From the weights, or else from 内容量's count: a pack of 6個 is six labels per 1個.
+            if let basisAmount = panel.basisAmount, let pack = panel.packAmount { return pack / basisAmount }
+            guard let portion = panel.portion, let pieces = portion.perPack else { return nil }
+            return Double(pieces) * portion.ofBasis
+        }
     }
 
     func title(for basis: Basis) -> String {
         switch basis {
-        case .asLabelled: panel.basisShort
-        case .per100: "100 \(panel.unit.rawValue)"
-        case .wholePack: panel.packShort
+        case .asLabelled:
+            return portion.map { $0.text(count) } ?? panel.basisShort
+        case .per100:
+            return "100 \(panel.unit.rawValue)"
+        case .wholePack:
+            if panel.packAmount == nil, let portion, let pieces = portion.perPack { return "Pack · \(portion.text(pieces))" }
+            return panel.packShort
         }
     }
 
@@ -76,9 +103,12 @@ struct PanelAnalysis {
 
     /// Says what the chosen amount is, under the size tabs. The label's serving is the maker's choice, not a standard one.
     var basisNote: String? {
-        switch basis {
+        if basis == .asLabelled, let portion, count != 1 || portion.ofBasis != 1 || !knowsBasisAmount {
+            return portionNote(portion)
+        }
+        return switch basis {
         case .wholePack:
-            "The whole pack, from 内容量 (net contents)."
+            panel.packAmount == nil ? "The whole pack, from 内容量 (net contents). " + portionNote(portion) : "The whole pack, from 内容量 (net contents)."
         case .asLabelled where panel.basisAmount != nil && panel.basisAmount == panel.packAmount:
             "The label's amount is the whole pack."
         case .asLabelled where panel.basisAmount != 100:
@@ -88,13 +118,17 @@ struct PanelAnalysis {
         }
     }
 
-    /// Nil when the label's basis has no size, so values can only be shown as printed.
+    /// "The label is per 1包装, the whole pack." The basis stays in view however the amount is counted.
+    private func portionNote(_ portion: Portion?) -> String {
+        var note = "The label is per \(panel.basisUnitName)" + (panel.basisIsWholePack ? ", the whole pack." : ".")
+        if let portion, let pieces = portion.perPack, pieces > 1 { note += " The pack holds \(portion.text(pieces))." }
+        return note
+    }
+
+    /// The grams or ml shown. Nil when the label's basis has no size.
     var targetAmount: Double? {
-        switch basis {
-        case .asLabelled: panel.basisAmount
-        case .per100: 100
-        case .wholePack: panel.packAmount
-        }
+        guard let basisAmount = panel.basisAmount, let multiplier else { return nil }
+        return basisAmount * multiplier
     }
 
     /// False for a basis like 1個当たり until its size is confirmed.
@@ -102,9 +136,15 @@ struct PanelAnalysis {
 
     var basisDescription: String {
         switch basis {
-        case .asLabelled: panel.basisDescription
-        case .per100: "per 100 \(panel.unit.rawValue)"
-        case .wholePack: "whole pack (\(NumberFormat.amount(panel.packAmount ?? 0, .protein)) \(panel.unit.rawValue))"
+        case .asLabelled:
+            guard let portion, count != 1 || portion.ofBasis != 1 else { return panel.basisDescription }
+            return "per \(portion.text(count))" + (targetAmount.map { " (\(NumberFormat.amount($0, .protein)) \(panel.unit.rawValue))" } ?? "")
+        case .wholePack where panel.packAmount == nil:
+            return "whole pack (\(title(for: .wholePack).replacingOccurrences(of: "Pack · ", with: "")))"
+        case .per100:
+            return "per 100 \(panel.unit.rawValue)"
+        case .wholePack:
+            return "whole pack (\(NumberFormat.amount(panel.packAmount ?? 0, .protein)) \(panel.unit.rawValue))"
         }
     }
 
@@ -118,9 +158,9 @@ struct PanelAnalysis {
             let limit = targetAmount.map { key.zeroThreshold * $0 / 100 } ?? 0
             return ShownValue(amount: limit, text: "0 \(key.unit)", isUpperBound: true)
         }
-        if basis == .asLabelled { return ShownValue(amount: number, text: "\(raw) \(key.unit)") }
-        guard let target = targetAmount, let basisAmount = panel.basisAmount else { return nil }
-        let scaled = number * target / basisAmount
+        guard let multiplier else { return nil }
+        if multiplier == 1 { return ShownValue(amount: number, text: "\(raw) \(key.unit)") }
+        let scaled = number * multiplier
         return ShownValue(amount: scaled, text: "\(NumberFormat.amount(scaled, key)) \(key.unit)")
     }
 
@@ -161,10 +201,25 @@ struct PanelAnalysis {
     /// Empty when the basis size isn't known.
     var bounds: [NutrientKey: ClosedRange<Double>] {
         guard let basisAmount = panel.basisAmount else { return [:] }
+        return limits(zero: { 0...$0.zeroThreshold }, scale: { $0 * 100 / basisAmount })
+    }
+
+    /// `bounds`, or for a basis whose weight isn't known (1個当たり), the same per one label amount. The FDA
+    /// and Canada judge a serving, which that is, so they need no weight. A printed 0 is taken as 0 then,
+    /// as its limit is per 100 g.
+    private var ruleBounds: [NutrientKey: ClosedRange<Double>] {
+        knowsBasisAmount ? bounds : limits(zero: { _ in 0...0 }, scale: { $0 })
+    }
+
+    /// The serving the rules judge, in the units of `ruleBounds`: `serving`, or 100 for a basis whose weight
+    /// isn't known, as `ruleBounds` are then already per serving.
+    private var ruleServing: Double? { knowsBasisAmount ? serving : 100 }
+
+    private func limits(zero: (NutrientKey) -> ClosedRange<Double>, scale: (Double) -> Double) -> [NutrientKey: ClosedRange<Double>] {
         func per100(_ key: NutrientKey) -> ClosedRange<Double>? {
             guard let number = panel.number(key) else { return nil }
-            if number == 0 { return 0...key.zeroThreshold }
-            let value = number * 100 / basisAmount
+            if number == 0 { return zero(key) }
+            let value = scale(number)
             return value...value
         }
         var result: [NutrientKey: ClosedRange<Double>] = [:]
@@ -210,28 +265,20 @@ struct PanelAnalysis {
     /// under 720 ml is one serving, as the FDA counts a pack under twice the 360 ml reference amount.
     var serving: Double? {
         guard let amount = panel.basisAmount else { return nil }
-        guard labelIsPer100 else { return amount }
+        guard panel.isPer100 else { return amount }
         return servingIsPack ? panel.packAmount : nil
-    }
-
-    /// 100ml当たり, 100mL当たり, 製品100g当たり and the like.
-    private var labelIsPer100: Bool {
-        let basis = (panel.basisJapanese.applyingTransform(.fullwidthToHalfwidth, reverse: false) ?? panel.basisJapanese)
-            .lowercased().replacingOccurrences(of: " ", with: "")
-            .replacingOccurrences(of: "^(製品|本品|商品)", with: "", options: .regularExpression)
-        return basis.hasPrefix("100\(panel.unit.rawValue)")
     }
 
     /// The serving is the whole bottle of a drink labelled per 100 ml.
     private var servingIsPack: Bool {
-        guard labelIsPer100, panel.unit.isDrink, let pack = panel.packAmount, pack < 720 else { return false }
+        guard panel.isPer100, panel.unit.isDrink, let pack = panel.packAmount, pack < 720 else { return false }
         return pack != panel.basisAmount
     }
 
     /// The % of the authority's own daily value in one serving (never a WHO stand-in, which its words
     /// aren't about).
     private func servingPercent(_ key: NutrientKey, per100: Double) -> Double? {
-        guard key != .energy, let serving, let reference = source.values[key] else { return nil }
+        guard key != .energy, let serving = ruleServing, let reference = source.values[key] else { return nil }
         return per100 * serving / 100 / reference * 100
     }
 
@@ -245,7 +292,7 @@ struct PanelAnalysis {
     /// How the chosen authority describes this line, in its own words, when every value the label
     /// allows gets the same words. Nil when it says nothing.
     func verdict(_ key: NutrientKey) -> Verdict? {
-        guard let rule = source.rule, panel.printed[key] != nil, let range = bounds[key] else { return nil }
+        guard let rule = source.rule, panel.printed[key] != nil, let range = ruleBounds[key] else { return nil }
         let words = bandVerdict(key, rule: rule, range: range)
         // A line Things to know warns about is high on its row too, e.g. Canada's "High in" symbol from 10%.
         if words?.isHigh != true, highReason(key, per100: range.lowerBound) != nil {
@@ -256,7 +303,7 @@ struct PanelAnalysis {
 
     /// A line the label leaves out that Things to know says may be high.
     func mayBeHigh(_ key: NutrientKey) -> Bool {
-        guard panel.printed[key] == nil, let range = bounds[key] else { return false }
+        guard panel.printed[key] == nil, let range = ruleBounds[key] else { return false }
         return highReason(key, per100: range.lowerBound) == nil && highReason(key, per100: range.upperBound) != nil
     }
 
@@ -268,7 +315,8 @@ struct PanelAnalysis {
             if high <= bands.low { return Verdict(text: rule.lowWord, color: color(key, high: false), isHigh: false) }
             return nil
         }
-        guard let limits = (panel.unit.isDrink ? Self.drinkBands : Self.foodBands)[key] else { return nil }
+        // The UK's lights are per 100 g/ml, so they need the weight.
+        guard knowsBasisAmount, let limits = (panel.unit.isDrink ? Self.drinkBands : Self.foodBands)[key] else { return nil }
         if ukPortionHigh(key, per100: range.lowerBound) || band(range.lowerBound, limits) == .high {
             return Verdict(text: "High", color: .red, isHigh: true)
         }
@@ -285,12 +333,15 @@ struct PanelAnalysis {
         guard let rule = source.rule else { return nil }
         let unit = panel.unit.rawValue
         let upToText = upTo ? "Up to " : ""
-        let inServing = { (percent: Double) in
-            "\(upToText)\(NumberFormat.percent(percent)) of the daily value in \(self.servingIsPack ? "the" : "one") \(NumberFormat.amount(self.serving ?? 0, .protein)) \(unit) \(self.servingIsPack ? "bottle" : "serving")."
+        let inServing = { (percent: Double) -> String in
+            guard self.knowsBasisAmount else {
+                return "\(upToText)\(NumberFormat.percent(percent)) of the daily value in \(self.servingWords)."
+            }
+            return "\(upToText)\(NumberFormat.percent(percent)) of the daily value in \(self.servingIsPack ? "the" : "one") \(NumberFormat.amount(self.serving ?? 0, .protein)) \(unit) \(self.servingIsPack ? "bottle" : "serving")."
         }
         switch rule {
         case .uk:
-            guard let limits = (panel.unit.isDrink ? Self.drinkBands : Self.foodBands)[key] else { return nil }
+            guard knowsBasisAmount, let limits = (panel.unit.isDrink ? Self.drinkBands : Self.foodBands)[key] else { return nil }
             if band(per100, limits) == .high {
                 return "\(upToText)\(NumberFormat.amount(per100, key)) g per 100 \(unit). The UK calls over \(NumberFormat.amount(limits.1, key)) g high."
             }
@@ -300,11 +351,22 @@ struct PanelAnalysis {
             guard Self.limited.contains(key), let percent = servingPercent(key, per100: per100), percent >= 20 else { return nil }
             return "\(inServing(percent)) The FDA calls 20% or more high."
         case .healthCanada:
-            guard key != .fat, Self.limited.contains(key), let serving, let percent = servingPercent(key, per100: per100) else { return nil }
+            guard key != .fat, Self.limited.contains(key), let serving, let percent = servingPercent(key, per100: per100) else {
+                // Without the weight, the threshold for most foods: 15%, or 10% for 30 g or less.
+                guard !knowsBasisAmount, key != .fat, Self.limited.contains(key), let percent = servingPercent(key, per100: per100),
+                      percent >= 15 else { return nil }
+                return "\(inServing(percent)) Canada requires a “High in” symbol from 15% for most foods."
+            }
             let threshold = AgencyRule.canadaHighInAt(serving: serving, isDrink: panel.unit.isDrink)
             guard percent >= threshold else { return nil }
             return "\(inServing(percent)) Canada requires a “High in” symbol from \(Int(threshold))%."
         }
+    }
+
+    /// One label amount, for a basis whose weight isn't known: "one piece", or "the pack" for a label per pack.
+    private var servingWords: String {
+        if let portion, portion.ofBasis == 1 { return "one \(portion.singular)" }
+        return panel.basisIsWholePack ? "the pack" : "one \(panel.basisUnitName)"
     }
 
     // MARK: Percent of daily value
@@ -377,7 +439,7 @@ struct PanelAnalysis {
 
     private var levelWarnings: [Notice] {
         guard source.rule != nil else { return [] }
-        let b = bounds
+        let b = ruleBounds
         var notices: [Notice] = []
         for (key, word) in Self.watched {
             guard let range = b[key] else { continue }
@@ -396,7 +458,11 @@ struct PanelAnalysis {
     /// Why the authority's words can't apply, or that nothing is high. Nil when something is.
     var guidanceNotice: Notice? {
         guard let rule = source.rule else { return nil }
-        if rule.percentBands != nil, serving == nil {
+        if rule == .uk, !knowsBasisAmount {
+            return Notice(symbol: "scalemass", tint: .gray, title: "Traffic lights need the weight",
+                          detail: "The UK’s are per 100 \(panel.unit.rawValue), and the label doesn’t say what \(panel.basisUnitName) weighs. Add it above.")
+        }
+        if rule.percentBands != nil, ruleServing == nil {
             let who = rule == .fda ? "The FDA" : "Health Canada"
             return Notice(symbol: "info", tint: .gray, title: "No serving size",
                           detail: "\(who) judges amounts per serving, and this label is per 100 \(panel.unit.rawValue).")

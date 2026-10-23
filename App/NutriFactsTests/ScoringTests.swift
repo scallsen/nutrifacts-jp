@@ -51,7 +51,7 @@ import Testing
 @Suite struct ExtractionMappingTests {
     private func label(_ lines: [ExtractedLine], basis: String = "100g当たり", amount: Double = 100) -> ExtractedLabel {
         ExtractedLabel(panelFound: true, productName: "", productNameEnglish: "", basisText: basis, basisAmount: amount, basisUnit: .g,
-                       netContentsAmount: 0, netContentsUnit: .none, netContentsCount: 0, lines: lines, isEstimate: false)
+                       netContentsText: "", netContentsAmount: 0, netContentsUnit: .none, netContentsCount: 0, lines: lines, isEstimate: false)
     }
 
     private func line(_ n: ExtractedNutrient, _ v: Double, _ unit: String = "g", max: Double? = nil) -> ExtractedLine {
@@ -136,7 +136,7 @@ import Testing
         // A drink labelled per 100 ml: 6.7 g of carbohydrate, no sugars line.
         func analysis(pack: Double) throws -> PanelAnalysis {
             let l = ExtractedLabel(panelFound: true, productName: "", productNameEnglish: "", basisText: "100ml当たり", basisAmount: 100, basisUnit: .ml,
-                                   netContentsAmount: pack, netContentsUnit: .ml, netContentsCount: 0,
+                                   netContentsText: "", netContentsAmount: pack, netContentsUnit: .ml, netContentsCount: 0,
                                    lines: [line(.energy, 27, "kcal"), line(.carbohydrate, 6.7), line(.salt, 0.1)], isEstimate: false)
             return PanelAnalysis(panel: try l.toPanel(photo: nil), basis: .asLabelled, source: .canada)
         }
@@ -150,7 +150,7 @@ import Testing
         #expect(bottle.verdict(.sugars) == nil)
         // Labels often write mL.
         let capitalL = ExtractedLabel(panelFound: true, productName: "", productNameEnglish: "", basisText: "100mL当たり", basisAmount: 100, basisUnit: .ml,
-                                      netContentsAmount: 500, netContentsUnit: .ml, netContentsCount: 0,
+                                      netContentsText: "", netContentsAmount: 500, netContentsUnit: .ml, netContentsCount: 0,
                                       lines: [line(.carbohydrate, 6.8)], isEstimate: false)
         let mL = PanelAnalysis(panel: try capitalL.toPanel(photo: nil), basis: .asLabelled, source: .canada)
         #expect(mL.serving == 500)
@@ -266,6 +266,118 @@ import Testing
         var l = label([line(.sugars, 7)], basis: "100ml当たり")
         l.basisUnit = .ml
         #expect(try l.toPanel(photo: nil).unit == .millilitres)
+    }
+
+    // MARK: Pieces and packs
+
+    /// A chocolate croissant: 1包装当り with 内容量 1個, and no weight anywhere.
+    private func croissant(contents: String = "1個") -> ExtractedLabel {
+        var l = label([line(.energy, 272, "kcal"), line(.protein, 3.3), line(.fat, 16.2), line(.carbohydrate, 29.0),
+                       line(.netCarbs, 27.7), line(.fibre, 1.3), line(.salt, 0.4)], basis: "1包装当り", amount: 0)
+        l.netContentsText = contents
+        // Models read the 1 in 1個 as 1 g.
+        l.netContentsAmount = 1
+        l.netContentsUnit = .g
+        l.netContentsCount = 1
+        return l
+    }
+
+    @Test func aCountInContentsIsNotAWeight() throws {
+        let panel = try croissant().toPanel(photo: nil)
+        #expect(panel.basisSuggestion == nil)
+        #expect(panel.packAmount == nil)
+        #expect(panel.basisDescription == "per 1包装")
+        #expect(panel.portion == Portion(singular: "piece", plural: "pieces", ofBasis: 1, perPack: 1))
+        // A Worker deployed before netContentsText: an amount equal to the count is the same mistake.
+        #expect(try croissant(contents: "").toPanel(photo: nil).basisSuggestion == nil)
+        #expect(!LabelPanel.printsWeight("1個"))
+        #expect(LabelPanel.printsWeight("120g（6個入）"))
+        #expect(LabelPanel.printsWeight("1L"))
+        #expect(LabelPanel.printsWeight("500ｍｌ"))
+    }
+
+    @Test func aPieceIsCountedWithoutItsWeight() throws {
+        let panel = try croissant().toPanel(photo: nil)
+        #expect(PanelAnalysis.availableBases(for: panel) == [.asLabelled])
+        let one = PanelAnalysis(panel: panel, basis: .asLabelled, source: .japan)
+        #expect(one.title(for: .asLabelled) == "1 piece")
+        #expect(one.value(.fat)?.text == "16.2 g")
+        #expect(one.basisNote == "The label is per 1包装, the whole pack.")
+        let three = PanelAnalysis(panel: panel, basis: .asLabelled, source: .japan, count: 3)
+        #expect(three.value(.energy)?.text == "816 kcal")
+        #expect(three.basisDescription == "per 3 pieces")
+    }
+
+    @Test func fdaAndCanadaJudgeAPieceWithoutItsWeight() throws {
+        let panel = try croissant().toPanel(photo: nil)
+        let fda = PanelAnalysis(panel: panel, basis: .asLabelled, source: .unitedStates)
+        #expect(fda.warnings.first?.title == "High in fat")
+        #expect(fda.warnings.first?.detail == "21% of the daily value in one piece. The FDA calls 20% or more high.")
+        // The rules judge one label serving, however many pieces are shown.
+        #expect(PanelAnalysis(panel: panel, basis: .asLabelled, source: .unitedStates, count: 2).warnings.first?.detail == fda.warnings.first?.detail)
+        let canada = PanelAnalysis(panel: panel, basis: .asLabelled, source: .canada)
+        #expect(canada.warnings.map(\.title) == ["May be high in saturated fat", "May be high in sugars"])
+        #expect(canada.warnings.first?.detail.contains("from 15% for most foods") == true)
+        // The UK's traffic lights are per 100 g, so they need the weight.
+        let uk = PanelAnalysis(panel: panel, basis: .asLabelled, source: .unitedKingdom)
+        #expect(uk.warnings.isEmpty)
+        #expect(uk.guidanceNotice?.title == "Traffic lights need the weight")
+    }
+
+    @Test func aWeightForAPackLabelIsThePack() throws {
+        var panel = try croissant().toPanel(photo: nil)
+        panel.confirmBasis(amount: 70, unit: .grams)
+        #expect(panel.packAmount == 70)
+        let analysis = PanelAnalysis(panel: panel, basis: .per100, source: .japan)
+        #expect(analysis.availableBases == [.asLabelled, .per100])
+        #expect(analysis.value(.fat)?.text == "23.1 g")
+    }
+
+    @Test func aPackLabelWithSeveralPiecesCountsPieces() throws {
+        var l = label([line(.energy, 600, "kcal"), line(.fat, 30)], basis: "1包装当たり", amount: 0)
+        l.netContentsText = "120g（6個入）"
+        l.netContentsAmount = 120
+        l.netContentsUnit = .g
+        l.netContentsCount = 6
+        let panel = try l.toPanel(photo: nil)
+        // The label is the whole pack, so its size is the whole 内容量, not a sixth of it.
+        #expect(panel.basisSuggestion == BasisSuggestion(amount: 120, unit: .grams, reason: "内容量 120 g"))
+        #expect(panel.portion?.perPack == 6)
+        let two = PanelAnalysis(panel: panel, basis: .asLabelled, source: .japan, count: 2)
+        #expect(two.value(.energy)?.text == "200 kcal")
+        #expect(two.basisNote == "The label is per 1包装, the whole pack. The pack holds 6 pieces.")
+    }
+
+    @Test func aCountedPackAddsTheWholePack() throws {
+        var l = label([line(.energy, 45, "kcal"), line(.fat, 2.5)], basis: "1個当たり", amount: 0)
+        l.netContentsText = "6個"
+        l.netContentsCount = 6
+        let panel = try l.toPanel(photo: nil)
+        #expect(panel.contentsCounter == "個")
+        let pack = PanelAnalysis(panel: panel, basis: .wholePack, source: .japan)
+        #expect(pack.availableBases == [.asLabelled, .wholePack])
+        #expect(pack.title(for: .wholePack) == "Pack · 6 pieces")
+        #expect(pack.value(.energy)?.text == "270 kcal")
+        #expect(pack.basisDescription == "whole pack (6 pieces)")
+        #expect(PanelAnalysis.defaultBasis(for: panel) == .wholePack)
+    }
+
+    @Test func oneBagOfAMultipackIsNotThePack() throws {
+        var l = label([line(.energy, 80, "kcal")], basis: "1袋当たり", amount: 0)
+        l.netContentsText = "10袋"
+        l.netContentsCount = 10
+        let panel = try l.toPanel(photo: nil)
+        #expect(!panel.basisIsWholePack)
+        #expect(panel.portion == Portion(singular: "bag", plural: "bags", ofBasis: 1, perPack: 10))
+    }
+
+    @Test func servingsComeFromTheWeights() {
+        // 1食分（50g）当たり in a 400 g bag: 8 servings.
+        let granola = PanelAnalysis(panel: SampleLabels.granola, basis: .asLabelled, source: .japan, count: 2)
+        #expect(granola.portion?.perPack == 8)
+        #expect(granola.title(for: .asLabelled) == "2 servings")
+        #expect(granola.value(.energy)?.text == "440 kcal")
+        #expect(granola.basisDescription == "per 2 servings (100 g)")
     }
 }
 
