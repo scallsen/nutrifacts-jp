@@ -66,6 +66,8 @@ struct ResultView: View {
                     }
                 }
                 if showsCount(a), let portion = a.portion { countSection(a, portion) }
+                // On every tab, so a pack counted from 内容量 (6個入) can still be given its weight.
+                if !a.knowsBasisAmount { weightSection(a) }
                 if a.knowsBasisAmount {
                     Section {
                         Button {
@@ -234,10 +236,11 @@ struct ResultView: View {
     /// The stepper is for counting what the label's amount describes: pieces, servings or packs.
     private func showsCount(_ a: PanelAnalysis) -> Bool { a.basis == .asLabelled && a.portion != nil }
 
-    /// "2 pieces", with whether that's the whole pack and its weight, then the label's weight when it isn't printed.
+    /// "2 pieces", with whether that's the whole pack and its weight.
     private func countSection(_ a: PanelAnalysis, _ portion: Portion) -> some View {
         Section {
-            Stepper(value: Binding(get: { count }, set: { pickedCount = $0 }), in: 1...99) {
+            // A pack can hold more than 99, e.g. 120粒 opens on all of them.
+            Stepper(value: Binding(get: { count }, set: { pickedCount = $0 }), in: 1...max(99, defaultCount)) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(portion.text(count)).monospacedDigit()
                     if let detail = amountDetail(a, portion) {
@@ -245,28 +248,33 @@ struct ResultView: View {
                     }
                 }
             }
-            if !a.knowsBasisAmount {
-                if let suggestion = a.panel.basisSuggestion {
-                    Button {
-                        model.confirmBasis(of: scan, amount: suggestion.amount, unit: suggestion.unit)
-                    } label: {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Use \(NumberFormat.amount(suggestion.amount, .protein)) \(suggestion.unit.rawValue) for \(weightSubject(a))")
-                            Text("From \(suggestion.reason). Check it: a pack can hold several pieces.").font(.footnote).foregroundStyle(.secondary)
-                        }
+        } footer: {
+            if let note = a.basisNote { Text(note) }
+        }
+    }
+
+    /// The label's weight when it isn't printed: the 内容量 suggestion to confirm, or typed in. Optional.
+    private func weightSection(_ a: PanelAnalysis) -> some View {
+        Section {
+            if let suggestion = a.panel.basisSuggestion {
+                Button {
+                    model.confirmBasis(of: scan, amount: suggestion.amount, unit: suggestion.unit)
+                } label: {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Use \(NumberFormat.amount(suggestion.amount, .protein)) \(suggestion.unit.rawValue) for \(weightSubject(a))")
+                        Text("From \(suggestion.reason). Check it: a pack can hold several pieces.").font(.footnote).foregroundStyle(.secondary)
                     }
                 }
-                Button {
-                    weightText = ""
-                    editingWeight = true
-                } label: {
-                    LabeledContent("Weight", value: "Add")
-                }
-                .tint(.primary)
             }
+            Button {
+                weightText = ""
+                editingWeight = true
+            } label: {
+                LabeledContent("Weight", value: "Add")
+            }
+            .tint(.primary)
         } footer: {
-            let note = a.basisNote ?? ""
-            Text(a.knowsBasisAmount ? note : note + " The weight isn't printed. It's only needed to compare per 100 \(a.panel.unit.rawValue).")
+            Text("The weight isn't printed. It's only needed to compare per 100 \(a.panel.unit.rawValue).")
         }
     }
 

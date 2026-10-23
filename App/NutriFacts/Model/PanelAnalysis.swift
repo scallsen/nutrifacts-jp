@@ -213,7 +213,7 @@ struct PanelAnalysis {
 
     /// The serving the rules judge, in the units of `ruleBounds`: `serving`, or 100 for a basis whose weight
     /// isn't known, as `ruleBounds` are then already per serving.
-    private var ruleServing: Double? { knowsBasisAmount ? serving : 100 }
+    private var ruleServing: Double? { knowsBasisAmount ? serving : panel.isPer100 ? nil : 100 }
 
     private func limits(zero: (NutrientKey) -> ClosedRange<Double>, scale: (Double) -> Double) -> [NutrientKey: ClosedRange<Double>] {
         func per100(_ key: NutrientKey) -> ClosedRange<Double>? {
@@ -460,7 +460,7 @@ struct PanelAnalysis {
         guard let rule = source.rule else { return nil }
         if rule == .uk, !knowsBasisAmount {
             return Notice(symbol: "scalemass", tint: .gray, title: "Traffic lights need the weight",
-                          detail: "The UK’s are per 100 \(panel.unit.rawValue), and the label doesn’t say what \(panel.basisUnitName) weighs. Add it above.")
+                          detail: "The UK’s are per 100 \(panel.unit.rawValue), and the label doesn’t say what \(panel.basisUnitName) weighs. Add it below.")
         }
         if rule.percentBands != nil, ruleServing == nil {
             let who = rule == .fda ? "The FDA" : "Health Canada"

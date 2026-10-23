@@ -70,7 +70,9 @@ struct LabelPanel: Identifiable, Hashable, Codable, Sendable {
 
     /// The count and counter the basis starts with: 1個 → (1, 個), 2枚（30g） → (2, 枚), 1食分 → (1, 食).
     private var basisCount: (count: Int, counter: String)? {
-        guard let match = basisUnitName.firstMatch(of: /^\s*([0-9０-９]+)\s*([^0-9０-９\s（(]+)/) else { return nil }
+        // 本品1袋当たり: the same prefixes `isPer100` drops.
+        let basis = basisUnitName.replacingOccurrences(of: "^\\s*(製品|本品|商品)", with: "", options: .regularExpression)
+        guard let match = basis.firstMatch(of: /^\s*([0-9０-９]+)\s*([^0-9０-９\s（(]+)/) else { return nil }
         let counter = Self.normalisedCounter(String(match.2))
         guard let count = Self.integer(match.1), count > 0, !["g", "ｇ", "ml", "mL", "ｍｌ"].contains(counter) else { return nil }
         return (count, counter)
