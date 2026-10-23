@@ -294,7 +294,7 @@ import Testing
 
     @Test func appPointsAtTheDeployedWorker() {
         // From Config/NutriFacts.xcconfig via Info.plist.
-        #expect(AIAndConfig.current.apiURL?.absoluteString == "https://nutrifacts-api.justin-garcia.workers.dev")
+        #expect(AIAndConfig.current.apiURL?.absoluteString == "https://nutrifacts-api.nutrifacts-api.workers.dev")
     }
 }
 

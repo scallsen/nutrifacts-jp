@@ -1,10 +1,11 @@
 // Build settings for NutriFacts. Values here end up in Info.plist (NutriFacts/Info.plist).
 
-// The NutriFacts API (backend/, a Cloudflare Worker on the justin.garcia@gmail.com account).
+// The NutriFacts API (backend/, a Cloudflare Worker on the simon.callsen@gmail.com account).
 // "$()" keeps xcconfig from reading "//" as a comment.
-NUTRIFACTS_API_URL = https:/$()/nutrifacts-api.justin-garcia.workers.dev
+NUTRIFACTS_API_URL = https:/$()/nutrifacts-api.nutrifacts-api.workers.dev
 
-// Optional app token the Worker checks (its APP_TOKEN secret). Set it in Secrets.xcconfig, not here.
+// The app token the Worker checks (its APP_TOKEN secret, which is set). It goes in the git-ignored
+// Secrets.xcconfig, not here: copy Secrets.example.xcconfig and ask whoever runs the Worker for it.
 NUTRIFACTS_APP_TOKEN =
 
 #include? "Secrets.xcconfig"
